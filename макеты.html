@@ -5,18 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Мастер-Каталог: Мои таблицы</title>
   <style>
-    /* 100% чистый HTML+CSS: БЕЗ внешних скриптов, БЕЗ хрупких якорных ссылок */
+    /* 100% стабильный HTML+CSS: БЕЗ внешних скриптов, БЕЗ ссылок с решётками */
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       background-color: #F6F1EA;
       color: #38423B;
-      padding: 20px 16px 60px 16px;
+      padding: 20px 16px 80px 16px;
       line-height: 1.4;
     }
     .container { max-width: 860px; margin: 0 auto; }
 
-    /* Секции идут друг за другом единым длинным свитком */
+    /* Разделители секций */
     .section {
       padding-top: 32px;
       margin-top: 32px;
@@ -64,7 +64,6 @@
     }
     .paper-btn {
       border: none;
-      cursor: pointer;
       border-radius: 14px;
       font-weight: 700;
       font-size: 11px;
@@ -75,7 +74,6 @@
     }
     .marshmallow-btn {
       border: none;
-      cursor: pointer;
       border-radius: 14px;
       font-weight: 700;
       font-size: 11px;
@@ -115,14 +113,14 @@
 
   <div class="container">
     
-    <!-- Заголовок (БЕЗ ломающих кнопок, просто листай вниз!) -->
+    <!-- Шапка страницы -->
     <div style="text-align: center; padding: 16px 0 8px 0;">
       <span style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #7BA79D; background: #EAF2EF; padding: 5px 14px; border-radius: 20px;">
         Единый сплошной свиток · Листай вниз
       </span>
       <h1 style="font-size: 26px; font-weight: 800; margin: 12px 0 6px 0;">Мастер-Каталог «Мои таблицы»</h1>
       <p style="font-size: 13px; color: #78736B; max-width: 550px; margin: 0 auto;">
-        Все разделы идут по порядку один за другим. Никаких исчезновений и сбоев — просто прокручивай страницу вниз.
+        Все варианты показаны на одной странице. Никаких верхних кнопок, ничего не исчезает — просто листай страницу вниз.
       </p>
     </div>
 
@@ -150,7 +148,7 @@
             <div style="font-size: 11px; font-weight: 700; color: #6E6860; margin-bottom: 6px;">Вложенная карточка</div>
             <div style="display: flex; justify-content: space-between; align-items: center;">
               <span style="font-size: 12px; font-weight: 800;">+7 (999) 111-22-33</span>
-              <button class="paper-btn" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2); color: #38423B;">Скопировать 📋</button>
+              <div class="paper-btn" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2); color: #38423B;">Скопировать 📋</div>
             </div>
           </div>
         </div>
@@ -168,7 +166,7 @@
             <div style="font-size: 11px; font-weight: 700; color: #6E6860; margin-bottom: 6px;">Вложенная карточка</div>
             <div style="display: flex; justify-content: space-between; align-items: center;">
               <span style="font-size: 12px; font-weight: 800;">+7 (999) 111-22-33</span>
-              <button class="paper-btn" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2); color: #38423B;">Скопировать 📋</button>
+              <div class="paper-btn" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2); color: #38423B;">Скопировать 📋</div>
             </div>
           </div>
         </div>
@@ -255,15 +253,15 @@
         <div class="grid-4" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
           <div style="text-align: center; padding: 8px;">
             <div style="font-size: 11px; font-weight: 700; color: #78736B; margin-bottom: 6px;">А. Парящая бумага:</div>
-            <button class="paper-btn" style="background: linear-gradient(145deg, #FAF5EE, #E6D8C6); width: 100%;">Скопировать 📋</button>
+            <div class="paper-btn" style="background: linear-gradient(145deg, #FAF5EE, #E6D8C6); width: 100%;">Скопировать 📋</div>
           </div>
           <div style="text-align: center; padding: 8px;">
             <div style="font-size: 11px; font-weight: 700; color: #78736B; margin-bottom: 6px;">Б. Пухлая зефирка:</div>
-            <button class="marshmallow-btn" style="background: linear-gradient(145deg, #FAF3EA, #EBE0D0); width: 100%;">Скопировать 📋</button>
+            <div class="marshmallow-btn" style="background: linear-gradient(145deg, #FAF3EA, #EBE0D0); width: 100%;">Скопировать 📋</div>
           </div>
           <div style="text-align: center; padding: 8px;">
             <div style="font-size: 11px; font-weight: 700; color: #78736B; margin-bottom: 6px;">В. Градиентная акцентная:</div>
-            <button class="paper-btn" style="background: linear-gradient(160deg, #78A59E, #4D6E5C); color: #fff; width: 100%;">Открыть CRM ↗</button>
+            <div class="paper-btn" style="background: linear-gradient(160deg, #78A59E, #4D6E5C); color: #fff; width: 100%;">Открыть CRM ↗</div>
           </div>
         </div>
       </div>
@@ -306,29 +304,29 @@
 
       <div class="shadow-pure-matte" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2); padding: 18px;">
         <div class="grid-4">
-          <button class="paper-btn" style="background: linear-gradient(145deg, #F5EDE3, #E6D8C6); text-align: left; padding: 12px;">
+          <div class="paper-btn" style="background: linear-gradient(145deg, #F5EDE3, #E6D8C6); text-align: left; padding: 12px;">
             <div style="width: 26px; height: 26px; border-radius: 50%; background: linear-gradient(145deg, #4E6555, #384B3E); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 11px; margin-bottom: 8px;">01</div>
             <div style="font-size: 12px; font-weight: 800;">1. Клиенты</div>
             <div style="font-size: 10px; color: #78736B;">База и доступы</div>
-          </button>
+          </div>
 
-          <button class="paper-btn" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2); text-align: left; padding: 12px; opacity: 0.85;">
+          <div class="paper-btn" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2); text-align: left; padding: 12px; opacity: 0.85;">
             <div style="width: 26px; height: 26px; border-radius: 50%; background: #E5D7C5; color: #5A483E; display: flex; align-items: center; justify-content: center; font-size: 11px; margin-bottom: 8px;">02</div>
             <div style="font-size: 12px; font-weight: 800;">2. Траты на ИИ</div>
             <div style="font-size: 10px; color: #78736B;">VPN, ChatGPT, софт</div>
-          </button>
+          </div>
 
-          <button class="paper-btn" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2); text-align: left; padding: 12px; opacity: 0.85;">
+          <div class="paper-btn" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2); text-align: left; padding: 12px; opacity: 0.85;">
             <div style="width: 26px; height: 26px; border-radius: 50%; background: #DCEEE5; color: #2C5749; display: flex; align-items: center; justify-content: center; font-size: 11px; margin-bottom: 8px;">03</div>
             <div style="font-size: 12px; font-weight: 800;">3. Мои доходы</div>
             <div style="font-size: 10px; color: #78736B;">Оплаты от клиентов</div>
-          </button>
+          </div>
 
-          <button class="paper-btn" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2); text-align: left; padding: 12px; opacity: 0.85;">
+          <div class="paper-btn" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2); text-align: left; padding: 12px; opacity: 0.85;">
             <div style="width: 26px; height: 26px; border-radius: 50%; background: #FDECE1; color: #8F5234; display: flex; align-items: center; justify-content: center; font-size: 11px; margin-bottom: 8px;">04</div>
             <div style="font-size: 12px; font-weight: 800;">4. Фокус дня</div>
             <div style="font-size: 10px; color: #78736B;">Срочные задачи</div>
-          </button>
+          </div>
         </div>
       </div>
     </div>
@@ -360,7 +358,7 @@
               <div style="font-size: 26px; font-weight: 900;">3</div>
               <div style="font-size: 11px; font-weight: 700;">Проекта</div>
             </div>
-            <button class="paper-btn" style="background: rgba(255,255,255,0.3); color: #fff; width: 100%; font-size: 10px; padding: 6px;">+ Добавить</button>
+            <div class="paper-btn" style="background: rgba(255,255,255,0.3); color: #fff; width: 100%; font-size: 10px; padding: 6px; text-align: center;">+ Добавить</div>
           </div>
 
           <!-- Правая карточка -->
@@ -395,11 +393,11 @@
           <div style="background: linear-gradient(145deg, #F5EDE3, #E6D8C6); padding: 10px; border-radius: 14px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
               <span style="font-size: 11px; font-weight: 800;">+7 (999) 111-22-33</span>
-              <button class="paper-btn" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2); font-size: 9px; padding: 4px 8px;">Копия 📋</button>
+              <div class="paper-btn" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2); font-size: 9px; padding: 4px 8px;">Копия 📋</div>
             </div>
             <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #D9CCB8; padding-top: 6px;">
               <span style="font-size: 10px; color: #78736B;">Боевая CRM</span>
-              <button class="paper-btn" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2); color: #4E6555; font-size: 9px; padding: 4px 8px;">Сайт ↗</button>
+              <div class="paper-btn" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2); color: #4E6555; font-size: 9px; padding: 4px 8px;">Сайт ↗</div>
             </div>
           </div>
         </div>
