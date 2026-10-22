@@ -5,73 +5,50 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Мастер-Каталог: Мои таблицы</title>
   <style>
-    /* Базовый сброс и системные быстрые шрифты (БЕЗ ВНЕШНИХ СКРИПТОВ) */
+    /* 100% чистый HTML+CSS: БЕЗ внешних скриптов, БЕЗ хрупких якорных ссылок */
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       background-color: #F6F1EA;
       color: #38423B;
-      padding: 16px;
+      padding: 20px 16px 60px 16px;
       line-height: 1.4;
-      scroll-behavior: smooth;
     }
     .container { max-width: 860px; margin: 0 auto; }
-    
-    /* Ссылки и навигация */
-    .nav-bar {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 8px;
-      margin: 16px 0 32px 0;
-    }
-    .nav-link {
-      padding: 8px 14px;
-      border-radius: 12px;
-      font-size: 12px;
-      font-weight: 700;
-      text-decoration: none;
-      background: #E8DDD0;
-      color: #38423B;
-      transition: background 0.15s;
-    }
-    .nav-link:hover { background: #DDD0C0; }
-    .nav-link-accent { background: #7BA79D; color: #FFFFFF; }
 
-    /* Секции */
+    /* Секции идут друг за другом единым длинным свитком */
     .section {
-      padding-top: 24px;
-      margin-top: 24px;
-      border-top: 1px solid #E2D7C8;
+      padding-top: 32px;
+      margin-top: 32px;
+      border-top: 2px solid #E4D8C8;
     }
     .section-title {
-      font-size: 18px;
+      font-size: 19px;
       font-weight: 800;
-      margin-bottom: 14px;
+      margin-bottom: 16px;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
     .badge-num {
-      width: 24px;
-      height: 24px;
+      width: 26px;
+      height: 26px;
       background: #7BA79D;
       color: #fff;
       border-radius: 50%;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 800;
+      flex-shrink: 0;
     }
 
     /* Сетки */
-    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; }
     .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
 
-    /* ------------------------------------------------------------- */
-    /* ТОЧНАЯ ФИЗИКА ТЕНЕЙ                                           */
-    /* ------------------------------------------------------------- */
+    /* Тени без обводок */
     .shadow-with-glow {
       border-radius: 28px;
       box-shadow: 
@@ -95,13 +72,7 @@
       box-shadow: 
         5px 8px 16px -2px rgba(150, 130, 110, 0.42),
         2px 3px 6px -1px rgba(150, 130, 110, 0.2);
-      transition: all 0.15s ease;
     }
-    .paper-btn:active {
-      transform: translate(2px, 3px);
-      box-shadow: 2px 3px 6px rgba(150, 130, 110, 0.3);
-    }
-
     .marshmallow-btn {
       border: none;
       cursor: pointer;
@@ -112,13 +83,7 @@
       box-shadow: 
         5px 5px 12px rgba(170, 150, 130, 0.35),
         -4px -4px 10px rgba(255, 252, 245, 0.9);
-      transition: all 0.15s ease;
     }
-    .marshmallow-btn:active {
-      transform: scale(0.97);
-      box-shadow: inset 3px 3px 6px rgba(170, 150, 130, 0.35);
-    }
-
     .paper-chip {
       border-radius: 12px;
       font-size: 11px;
@@ -130,12 +95,11 @@
       box-shadow: 4px 6px 12px -1px rgba(160, 140, 120, 0.32);
     }
 
-    /* Карточки палитры */
     .color-card {
-      padding: 14px;
+      padding: 16px;
       border-radius: 18px;
       text-align: center;
-      min-height: 80px;
+      min-height: 84px;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -144,41 +108,29 @@
       box-shadow: 
         8px 12px 20px -3px rgba(165, 145, 125, 0.35),
         2px 4px 8px rgba(165, 145, 125, 0.15);
-      transition: transform 0.15s ease;
     }
-    .color-card:hover { transform: translateY(-2px); }
   </style>
 </head>
 <body>
 
   <div class="container">
     
-    <!-- Заголовок -->
-    <div style="text-align: center; padding: 12px 0;">
-      <span style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #7BA79D; background: #EAF2EF; padding: 4px 12px; border-radius: 20px;">
-        Мгновенно открывается · Все варианты на месте
+    <!-- Заголовок (БЕЗ ломающих кнопок, просто листай вниз!) -->
+    <div style="text-align: center; padding: 16px 0 8px 0;">
+      <span style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #7BA79D; background: #EAF2EF; padding: 5px 14px; border-radius: 20px;">
+        Единый сплошной свиток · Листай вниз
       </span>
-      <h1 style="font-size: 24px; font-weight: 800; margin: 10px 0 4px 0;">Мастер-Каталог «Мои таблицы»</h1>
-      <p style="font-size: 13px; color: #78736B;">
-        Убрали тяжёлые скрипты — теперь страница летает! Всё сохранено и разложено по полочкам.
+      <h1 style="font-size: 26px; font-weight: 800; margin: 12px 0 6px 0;">Мастер-Каталог «Мои таблицы»</h1>
+      <p style="font-size: 13px; color: #78736B; max-width: 550px; margin: 0 auto;">
+        Все разделы идут по порядку один за другим. Никаких исчезновений и сбоев — просто прокручивай страницу вниз.
       </p>
-
-      <!-- Навигация -->
-      <div class="nav-bar">
-        <a href="#sec-shadows" class="nav-link">1. Сравнение теней</a>
-        <a href="#sec-palettes" class="nav-link">2. Палитра (20 шт)</a>
-        <a href="#sec-buttons" class="nav-link">3. Кнопки</a>
-        <a href="#sec-statuses" class="nav-link">4. Статусы</a>
-        <a href="#sec-menu" class="nav-link">5. Главное меню</a>
-        <a href="#sec-app" class="nav-link nav-link-accent">6. Экран смартфона</a>
-      </div>
     </div>
 
 
     <!-- =============================================================== -->
-    <!-- 1. СРАВНЕНИЕ ТЕНЕЙ                                              -->
+    <!-- РАЗДЕЛ 1. СРАВНЕНИЕ ТЕНЕЙ БОК О БОК                             -->
     <!-- =============================================================== -->
-    <div id="sec-shadows" class="section">
+    <div class="section" style="border-top: none; margin-top: 16px; padding-top: 16px;">
       <div class="section-title">
         <span class="badge-num">1</span>
         Сравнение теней: с верхней засветкой vs чистая матовая бумага
@@ -225,16 +177,16 @@
 
 
     <!-- =============================================================== -->
-    <!-- 2. ВСЕ 20 ПАСТЕЛЬНЫХ ГРАДИЕНТОВ                                 -->
+    <!-- РАЗДЕЛ 2. ВСЕ 20 ПАСТЕЛЬНЫХ ГРАДИЕНТОВ                          -->
     <!-- =============================================================== -->
-    <div id="sec-palettes" class="section">
+    <div class="section">
       <div class="section-title">
         <span class="badge-num">2</span>
         Большая коллекция пастелей (20 оттенков, спокойные, молочные)
       </div>
 
       <!-- Голубые -->
-      <div style="margin-bottom: 16px;">
+      <div style="margin-bottom: 18px;">
         <div style="font-size: 11px; font-weight: 800; color: #4A7285; margin-bottom: 8px;">💧 НЕБЕСНО-ГОЛУБЫЕ И ЛАЗУРНЫЕ:</div>
         <div class="grid-4">
           <div class="color-card" style="background: linear-gradient(150deg, #EDF4FA, #D4E3F2); color: #324B5C;">1. Небесный фарфор</div>
@@ -245,7 +197,7 @@
       </div>
 
       <!-- Желтые и персик -->
-      <div style="margin-bottom: 16px;">
+      <div style="margin-bottom: 18px;">
         <div style="font-size: 11px; font-weight: 800; color: #A86F3E; margin-bottom: 8px;">🍑 ЖЁЛТЫЕ И ПЕРСИКОВЫЕ:</div>
         <div class="grid-4">
           <div class="color-card" style="background: linear-gradient(150deg, #FFF9EA, #FCEBCA); color: #594226;">5. Сливочное солнце</div>
@@ -256,7 +208,7 @@
       </div>
 
       <!-- Розовые и лаванда -->
-      <div style="margin-bottom: 16px;">
+      <div style="margin-bottom: 18px;">
         <div style="font-size: 11px; font-weight: 800; color: #9E5775; margin-bottom: 8px;">🌸 ЧАЙНАЯ РОЗА И ЛАВАНДА:</div>
         <div class="grid-4">
           <div class="color-card" style="background: linear-gradient(150deg, #FCF1F4, #F4D5DF); color: #54303E;">9. Чайная роза</div>
@@ -267,7 +219,7 @@
       </div>
 
       <!-- Тройные сложные -->
-      <div style="margin-bottom: 16px;">
+      <div style="margin-bottom: 18px;">
         <div style="font-size: 11px; font-weight: 800; color: #5D857A; margin-bottom: 8px;">✨ ТРОЙНЫЕ СЛОЖНЫЕ ПЕРЕЛИВЫ:</div>
         <div class="grid-4">
           <div class="color-card" style="background: linear-gradient(175deg, #7BA79D 0%, #B39EB1 50%, #EFA79A 100%); color: #fff;">13. Грибочек</div>
@@ -291,9 +243,9 @@
 
 
     <!-- =============================================================== -->
-    <!-- 3. КНОПКИ                                                       -->
+    <!-- РАЗДЕЛ 3. КНОПКИ                                                -->
     <!-- =============================================================== -->
-    <div id="sec-buttons" class="section">
+    <div class="section">
       <div class="section-title">
         <span class="badge-num">3</span>
         Стили кнопок (все сохранены)
@@ -319,9 +271,9 @@
 
 
     <!-- =============================================================== -->
-    <!-- 4. СТАТУСЫ                                                      -->
+    <!-- РАЗДЕЛ 4. СТАТУСЫ                                               -->
     <!-- =============================================================== -->
-    <div id="sec-statuses" class="section">
+    <div class="section">
       <div class="section-title">
         <span class="badge-num">4</span>
         Стили статусов проектов
@@ -344,9 +296,9 @@
 
 
     <!-- =============================================================== -->
-    <!-- 5. ГЛАВНОЕ МЕНЮ (4 РАЗДЕЛА)                                     -->
+    <!-- РАЗДЕЛ 5. ГЛАВНОЕ МЕНЮ (4 РАЗДЕЛА)                              -->
     <!-- =============================================================== -->
-    <div id="sec-menu" class="section">
+    <div class="section">
       <div class="section-title">
         <span class="badge-num">5</span>
         Главное меню (4 раздела в дорогом минимализме)
@@ -383,9 +335,9 @@
 
 
     <!-- =============================================================== -->
-    <!-- 6. ЭКРАН СМАРТФОНА                                              -->
+    <!-- РАЗДЕЛ 6. ЭКРАН СМАРТФОНА                                       -->
     <!-- =============================================================== -->
-    <div id="sec-app" class="section">
+    <div class="section">
       <div class="section-title">
         <span class="badge-num">6</span>
         Полный экран смартфона (как всё собирается в единое приложение)
