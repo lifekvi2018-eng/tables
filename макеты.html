@@ -3,19 +3,76 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Полная Дизайн-Витрина: Мои таблицы (Всё сохранено)</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <title>Мастер-Каталог: Мои таблицы</title>
   <style>
+    /* Базовый сброс и системные быстрые шрифты (БЕЗ ВНЕШНИХ СКРИПТОВ) */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: 'Plus Jakarta Sans', -apple-system, system-ui, sans-serif;
-      background: #F6F1EA;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #F6F1EA;
       color: #38423B;
+      padding: 16px;
+      line-height: 1.4;
       scroll-behavior: smooth;
     }
+    .container { max-width: 860px; margin: 0 auto; }
+    
+    /* Ссылки и навигация */
+    .nav-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin: 16px 0 32px 0;
+    }
+    .nav-link {
+      padding: 8px 14px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 700;
+      text-decoration: none;
+      background: #E8DDD0;
+      color: #38423B;
+      transition: background 0.15s;
+    }
+    .nav-link:hover { background: #DDD0C0; }
+    .nav-link-accent { background: #7BA79D; color: #FFFFFF; }
 
+    /* Секции */
+    .section {
+      padding-top: 24px;
+      margin-top: 24px;
+      border-top: 1px solid #E2D7C8;
+    }
+    .section-title {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .badge-num {
+      width: 24px;
+      height: 24px;
+      background: #7BA79D;
+      color: #fff;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    /* Сетки */
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+
+    /* ------------------------------------------------------------- */
+    /* ТОЧНАЯ ФИЗИКА ТЕНЕЙ                                           */
+    /* ------------------------------------------------------------- */
     .shadow-with-glow {
-      border: none !important;
       border-radius: 28px;
       box-shadow: 
         12px 16px 28px -4px rgba(165, 145, 125, 0.42),
@@ -23,18 +80,21 @@
         inset 1.5px 1.5px 2px rgba(255, 255, 255, 0.95);
     }
     .shadow-pure-matte {
-      border: none !important;
       border-radius: 28px;
       box-shadow: 
         12px 16px 28px -4px rgba(165, 145, 125, 0.42),
         4px 6px 12px -2px rgba(165, 145, 125, 0.22);
     }
     .paper-btn {
-      border: none !important;
-      border-radius: 16px;
+      border: none;
+      cursor: pointer;
+      border-radius: 14px;
+      font-weight: 700;
+      font-size: 11px;
+      padding: 8px 14px;
       box-shadow: 
-        6px 10px 18px -2px rgba(150, 130, 110, 0.42),
-        2px 4px 6px -1px rgba(150, 130, 110, 0.2);
+        5px 8px 16px -2px rgba(150, 130, 110, 0.42),
+        2px 3px 6px -1px rgba(150, 130, 110, 0.2);
       transition: all 0.15s ease;
     }
     .paper-btn:active {
@@ -43,382 +103,356 @@
     }
 
     .marshmallow-btn {
-      border: none !important;
-      border-radius: 16px;
+      border: none;
+      cursor: pointer;
+      border-radius: 14px;
+      font-weight: 700;
+      font-size: 11px;
+      padding: 8px 14px;
       box-shadow: 
-        6px 6px 14px rgba(170, 150, 130, 0.35),
+        5px 5px 12px rgba(170, 150, 130, 0.35),
         -4px -4px 10px rgba(255, 252, 245, 0.9);
       transition: all 0.15s ease;
     }
     .marshmallow-btn:active {
       transform: scale(0.97);
-      box-shadow: 
-        inset 3px 3px 6px rgba(170, 150, 130, 0.35),
-        inset -3px -3px 6px rgba(255, 252, 245, 0.8);
+      box-shadow: inset 3px 3px 6px rgba(170, 150, 130, 0.35);
     }
 
     .paper-chip {
-      border: none !important;
-      border-radius: 14px;
-      box-shadow: 
-        4px 6px 12px -1px rgba(160, 140, 120, 0.32),
-        1px 2px 4px rgba(160, 140, 120, 0.15);
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 6px 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 4px 6px 12px -1px rgba(160, 140, 120, 0.32);
     }
+
+    /* Карточки палитры */
+    .color-card {
+      padding: 14px;
+      border-radius: 18px;
+      text-align: center;
+      min-height: 80px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 800;
+      box-shadow: 
+        8px 12px 20px -3px rgba(165, 145, 125, 0.35),
+        2px 4px 8px rgba(165, 145, 125, 0.15);
+      transition: transform 0.15s ease;
+    }
+    .color-card:hover { transform: translateY(-2px); }
   </style>
 </head>
-<body class="p-3 sm:p-8 min-h-screen">
+<body>
 
-  <div class="max-w-4xl mx-auto space-y-14">
+  <div class="container">
     
-    <div class="text-center pt-2">
-      <span class="text-xs font-bold uppercase tracking-wider text-[#7BA79D] bg-[#EAF2EF] px-3.5 py-1 rounded-full">
-        Постоянная Дизайн-Витрина (Ничего не удаляется)
+    <!-- Заголовок -->
+    <div style="text-align: center; padding: 12px 0;">
+      <span style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #7BA79D; background: #EAF2EF; padding: 4px 12px; border-radius: 20px;">
+        Мгновенно открывается · Все варианты на месте
       </span>
-      <h1 class="text-2xl sm:text-3xl font-extrabold text-[#38423B] mt-3">Мастер-Каталог «Мои таблицы»</h1>
-      <p class="text-xs sm:text-sm text-stone-500 mt-1 max-w-xl mx-auto">
-        Все элементы сохранены на одной странице. Спокойно смотри, сравнивай в любое время.
+      <h1 style="font-size: 24px; font-weight: 800; margin: 10px 0 4px 0;">Мастер-Каталог «Мои таблицы»</h1>
+      <p style="font-size: 13px; color: #78736B;">
+        Убрали тяжёлые скрипты — теперь страница летает! Всё сохранено и разложено по полочкам.
       </p>
 
-      <div class="flex flex-wrap items-center justify-center gap-2 mt-5">
-        <a href="#sec-shadows" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-[#E8DDD0] hover:bg-[#DDD0C0] transition">1. Тени</a>
-        <a href="#sec-palettes" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-[#E8DDD0] hover:bg-[#DDD0C0] transition">2. Все градиенты (20 шт)</a>
-        <a href="#sec-buttons" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-[#E8DDD0] hover:bg-[#DDD0C0] transition">3. Кнопки</a>
-        <a href="#sec-statuses" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-[#E8DDD0] hover:bg-[#DDD0C0] transition">4. Статусы</a>
-        <a href="#sec-menu" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-[#E8DDD0] hover:bg-[#DDD0C0] transition">5. Главное меню</a>
-        <a href="#sec-app" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-[#7BA79D] text-white hover:opacity-90 transition">6. Экран смартфона</a>
+      <!-- Навигация -->
+      <div class="nav-bar">
+        <a href="#sec-shadows" class="nav-link">1. Сравнение теней</a>
+        <a href="#sec-palettes" class="nav-link">2. Палитра (20 шт)</a>
+        <a href="#sec-buttons" class="nav-link">3. Кнопки</a>
+        <a href="#sec-statuses" class="nav-link">4. Статусы</a>
+        <a href="#sec-menu" class="nav-link">5. Главное меню</a>
+        <a href="#sec-app" class="nav-link nav-link-accent">6. Экран смартфона</a>
       </div>
     </div>
 
-    <!-- РАЗДЕЛ 1: СРАВНЕНИЕ ТЕНЕЙ БОК О БОК -->
-    <div id="sec-shadows" class="space-y-4 pt-4 border-t border-stone-200">
-      <div class="flex items-center gap-2">
-        <span class="w-6 h-6 rounded-full bg-[#7BA79D] text-white text-xs font-extrabold flex items-center justify-center">1</span>
-        <h2 class="text-lg font-bold text-[#38423B]">Сравнение теней (С засветкой vs Чистая матовая бумага)</h2>
+
+    <!-- =============================================================== -->
+    <!-- 1. СРАВНЕНИЕ ТЕНЕЙ                                              -->
+    <!-- =============================================================== -->
+    <div id="sec-shadows" class="section">
+      <div class="section-title">
+        <span class="badge-num">1</span>
+        Сравнение теней: с верхней засветкой vs чистая матовая бумага
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="p-6 relative shadow-with-glow" style="background: linear-gradient(145deg, #FAF5EE, #EFE4D6);">
-          <div class="flex items-start justify-between mb-2">
-            <div>
-              <span class="text-[10px] font-extrabold uppercase text-[#7BA79D]">Вариант 1</span>
-              <h3 class="text-base font-extrabold text-[#38423B]">Тень на 4 часа + Засветка вверху</h3>
-            </div>
-            <span class="text-[10px] font-bold text-stone-500 bg-[#E8DDD0] px-2 py-0.5 rounded-full">Светлый блик</span>
+      <div class="grid-2">
+        <!-- Вариант 1 -->
+        <div class="shadow-with-glow" style="background: linear-gradient(145deg, #FAF5EE, #EFE4D6); padding: 22px;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+            <strong style="font-size: 14px;">Вариант 1: С засветкой вверху</strong>
+            <span style="font-size: 10px; font-weight: 700; background: #E8DDD0; padding: 2px 8px; border-radius: 10px;">Светлый блик</span>
           </div>
-          <p class="text-xs text-stone-600 mb-4">
-            По верхнему и левому краю виден светлый ободок-блик, словно на край падает лучик света.
+          <p style="font-size: 12px; color: #6E6860; margin-bottom: 14px;">
+            По верхнему и левому краю идет светлая фаска-блик.
           </p>
-
-          <div class="p-4 rounded-2xl space-y-3" style="background: linear-gradient(145deg, #F5EDE3, #E6D8C6); box-shadow: 8px 12px 20px -3px rgba(155, 135, 115, 0.38), inset 1px 1px 1.5px rgba(255, 255, 255, 0.9);">
-            <div class="text-[10px] font-bold text-stone-600">Вложенная карточка с бликом</div>
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-bold text-[#38423B]">+7 (999) 111-22-33</span>
-              <button class="paper-btn px-3.5 py-1.5 text-xs font-extrabold text-[#38423B]" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2); box-shadow: 6px 10px 18px -2px rgba(150, 130, 110, 0.42), inset 1px 1px 1.5px rgba(255, 255, 255, 0.95);">
-                Скопировать 📋
-              </button>
+          <div style="background: linear-gradient(145deg, #F5EDE3, #E6D8C6); padding: 14px; border-radius: 16px; box-shadow: 8px 12px 20px -3px rgba(155, 135, 115, 0.38), inset 1px 1px 1.5px rgba(255, 255, 255, 0.9);">
+            <div style="font-size: 11px; font-weight: 700; color: #6E6860; margin-bottom: 6px;">Вложенная карточка</div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 12px; font-weight: 800;">+7 (999) 111-22-33</span>
+              <button class="paper-btn" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2); color: #38423B;">Скопировать 📋</button>
             </div>
           </div>
         </div>
 
-        <div class="p-6 relative shadow-pure-matte" style="background: linear-gradient(145deg, #FAF5EE, #EFE4D6);">
-          <div class="flex items-start justify-between mb-2">
-            <div>
-              <span class="text-[10px] font-extrabold uppercase text-[#D67C5A]">Вариант 2</span>
-              <h3 class="text-base font-extrabold text-[#38423B]">Только тень (БЕЗ засветки)</h3>
-            </div>
-            <span class="text-[10px] font-bold text-stone-500 bg-[#E8DDD0] px-2 py-0.5 rounded-full">Чистый мат</span>
+        <!-- Вариант 2 -->
+        <div class="shadow-pure-matte" style="background: linear-gradient(145deg, #FAF5EE, #EFE4D6); padding: 22px;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+            <strong style="font-size: 14px;">Вариант 2: Только тень (БЕЗ засветки)</strong>
+            <span style="font-size: 10px; font-weight: 700; background: #E8DDD0; padding: 2px 8px; border-radius: 10px;">Чистый мат</span>
           </div>
-          <p class="text-xs text-stone-600 mb-4">
-            Блика нет вообще! Края мягкие и матовые, тень только снизу-справа. Чистый эффект бархатного картона.
+          <p style="font-size: 12px; color: #6E6860; margin-bottom: 14px;">
+            Никаких бликов. Бархатный натуральный край картона.
           </p>
-
-          <div class="p-4 rounded-2xl space-y-3" style="background: linear-gradient(145deg, #F5EDE3, #E6D8C6); box-shadow: 8px 12px 20px -3px rgba(155, 135, 115, 0.38);">
-            <div class="text-[10px] font-bold text-stone-600">Вложенная матовая карточка</div>
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-bold text-[#38423B]">+7 (999) 111-22-33</span>
-              <button class="paper-btn px-3.5 py-1.5 text-xs font-extrabold text-[#38423B]" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2);">
-                Скопировать 📋
-              </button>
+          <div style="background: linear-gradient(145deg, #F5EDE3, #E6D8C6); padding: 14px; border-radius: 16px; box-shadow: 8px 12px 20px -3px rgba(155, 135, 115, 0.38);">
+            <div style="font-size: 11px; font-weight: 700; color: #6E6860; margin-bottom: 6px;">Вложенная карточка</div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 12px; font-weight: 800;">+7 (999) 111-22-33</span>
+              <button class="paper-btn" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2); color: #38423B;">Скопировать 📋</button>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- РАЗДЕЛ 2: ВСЕ 20 ПАСТЕЛЬНЫХ ГРАДИЕНТОВ -->
-    <div id="sec-palettes" class="space-y-6 pt-4 border-t border-stone-200">
-      <div class="flex items-center gap-2">
-        <span class="w-6 h-6 rounded-full bg-[#7BA79D] text-white text-xs font-extrabold flex items-center justify-center">2</span>
-        <h2 class="text-lg font-bold text-[#38423B]">Большая коллекция пастелей (20 оттенков без ядовитости)</h2>
+
+    <!-- =============================================================== -->
+    <!-- 2. ВСЕ 20 ПАСТЕЛЬНЫХ ГРАДИЕНТОВ                                 -->
+    <!-- =============================================================== -->
+    <div id="sec-palettes" class="section">
+      <div class="section-title">
+        <span class="badge-num">2</span>
+        Большая коллекция пастелей (20 оттенков, спокойные, молочные)
       </div>
 
-      <div class="space-y-2">
-        <h3 class="text-xs font-extrabold uppercase text-[#4A7285]">💧 Небесно-голубые и лазурные пастели:</h3>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div class="shadow-pure-matte p-3 text-center" style="background: linear-gradient(150deg, #EDF4FA 0%, #D4E3F2 100%);">
-            <div class="text-xs font-extrabold text-[#324B5C]">1. Небесный фарфор</div>
-          </div>
-          <div class="shadow-pure-matte p-3 text-center" style="background: linear-gradient(150deg, #E8F2F6 0%, #CDE3EB 100%);">
-            <div class="text-xs font-extrabold text-[#324B5C]">2. Лазурный туман</div>
-          </div>
-          <div class="shadow-pure-matte p-3 text-center" style="background: linear-gradient(150deg, #EAF4F1 0%, #D2E7E2 100%);">
-            <div class="text-xs font-extrabold text-[#2F4F46]">3. Мятный лёд</div>
-          </div>
-          <div class="shadow-pure-matte p-3 text-center" style="background: linear-gradient(150deg, #E6ECF5 0%, #CAD8E8 100%);">
-            <div class="text-xs font-extrabold text-[#324B5C]">4. Серо-голубой шёлк</div>
-          </div>
+      <!-- Голубые -->
+      <div style="margin-bottom: 16px;">
+        <div style="font-size: 11px; font-weight: 800; color: #4A7285; margin-bottom: 8px;">💧 НЕБЕСНО-ГОЛУБЫЕ И ЛАЗУРНЫЕ:</div>
+        <div class="grid-4">
+          <div class="color-card" style="background: linear-gradient(150deg, #EDF4FA, #D4E3F2); color: #324B5C;">1. Небесный фарфор</div>
+          <div class="color-card" style="background: linear-gradient(150deg, #E8F2F6, #CDE3EB); color: #324B5C;">2. Лазурный туман</div>
+          <div class="color-card" style="background: linear-gradient(150deg, #EAF4F1, #D2E7E2); color: #2F4F46;">3. Мятный лёд</div>
+          <div class="color-card" style="background: linear-gradient(150deg, #E6ECF5, #CAD8E8); color: #324B5C;">4. Серо-голубой шёлк</div>
         </div>
       </div>
 
-      <div class="space-y-2">
-        <h3 class="text-xs font-extrabold uppercase text-[#A86F3E]">🍑 Жёлтые, персиковые и сливочные:</h3>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div class="shadow-pure-matte p-3 text-center" style="background: linear-gradient(150deg, #FFF9EA 0%, #FCEBCA 100%);">
-            <div class="text-xs font-extrabold text-[#594226]">5. Сливочное солнце</div>
-          </div>
-          <div class="shadow-pure-matte p-3 text-center" style="background: linear-gradient(150deg, #FDF2EB 0%, #F9DEC8 100%);">
-            <div class="text-xs font-extrabold text-[#5C3D26]">6. Персиковый крем</div>
-          </div>
-          <div class="shadow-pure-matte p-3 text-center" style="background: linear-gradient(150deg, #FAF2E6 0%, #EEDDC4 100%);">
-            <div class="text-xs font-extrabold text-[#594226]">7. Медовый овёс</div>
-          </div>
-          <div class="shadow-pure-matte p-3 text-center" style="background: linear-gradient(150deg, #FDF1EA 0%, #F8D9C6 100%);">
-            <div class="text-xs font-extrabold text-[#5C3D26]">8. Тёплый абрикос</div>
-          </div>
+      <!-- Желтые и персик -->
+      <div style="margin-bottom: 16px;">
+        <div style="font-size: 11px; font-weight: 800; color: #A86F3E; margin-bottom: 8px;">🍑 ЖЁЛТЫЕ И ПЕРСИКОВЫЕ:</div>
+        <div class="grid-4">
+          <div class="color-card" style="background: linear-gradient(150deg, #FFF9EA, #FCEBCA); color: #594226;">5. Сливочное солнце</div>
+          <div class="color-card" style="background: linear-gradient(150deg, #FDF2EB, #F9DEC8); color: #5C3D26;">6. Персиковый крем</div>
+          <div class="color-card" style="background: linear-gradient(150deg, #FAF2E6, #EEDDC4); color: #594226;">7. Медовый овёс</div>
+          <div class="color-card" style="background: linear-gradient(150deg, #FDF1EA, #F8D9C6); color: #5C3D26;">8. Тёплый абрикос</div>
         </div>
       </div>
 
-      <div class="space-y-2">
-        <h3 class="text-xs font-extrabold uppercase text-[#9E5775]">🌸 Чайная роза, пудра и лаванда:</h3>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div class="shadow-pure-matte p-3 text-center" style="background: linear-gradient(150deg, #FCF1F4 0%, #F4D5DF 100%);">
-            <div class="text-xs font-extrabold text-[#54303E]">9. Чайная роза</div>
-          </div>
-          <div class="shadow-pure-matte p-3 text-center" style="background: linear-gradient(150deg, #FBF2F8 0%, #EFD6E7 100%);">
-            <div class="text-xs font-extrabold text-[#54303E]">10. Пудровый зефир</div>
-          </div>
-          <div class="shadow-pure-matte p-3 text-center" style="background: linear-gradient(150deg, #F4EFF8 0%, #DED2EA 100%);">
-            <div class="text-xs font-extrabold text-[#473454]">11. Дымчатая лаванда</div>
-          </div>
-          <div class="shadow-pure-matte p-3 text-center" style="background: linear-gradient(150deg, #FAF1F3 0%, #EBD5DA 100%);">
-            <div class="text-xs font-extrabold text-[#54303E]">12. Розовый кварц</div>
-          </div>
+      <!-- Розовые и лаванда -->
+      <div style="margin-bottom: 16px;">
+        <div style="font-size: 11px; font-weight: 800; color: #9E5775; margin-bottom: 8px;">🌸 ЧАЙНАЯ РОЗА И ЛАВАНДА:</div>
+        <div class="grid-4">
+          <div class="color-card" style="background: linear-gradient(150deg, #FCF1F4, #F4D5DF); color: #54303E;">9. Чайная роза</div>
+          <div class="color-card" style="background: linear-gradient(150deg, #FBF2F8, #EFD6E7); color: #54303E;">10. Пудровый зефир</div>
+          <div class="color-card" style="background: linear-gradient(150deg, #F4EFF8, #DED2EA); color: #473454;">11. Дымчатая лаванда</div>
+          <div class="color-card" style="background: linear-gradient(150deg, #FAF1F3, #EBD5DA); color: #54303E;">12. Розовый кварц</div>
         </div>
       </div>
 
-      <div class="space-y-2">
-        <h3 class="text-xs font-extrabold uppercase text-[#5D857A]">✨ Сложные тройные переливы (размытые в молоко):</h3>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div class="shadow-pure-matte p-3 text-center text-white" style="background: linear-gradient(175deg, #7BA79D 0%, #B39EB1 50%, #EFA79A 100%);">
-            <div class="text-xs font-extrabold">13. Грибочек</div>
-          </div>
-          <div class="shadow-pure-matte p-3 text-center text-[#4A3222]" style="background: linear-gradient(175deg, #FDE6B0 0%, #F5B5B8 52%, #F7A072 100%);">
-            <div class="text-xs font-extrabold">14. Тёплый рассвет</div>
-          </div>
-          <div class="shadow-pure-matte p-3 text-center text-[#33424A]" style="background: linear-gradient(175deg, #B8D4E3 0%, #FFF0D4 50%, #FAD6C5 100%);">
-            <div class="text-xs font-extrabold">15. Рассвет в облаках</div>
-          </div>
-          <div class="shadow-pure-matte p-3 text-center text-[#344038]" style="background: linear-gradient(175deg, #8EA89B 0%, #D8C6B3 52%, #F2A895 100%);">
-            <div class="text-xs font-extrabold">16. Морской жемчуг</div>
-          </div>
+      <!-- Тройные сложные -->
+      <div style="margin-bottom: 16px;">
+        <div style="font-size: 11px; font-weight: 800; color: #5D857A; margin-bottom: 8px;">✨ ТРОЙНЫЕ СЛОЖНЫЕ ПЕРЕЛИВЫ:</div>
+        <div class="grid-4">
+          <div class="color-card" style="background: linear-gradient(175deg, #7BA79D 0%, #B39EB1 50%, #EFA79A 100%); color: #fff;">13. Грибочек</div>
+          <div class="color-card" style="background: linear-gradient(175deg, #FDE6B0 0%, #F5B5B8 52%, #F7A072 100%); color: #4A3222;">14. Тёплый рассвет</div>
+          <div class="color-card" style="background: linear-gradient(175deg, #B8D4E3 0%, #FFF0D4 50%, #FAD6C5 100%); color: #33424A;">15. Рассвет в облаках</div>
+          <div class="color-card" style="background: linear-gradient(175deg, #8EA89B 0%, #D8C6B3 52%, #F2A895 100%); color: #344038;">16. Морской жемчуг</div>
         </div>
       </div>
 
-      <div class="space-y-2">
-        <h3 class="text-xs font-extrabold uppercase text-stone-600">🌿 Плавные градиенты «От светлого к глубокому»:</h3>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div class="shadow-pure-matte p-3 text-center text-white" style="background: linear-gradient(160deg, #A8C9B8 0%, #4D6E5C 100%);">
-            <div class="text-xs font-extrabold">17. Мята → Лесной мох</div>
+      <!-- От светлого к глубокому -->
+      <div>
+        <div style="font-size: 11px; font-weight: 800; color: #59534B; margin-bottom: 8px;">🌿 ПЛАВНЫЕ «ОТ СВЕТЛОГО К ГЛУБОКОМУ»:</div>
+        <div class="grid-4">
+          <div class="color-card" style="background: linear-gradient(160deg, #A8C9B8, #4D6E5C); color: #fff;">17. Мята → Лесной мох</div>
+          <div class="color-card" style="background: linear-gradient(160deg, #E6D2BF, #755B4B); color: #fff;">18. Карамель → Трюфель</div>
+          <div class="color-card" style="background: linear-gradient(160deg, #D4C6D8, #68536C); color: #fff;">19. Лаванда → Слива</div>
+          <div class="color-card" style="background: linear-gradient(160deg, #B5CCE0, #4B6885); color: #fff;">20. Голубой → Шторм</div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- =============================================================== -->
+    <!-- 3. КНОПКИ                                                       -->
+    <!-- =============================================================== -->
+    <div id="sec-buttons" class="section">
+      <div class="section-title">
+        <span class="badge-num">3</span>
+        Стили кнопок (все сохранены)
+      </div>
+
+      <div class="shadow-pure-matte" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2); padding: 18px;">
+        <div class="grid-4" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
+          <div style="text-align: center; padding: 8px;">
+            <div style="font-size: 11px; font-weight: 700; color: #78736B; margin-bottom: 6px;">А. Парящая бумага:</div>
+            <button class="paper-btn" style="background: linear-gradient(145deg, #FAF5EE, #E6D8C6); width: 100%;">Скопировать 📋</button>
           </div>
-          <div class="shadow-pure-matte p-3 text-center text-white" style="background: linear-gradient(160deg, #E6D2BF 0%, #755B4B 100%);">
-            <div class="text-xs font-extrabold">18. Карамель → Трюфель</div>
+          <div style="text-align: center; padding: 8px;">
+            <div style="font-size: 11px; font-weight: 700; color: #78736B; margin-bottom: 6px;">Б. Пухлая зефирка:</div>
+            <button class="marshmallow-btn" style="background: linear-gradient(145deg, #FAF3EA, #EBE0D0); width: 100%;">Скопировать 📋</button>
           </div>
-          <div class="shadow-pure-matte p-3 text-center text-white" style="background: linear-gradient(160deg, #D4C6D8 0%, #68536C 100%);">
-            <div class="text-xs font-extrabold">19. Лаванда → Слива</div>
-          </div>
-          <div class="shadow-pure-matte p-3 text-center text-white" style="background: linear-gradient(160deg, #B5CCE0 0%, #4B6885 100%);">
-            <div class="text-xs font-extrabold">20. Голубой → Шторм</div>
+          <div style="text-align: center; padding: 8px;">
+            <div style="font-size: 11px; font-weight: 700; color: #78736B; margin-bottom: 6px;">В. Градиентная акцентная:</div>
+            <button class="paper-btn" style="background: linear-gradient(160deg, #78A59E, #4D6E5C); color: #fff; width: 100%;">Открыть CRM ↗</button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- РАЗДЕЛ 3: СТИЛИ КНОПОК -->
-    <div id="sec-buttons" class="space-y-4 pt-4 border-t border-stone-200">
-      <div class="flex items-center gap-2">
-        <span class="w-6 h-6 rounded-full bg-[#7BA79D] text-white text-xs font-extrabold flex items-center justify-center">3</span>
-        <h2 class="text-lg font-bold text-[#38423B]">Стили кнопок (все сохранены)</h2>
+
+    <!-- =============================================================== -->
+    <!-- 4. СТАТУСЫ                                                      -->
+    <!-- =============================================================== -->
+    <div id="sec-statuses" class="section">
+      <div class="section-title">
+        <span class="badge-num">4</span>
+        Стили статусов проектов
       </div>
 
-      <div class="shadow-pure-matte p-5 rounded-3xl" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2);">
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div class="p-3 text-center">
-            <div class="text-xs text-stone-500 font-bold mb-2">А. Парящая бумага:</div>
-            <button class="paper-btn px-4 py-2.5 text-xs font-extrabold text-[#38423B] w-full" style="background: linear-gradient(145deg, #FAF5EE, #E6D8C6);">
-              Скопировать 📋
-            </button>
-          </div>
-
-          <div class="p-3 text-center">
-            <div class="text-xs text-stone-500 font-bold mb-2">Б. Пухлая зефирка:</div>
-            <button class="marshmallow-btn px-4 py-2.5 text-xs font-extrabold text-[#38423B] w-full" style="background: linear-gradient(145deg, #FAF3EA, #EBE0D0);">
-              Скопировать 📋
-            </button>
-          </div>
-
-          <div class="p-3 text-center">
-            <div class="text-xs text-stone-500 font-bold mb-2">В. Градиентная акцентная:</div>
-            <button class="paper-btn px-4 py-2.5 text-xs font-extrabold text-white w-full" style="background: linear-gradient(160deg, #78A59E, #4D6E5C);">
-              Открыть CRM ↗
-            </button>
-          </div>
+      <div class="shadow-pure-matte" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2); padding: 18px; display: flex; flex-wrap: wrap; gap: 10px;">
+        <div class="paper-chip" style="background: linear-gradient(135deg, #DCEEE5, #C6E2D4); color: #2C5749;">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: #34A853;"></span>
+          Бумажный чип: В работе
+        </div>
+        <div class="paper-chip" style="background: linear-gradient(135deg, #FDECE1, #F6D7C4); color: #8F5234;">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: #E3743B;"></span>
+          Айфон-капсула: На паузе
+        </div>
+        <div class="marshmallow-btn" style="background: #E8DDD0; color: #5C5449; font-size: 11px;">
+          Пухлая 3D-плашка: Архив
         </div>
       </div>
     </div>
 
-    <!-- РАЗДЕЛ 4: СТИЛИ СТАТУСОВ -->
-    <div id="sec-statuses" class="space-y-4 pt-4 border-t border-stone-200">
-      <div class="flex items-center gap-2">
-        <span class="w-6 h-6 rounded-full bg-[#7BA79D] text-white text-xs font-extrabold flex items-center justify-center">4</span>
-        <h2 class="text-lg font-bold text-[#38423B]">Стили статусов проектов</h2>
+
+    <!-- =============================================================== -->
+    <!-- 5. ГЛАВНОЕ МЕНЮ (4 РАЗДЕЛА)                                     -->
+    <!-- =============================================================== -->
+    <div id="sec-menu" class="section">
+      <div class="section-title">
+        <span class="badge-num">5</span>
+        Главное меню (4 раздела в дорогом минимализме)
       </div>
 
-      <div class="shadow-pure-matte p-5 rounded-3xl" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2);">
-        <div class="flex flex-wrap items-center gap-3">
-          <div class="paper-chip px-3.5 py-1.5 text-xs font-extrabold flex items-center gap-1.5" style="background: linear-gradient(135deg, #DCEEE5, #C6E2D4); color: #2C5749;">
-            <span class="w-2 h-2 rounded-full bg-[#34A853]"></span>
-            Бумажный чип: В работе
-          </div>
-
-          <div class="px-3.5 py-1.5 text-xs font-extrabold rounded-full flex items-center gap-1.5 shadow-sm" style="background: linear-gradient(135deg, #FDECE1, #F6D7C4); color: #8F5234;">
-            <span class="w-2 h-2 rounded-full bg-[#E3743B] shadow-[0_0_6px_#E3743B]"></span>
-            Айфон-капсула: На паузе
-          </div>
-
-          <div class="marshmallow-btn px-3.5 py-1 text-xs font-extrabold" style="background: #E8DDD0; color: #5C5449;">
-            Пухлая 3D-плашка: Архив
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- РАЗДЕЛ 5: ГЛАВНОЕ МЕНЮ (4 РАЗДЕЛА) -->
-    <div id="sec-menu" class="space-y-4 pt-4 border-t border-stone-200">
-      <div class="flex items-center gap-2">
-        <span class="w-6 h-6 rounded-full bg-[#7BA79D] text-white text-xs font-extrabold flex items-center justify-center">5</span>
-        <h2 class="text-lg font-bold text-[#38423B]">Главное меню (4 раздела в дорогом минимализме)</h2>
-      </div>
-
-      <div class="shadow-pure-matte p-5 rounded-3xl" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2);">
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <button class="paper-btn p-3.5 text-left" style="background: linear-gradient(145deg, #F5EDE3, #E6D8C6);">
-            <div class="w-7 h-7 rounded-full mb-2 flex items-center justify-center text-xs text-white font-extrabold shadow-sm" style="background: linear-gradient(145deg, #4E6555, #384B3E);">
-              01
-            </div>
-            <div class="text-xs font-extrabold text-[#38423B]">1. Клиенты</div>
-            <div class="text-[10px] text-stone-500">База и доступы</div>
+      <div class="shadow-pure-matte" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2); padding: 18px;">
+        <div class="grid-4">
+          <button class="paper-btn" style="background: linear-gradient(145deg, #F5EDE3, #E6D8C6); text-align: left; padding: 12px;">
+            <div style="width: 26px; height: 26px; border-radius: 50%; background: linear-gradient(145deg, #4E6555, #384B3E); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 11px; margin-bottom: 8px;">01</div>
+            <div style="font-size: 12px; font-weight: 800;">1. Клиенты</div>
+            <div style="font-size: 10px; color: #78736B;">База и доступы</div>
           </button>
 
-          <button class="paper-btn p-3.5 text-left opacity-85 hover:opacity-100" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2);">
-            <div class="w-7 h-7 rounded-full mb-2 flex items-center justify-center text-xs text-[#5A483E] font-extrabold shadow-xs" style="background: #E5D7C5;">
-              02
-            </div>
-            <div class="text-xs font-extrabold text-[#38423B]">2. Траты на ИИ</div>
-            <div class="text-[10px] text-stone-500">VPN, ChatGPT, софт</div>
+          <button class="paper-btn" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2); text-align: left; padding: 12px; opacity: 0.85;">
+            <div style="width: 26px; height: 26px; border-radius: 50%; background: #E5D7C5; color: #5A483E; display: flex; align-items: center; justify-content: center; font-size: 11px; margin-bottom: 8px;">02</div>
+            <div style="font-size: 12px; font-weight: 800;">2. Траты на ИИ</div>
+            <div style="font-size: 10px; color: #78736B;">VPN, ChatGPT, софт</div>
           </button>
 
-          <button class="paper-btn p-3.5 text-left opacity-85 hover:opacity-100" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2);">
-            <div class="w-7 h-7 rounded-full mb-2 flex items-center justify-center text-xs text-[#2C5749] font-extrabold shadow-xs" style="background: #DCEEE5;">
-              03
-            </div>
-            <div class="text-xs font-extrabold text-[#38423B]">3. Мои доходы</div>
-            <div class="text-[10px] text-stone-500">Оплаты от клиентов</div>
+          <button class="paper-btn" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2); text-align: left; padding: 12px; opacity: 0.85;">
+            <div style="width: 26px; height: 26px; border-radius: 50%; background: #DCEEE5; color: #2C5749; display: flex; align-items: center; justify-content: center; font-size: 11px; margin-bottom: 8px;">03</div>
+            <div style="font-size: 12px; font-weight: 800;">3. Мои доходы</div>
+            <div style="font-size: 10px; color: #78736B;">Оплаты от клиентов</div>
           </button>
 
-          <button class="paper-btn p-3.5 text-left opacity-85 hover:opacity-100" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2);">
-            <div class="w-7 h-7 rounded-full mb-2 flex items-center justify-center text-xs text-[#8F5234] font-extrabold shadow-xs" style="background: #FDECE1;">
-              04
-            </div>
-            <div class="text-xs font-extrabold text-[#38423B]">4. Фокус дня</div>
-            <div class="text-[10px] text-stone-500">Срочные задачи</div>
+          <button class="paper-btn" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2); text-align: left; padding: 12px; opacity: 0.85;">
+            <div style="width: 26px; height: 26px; border-radius: 50%; background: #FDECE1; color: #8F5234; display: flex; align-items: center; justify-content: center; font-size: 11px; margin-bottom: 8px;">04</div>
+            <div style="font-size: 12px; font-weight: 800;">4. Фокус дня</div>
+            <div style="font-size: 10px; color: #78736B;">Срочные задачи</div>
           </button>
         </div>
       </div>
     </div>
 
-    <!-- РАЗДЕЛ 6: ПОЛНЫЙ ЭКРАН СМАРТФОНА -->
-    <div id="sec-app" class="space-y-4 pt-4 border-t border-stone-200">
-      <div class="flex items-center gap-2">
-        <span class="w-6 h-6 rounded-full bg-[#7BA79D] text-white text-xs font-extrabold flex items-center justify-center">6</span>
-        <h2 class="text-lg font-bold text-[#38423B]">Полный экран смартфона (как всё собирается воедино)</h2>
+
+    <!-- =============================================================== -->
+    <!-- 6. ЭКРАН СМАРТФОНА                                              -->
+    <!-- =============================================================== -->
+    <div id="sec-app" class="section">
+      <div class="section-title">
+        <span class="badge-num">6</span>
+        Полный экран смартфона (как всё собирается в единое приложение)
       </div>
 
-      <div class="w-full max-w-[400px] mx-auto rounded-[46px] p-4 sm:p-5 shadow-2xl border-[10px] border-[#38423B] relative overflow-hidden" style="background: linear-gradient(160deg, #F7F1E8 0%, #EDE2D4 100%);">
-        <div class="flex items-center justify-between px-3 pt-2 pb-3 text-xs font-bold text-[#38423B]">
+      <div style="max-width: 380px; margin: 0 auto; background: linear-gradient(160deg, #F7F1E8, #EDE2D4); border-radius: 42px; padding: 18px; border: 10px solid #38423B; box-shadow: 0 25px 50px rgba(0,0,0,0.15);">
+        
+        <!-- Статус-бар -->
+        <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 800; margin-bottom: 12px;">
           <span>19:30</span>
-          <div class="flex items-center gap-2"><span>📶</span><span>🔋</span></div>
+          <span>📶 🔋</span>
         </div>
 
-        <div class="grid grid-cols-2 gap-3 mb-4">
-          <div class="shadow-pure-matte rounded-[26px] p-3 text-white flex flex-col justify-between min-h-[220px]" style="background: linear-gradient(175deg, #7BA79D 0%, #B39EB1 50%, #EFA79A 100%);">
-            <span class="text-[9px] font-bold uppercase opacity-85">Мои таблицы</span>
-            <div class="my-auto text-center">
-              <div class="text-2xl font-black">3</div>
-              <div class="text-xs font-bold mt-0.5">Активных проекта</div>
+        <!-- 2 верхние карточки -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px;">
+          <!-- Левая карточка -->
+          <div class="shadow-pure-matte" style="background: linear-gradient(175deg, #7BA79D 0%, #B39EB1 50%, #EFA79A 100%); color: #fff; padding: 12px; border-radius: 22px; display: flex; flex-direction: column; justify-content: space-between; min-height: 190px;">
+            <span style="font-size: 9px; font-weight: 800; text-transform: uppercase;">Мои таблицы</span>
+            <div style="text-align: center;">
+              <div style="font-size: 26px; font-weight: 900;">3</div>
+              <div style="font-size: 11px; font-weight: 700;">Проекта</div>
             </div>
-            <button class="paper-btn w-full py-1.5 text-[10px] font-bold text-white bg-white/25 backdrop-blur-xs">
-              + Добавить
-            </button>
+            <button class="paper-btn" style="background: rgba(255,255,255,0.3); color: #fff; width: 100%; font-size: 10px; padding: 6px;">+ Добавить</button>
           </div>
 
-          <div class="shadow-pure-matte rounded-[26px] p-3 flex flex-col justify-between min-h-[220px]" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2);">
-            <div class="text-[10px] font-bold text-stone-500 uppercase">Сводка</div>
-            <div class="my-auto space-y-2">
-              <div class="p-2 rounded-xl shadow-xs" style="background: linear-gradient(145deg, #F5EDE3, #E6D8C6);">
-                <div class="text-[9px] text-stone-500 font-bold">ИИ / VPN</div>
-                <div class="text-xs font-extrabold text-[#38423B]">4 800 ₽</div>
+          <!-- Правая карточка -->
+          <div class="shadow-pure-matte" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2); padding: 12px; border-radius: 22px; display: flex; flex-direction: column; justify-content: space-between; min-height: 190px;">
+            <div style="font-size: 9px; font-weight: 800; text-transform: uppercase; color: #78736B;">Сводка</div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <div style="background: linear-gradient(145deg, #F5EDE3, #E6D8C6); padding: 8px; border-radius: 12px;">
+                <div style="font-size: 9px; color: #78736B; font-weight: 700;">ИИ / VPN</div>
+                <div style="font-size: 12px; font-weight: 800;">4 800 ₽</div>
               </div>
-              <div class="p-2 rounded-xl shadow-xs" style="background: linear-gradient(145deg, #F5EDE3, #E6D8C6);">
-                <div class="text-[9px] text-stone-500 font-bold">Доходы</div>
-                <div class="text-xs font-extrabold text-[#2C5749]">120 000 ₽</div>
+              <div style="background: linear-gradient(145deg, #F5EDE3, #E6D8C6); padding: 8px; border-radius: 12px;">
+                <div style="font-size: 9px; color: #78736B; font-weight: 700;">Доходы</div>
+                <div style="font-size: 12px; font-weight: 800; color: #2C5749;">120 000 ₽</div>
               </div>
             </div>
-            <div class="text-[9px] text-stone-400 text-center font-bold">Октябрь 2026</div>
+            <div style="font-size: 9px; color: #A59E94; text-align: center;">Октябрь</div>
           </div>
         </div>
 
-        <div class="space-y-3 mb-3">
-          <div class="shadow-pure-matte p-3.5 rounded-2xl" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2);">
-            <div class="flex items-start justify-between mb-2">
-              <div>
-                <div class="paper-chip inline-block px-2.5 py-0.5 text-[10px] font-extrabold mb-1" style="background: linear-gradient(135deg, #DCEEE5, #C6E2D4); color: #2C5749;">
-                  В работе
-                </div>
-                <div class="text-sm font-extrabold text-[#38423B]">ООО «Альфа-Трейд»</div>
+        <!-- Клиент в работе -->
+        <div class="shadow-pure-matte" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2); padding: 14px; border-radius: 20px; margin-bottom: 12px;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+            <div>
+              <div class="paper-chip" style="background: linear-gradient(135deg, #DCEEE5, #C6E2D4); color: #2C5749; padding: 2px 8px; font-size: 9px; margin-bottom: 4px;">
+                В работе
               </div>
-              <span class="text-[10px] font-bold text-[#7BA79D]">Досье ↗</span>
+              <div style="font-size: 13px; font-weight: 800;">ООО «Альфа-Трейд»</div>
             </div>
+            <span style="font-size: 10px; font-weight: 800; color: #7BA79D;">Досье ↗</span>
+          </div>
 
-            <div class="p-2.5 rounded-xl space-y-2 text-xs" style="background: linear-gradient(145deg, #F5EDE3, #E6D8C6);">
-              <div class="flex items-center justify-between">
-                <span class="text-[11px] font-extrabold text-[#38423B]">+7 (999) 111-22-33</span>
-                <button class="paper-btn px-2.5 py-1 text-[10px] font-bold text-[#38423B]" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2);">
-                  Копия 📋
-                </button>
-              </div>
-              <div class="flex items-center justify-between pt-1 border-t border-[#D9CCB8]">
-                <span class="text-[10px] text-stone-500">Боевая CRM</span>
-                <button class="paper-btn px-2.5 py-1 text-[10px] font-bold text-[#4E6555]" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2);">
-                  Сайт ↗
-                </button>
-              </div>
+          <div style="background: linear-gradient(145deg, #F5EDE3, #E6D8C6); padding: 10px; border-radius: 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <span style="font-size: 11px; font-weight: 800;">+7 (999) 111-22-33</span>
+              <button class="paper-btn" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2); font-size: 9px; padding: 4px 8px;">Копия 📋</button>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #D9CCB8; padding-top: 6px;">
+              <span style="font-size: 10px; color: #78736B;">Боевая CRM</span>
+              <button class="paper-btn" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2); color: #4E6555; font-size: 9px; padding: 4px 8px;">Сайт ↗</button>
             </div>
           </div>
         </div>
 
-        <div class="pt-1 pb-1 text-center">
-          <div class="w-24 h-1 bg-stone-400/50 rounded-full mx-auto"></div>
-        </div>
+        <div style="width: 80px; height: 4px; background: rgba(0,0,0,0.15); border-radius: 4px; margin: 10px auto 0 auto;"></div>
       </div>
     </div>
 
