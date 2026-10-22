@@ -3,353 +3,346 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Мастер-Каталог: Мои таблицы</title>
+  <title>Мастер-Каталог «Мои таблицы»: Светлая и Тёмная темы</title>
   <style>
-    /* 100% чистый HTML+CSS: БЕЗ внешних библиотек, БЕЗ якорных переходов */
+    /* 100% чистый HTML+CSS: БЕЗ внешних библиотек, БЕЗ прыгающих ссылок */
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
     body {
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background: linear-gradient(180deg, #F6F0E8 0%, #EDE5DA 100%);
+      background: linear-gradient(180deg, #F3ECE2 0%, #E7DCCF 100%);
       color: #38423B;
-      padding: 24px 16px 100px 16px;
+      padding: 20px 14px 100px 14px;
       line-height: 1.4;
       min-height: 100vh;
       -webkit-font-smoothing: antialiased;
     }
 
     .container {
-      max-width: 860px;
+      max-width: 900px;
       margin: 0 auto;
     }
 
     /* -------------------------------------------------------------------------
-       ОБЪЕМНЫЕ СЕКЦИИ И ТАКТИЛЬНЫЕ НОМЕРА В НАШЕМ ЕДИНОМ СТИЛЕ 
+       СЕКЦИИ И ОБЪЕМНЫЕ НОМЕРА
        ------------------------------------------------------------------------- */
     .section {
-      background: linear-gradient(155deg, rgba(255, 252, 247, 0.75) 0%, rgba(243, 235, 224, 0.7) 100%);
-      border-radius: 32px;
-      padding: 28px 24px;
-      margin-top: 28px;
+      background: linear-gradient(155deg, rgba(255, 252, 247, 0.85) 0%, rgba(244, 236, 226, 0.75) 100%);
+      border-radius: 30px;
+      padding: 22px 18px;
+      margin-top: 24px;
       box-shadow: 
-        12px 18px 32px -4px rgba(165, 145, 125, 0.32),
+        10px 16px 30px -4px rgba(165, 145, 125, 0.32),
         inset 1.5px 1.5px 2px rgba(255, 255, 255, 0.95);
-      border: none;
-      transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s ease;
     }
 
     .section-title {
-      font-size: 20px;
-      font-weight: 800;
-      margin-bottom: 20px;
+      font-size: 18px;
+      font-weight: 900;
+      margin-bottom: 16px;
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
       color: #2F3B34;
     }
 
-    /* Объемная пухлая зефирка-номер (вместо плоского кружка) */
     .badge-num-3d {
-      width: 36px;
-      height: 36px;
-      border-radius: 14px;
+      width: 32px;
+      height: 32px;
+      border-radius: 12px;
       background: linear-gradient(145deg, #FAF4EC, #E7DAC9);
       color: #4A6356;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 900;
       flex-shrink: 0;
       box-shadow: 
-        5px 7px 14px -2px rgba(155, 135, 115, 0.42),
+        4px 6px 12px -2px rgba(155, 135, 115, 0.42),
         inset 1.5px 1.5px 2px rgba(255, 255, 255, 0.95),
         inset -1.5px -1.5px 2px rgba(195, 175, 155, 0.3);
-      transition: transform 0.2s ease;
-    }
-    .section:hover .badge-num-3d {
-      transform: scale(1.08) rotate(-3deg);
     }
 
-    /* Сетки */
-    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-    .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; }
+    /* ДВУХКОЛОНОЧНЫЙ СПЛИТ: СЛЕВА СВЕТЛАЯ, СПРАВА ТЕМНАЯ */
+    .split-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
 
-    /* -------------------------------------------------------------------------
-       ФИЗИКА ТЕНЕЙ (3D бумага и зефирка)
-       ------------------------------------------------------------------------- */
-    .shadow-with-glow {
-      border-radius: 26px;
+    .panel-light {
+      background: linear-gradient(155deg, #FAF5EE, #EDE2D2);
+      border-radius: 22px;
+      padding: 18px;
       box-shadow: 
-        12px 18px 30px -4px rgba(165, 145, 125, 0.42),
-        4px 6px 12px -2px rgba(165, 145, 125, 0.2),
+        8px 12px 22px -3px rgba(165, 145, 125, 0.35),
         inset 1.5px 1.5px 2px rgba(255, 255, 255, 0.95);
-      transition: all 0.25s ease;
-    }
-    .shadow-with-glow:hover {
-      transform: translateY(-3px);
-      box-shadow: 
-        14px 22px 36px -4px rgba(165, 145, 125, 0.48),
-        inset 1.5px 1.5px 2px rgba(255, 255, 255, 0.98);
+      color: #38423B;
     }
 
-    .shadow-pure-matte {
-      border-radius: 26px;
+    .panel-dark {
+      background: linear-gradient(155deg, #242838, #181A25);
+      border-radius: 22px;
+      padding: 18px;
       box-shadow: 
-        12px 18px 30px -4px rgba(165, 145, 125, 0.42),
-        4px 6px 12px -2px rgba(165, 145, 125, 0.2);
-      transition: all 0.25s ease;
-    }
-    .shadow-pure-matte:hover {
-      transform: translateY(-3px);
-      box-shadow: 
-        14px 22px 36px -4px rgba(165, 145, 125, 0.48);
+        8px 14px 26px -3px rgba(10, 12, 18, 0.65),
+        inset 1px 1px 1.5px rgba(255, 255, 255, 0.12);
+      color: #F0ECE4;
     }
 
-    /* -------------------------------------------------------------------------
-       КНОПКИ С ЖИВОЙ ТАКТИЛЬНОЙ АНИМАЦИЕЙ
-       ------------------------------------------------------------------------- */
-    .paper-btn {
-      border: none;
-      border-radius: 16px;
-      font-weight: 700;
-      font-size: 12px;
-      padding: 10px 16px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      box-shadow: 
-        6px 9px 18px -2px rgba(150, 130, 110, 0.42),
-        2px 3px 6px -1px rgba(150, 130, 110, 0.2),
-        inset 1px 1px 1.5px rgba(255, 255, 255, 0.85);
-      transition: transform 0.15s cubic-bezier(0.3, 1.3, 0.5, 1), box-shadow 0.15s ease, background 0.15s ease;
-      user-select: none;
-    }
-    .paper-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 
-        8px 12px 22px -2px rgba(150, 130, 110, 0.48),
-        3px 4px 8px -1px rgba(150, 130, 110, 0.25),
-        inset 1px 1px 1.5px rgba(255, 255, 255, 0.95);
-    }
-    .paper-btn:active {
-      transform: translateY(2px) scale(0.98);
-      box-shadow: 
-        2px 3px 6px -1px rgba(150, 130, 110, 0.4),
-        inset 1.5px 1.5px 3px rgba(160, 140, 120, 0.35);
-    }
-
-    .marshmallow-btn {
-      border: none;
-      border-radius: 16px;
-      font-weight: 700;
-      font-size: 12px;
-      padding: 10px 16px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      box-shadow: 
-        6px 7px 16px rgba(170, 150, 130, 0.38),
-        -4px -4px 12px rgba(255, 252, 245, 0.95),
-        inset 1px 1px 1.5px rgba(255, 255, 255, 0.9);
-      transition: transform 0.15s cubic-bezier(0.3, 1.3, 0.5, 1), box-shadow 0.15s ease;
-      user-select: none;
-    }
-    .marshmallow-btn:hover {
-      transform: translateY(-2px) scale(1.02);
-      box-shadow: 
-        8px 10px 20px rgba(170, 150, 130, 0.44),
-        -5px -5px 14px rgba(255, 252, 245, 1);
-    }
-    .marshmallow-btn:active {
-      transform: translateY(2px) scale(0.97);
-      box-shadow: 
-        2px 2px 6px rgba(170, 150, 130, 0.3),
-        inset 2px 2px 4px rgba(170, 150, 130, 0.35);
-    }
-
-    /* Чипы статусов */
-    .paper-chip {
-      border-radius: 14px;
-      font-size: 11px;
-      font-weight: 800;
-      padding: 7px 14px;
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      box-shadow: 
-        4px 7px 14px -1px rgba(160, 140, 120, 0.35),
-        inset 1px 1px 1.5px rgba(255, 255, 255, 0.8);
-      transition: transform 0.18s ease, box-shadow 0.18s ease;
-      cursor: default;
-      user-select: none;
-    }
-    .paper-chip:hover {
-      transform: translateY(-2px) scale(1.04);
-      box-shadow: 
-        6px 10px 18px -1px rgba(160, 140, 120, 0.42),
-        inset 1px 1px 1.5px rgba(255, 255, 255, 0.95);
-    }
-
-    /* Карточки палитры */
-    .color-card {
-      padding: 16px;
-      border-radius: 20px;
-      text-align: center;
-      min-height: 90px;
+    .panel-header {
       display: flex;
-      flex-direction: column;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: 800;
-      box-shadow: 
-        8px 12px 22px -3px rgba(165, 145, 125, 0.36),
-        2px 4px 8px rgba(165, 145, 125, 0.15),
-        inset 1px 1px 1.5px rgba(255, 255, 255, 0.7);
-      transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s ease;
-      user-select: none;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px dashed rgba(165, 145, 125, 0.3);
     }
-    .color-card:hover {
-      transform: translateY(-4px) scale(1.03);
-      box-shadow: 
-        12px 18px 28px -3px rgba(165, 145, 125, 0.45),
-        inset 1px 1px 1.5px rgba(255, 255, 255, 0.9);
+    .panel-dark .panel-header {
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.12);
     }
 
-    /* Карточка меню */
-    .menu-card-3d {
-      background: linear-gradient(145deg, #FAF5EE, #EDE2D2);
-      border-radius: 20px;
-      padding: 16px 14px;
-      text-align: left;
-      box-shadow: 
-        7px 10px 20px -2px rgba(165, 145, 125, 0.38),
-        inset 1px 1px 1.5px rgba(255, 255, 255, 0.9);
-      transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
-      cursor: pointer;
-      user-select: none;
-    }
-    .menu-card-3d:hover {
-      transform: translateY(-3px) scale(1.02);
-      box-shadow: 
-        10px 14px 26px -2px rgba(165, 145, 125, 0.46),
-        inset 1px 1px 1.5px rgba(255, 255, 255, 0.98);
-    }
-    .menu-card-3d:active {
-      transform: translateY(2px) scale(0.98);
+    .theme-tag {
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
     }
 
     /* -------------------------------------------------------------------------
-       РЕАЛИСТИЧНЫЙ КОРПУС СМАРТФОНА (FULL SCREEN IPHONE)
+       КНОПКИ С АНИМАЦИЕЙ
+       ------------------------------------------------------------------------- */
+    .paper-btn-light {
+      border: none;
+      border-radius: 14px;
+      font-weight: 800;
+      font-size: 11px;
+      padding: 9px 14px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: linear-gradient(145deg, #FAF5EE, #E6D8C6);
+      color: #38423B;
+      box-shadow: 
+        5px 7px 14px -2px rgba(150, 130, 110, 0.42),
+        inset 1px 1px 1.5px rgba(255, 255, 255, 0.9);
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+    .paper-btn-light:hover {
+      transform: translateY(-2px);
+      box-shadow: 6px 10px 18px -2px rgba(150, 130, 110, 0.48);
+    }
+    .paper-btn-light:active {
+      transform: translateY(2px) scale(0.98);
+      box-shadow: 2px 2px 5px -1px rgba(150, 130, 110, 0.4);
+    }
+
+    .paper-btn-dark {
+      border: none;
+      border-radius: 14px;
+      font-weight: 800;
+      font-size: 11px;
+      padding: 9px 14px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: linear-gradient(145deg, #E58B70, #C45B45);
+      color: #FFFFFF;
+      box-shadow: 
+        5px 7px 16px -2px rgba(229, 139, 112, 0.4),
+        inset 1px 1px 1.5px rgba(255, 255, 255, 0.35);
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+    .paper-btn-dark:hover {
+      transform: translateY(-2px);
+      box-shadow: 6px 10px 20px -2px rgba(229, 139, 112, 0.5);
+    }
+    .paper-btn-dark:active {
+      transform: translateY(2px) scale(0.98);
+      box-shadow: 2px 2px 6px rgba(196, 91, 69, 0.4);
+    }
+
+    .marshmallow-btn-light {
+      border: none;
+      border-radius: 14px;
+      font-weight: 800;
+      font-size: 11px;
+      padding: 9px 14px;
+      cursor: pointer;
+      background: linear-gradient(145deg, #FAF3EA, #EBE0D0);
+      color: #38423B;
+      box-shadow: 
+        5px 6px 14px rgba(170, 150, 130, 0.38),
+        -3px -3px 10px rgba(255, 252, 245, 0.95),
+        inset 1px 1px 1.5px rgba(255, 255, 255, 0.9);
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+    .marshmallow-btn-light:active {
+      transform: translateY(2px) scale(0.97);
+    }
+
+    .marshmallow-btn-dark {
+      border: none;
+      border-radius: 14px;
+      font-weight: 800;
+      font-size: 11px;
+      padding: 9px 14px;
+      cursor: pointer;
+      background: linear-gradient(145deg, #2D3244, #202330);
+      color: #F8C7BA;
+      border: 1px solid rgba(229, 139, 112, 0.35);
+      box-shadow: 
+        5px 6px 14px rgba(0, 0, 0, 0.4),
+        inset 1px 1px 1.5px rgba(255, 255, 255, 0.1);
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+    .marshmallow-btn-dark:active {
+      transform: translateY(2px) scale(0.97);
+    }
+
+    /* Чипы */
+    .chip-light {
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 5px 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      box-shadow: 3px 5px 10px -1px rgba(160, 140, 120, 0.32), inset 1px 1px 1px #fff;
+    }
+    .chip-dark {
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 5px 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: #25293A;
+      box-shadow: 3px 5px 10px rgba(0,0,0,0.4), inset 1px 1px 1px rgba(255,255,255,0.1);
+    }
+
+    /* Сетки цветов */
+    .grid-colors {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+    .color-box {
+      padding: 12px 8px;
+      border-radius: 14px;
+      font-size: 10px;
+      font-weight: 800;
+      text-align: center;
+      box-shadow: 3px 5px 10px rgba(0,0,0,0.12);
+    }
+
+    /* -------------------------------------------------------------------------
+       КОРПУС ТЕЛЕФОНА (ДЛЯ ОБОИХ ЭКРАНОВ)
        ------------------------------------------------------------------------- */
     .phone-case {
-      max-width: 390px;
-      margin: 20px auto 0 auto;
-      background: #25282A;
-      border-radius: 54px;
-      padding: 12px;
-      box-shadow: 
-        0 25px 60px -10px rgba(110, 90, 75, 0.55),
-        0 10px 24px -5px rgba(0, 0, 0, 0.25),
-        inset 0 0 4px 2px rgba(255, 255, 255, 0.2);
-      position: relative;
-    }
-
-    .phone-screen {
-      background: linear-gradient(175deg, #FAF4ED 0%, #EFE5D7 100%);
+      background: #1B1E22;
       border-radius: 44px;
-      padding: 14px 16px 20px 16px;
-      overflow: hidden;
-      box-shadow: inset 0 0 10px rgba(0,0,0,0.06);
-      position: relative;
-      display: flex;
-      flex-direction: column;
+      padding: 10px;
+      box-shadow: 
+        0 18px 45px -8px rgba(90, 70, 55, 0.5),
+        inset 0 0 3px 1.5px rgba(255, 255, 255, 0.18);
     }
-
-    /* Динамический остров (Dynamic Island) */
+    .phone-screen-light {
+      background: linear-gradient(175deg, #FAF4ED 0%, #EFE5D7 100%);
+      border-radius: 36px;
+      padding: 12px 12px 18px 12px;
+      color: #2F3B34;
+    }
+    .phone-screen-dark {
+      background: linear-gradient(175deg, #1C1F2B 0%, #14161F 100%);
+      border-radius: 36px;
+      padding: 12px 12px 18px 12px;
+      color: #F0ECE4;
+    }
     .dynamic-island {
-      width: 110px;
-      height: 28px;
+      width: 90px;
+      height: 22px;
       background: #000;
-      border-radius: 20px;
-      margin: 0 auto 10px auto;
+      border-radius: 16px;
+      margin: 0 auto 8px auto;
       display: flex;
       align-items: center;
       justify-content: flex-end;
-      padding: 0 9px;
-      gap: 6px;
+      padding: 0 7px;
     }
     .camera-lens {
-      width: 10px;
-      height: 10px;
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
-      background: #111424;
-      box-shadow: inset 0 0 2px #445588;
+      background: #101528;
     }
-
-    /* Статусная строка iPhone */
     .status-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0 8px;
-      font-size: 13px;
+      font-size: 11px;
       font-weight: 800;
-      color: #2F3B34;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
+      padding: 0 4px;
+      opacity: 0.85;
     }
-
-    /* Нижняя панель навигации (iOS Tab Bar) */
     .bottom-tab-bar {
-      background: linear-gradient(155deg, rgba(250, 245, 238, 0.95), rgba(235, 225, 212, 0.95));
-      backdrop-filter: blur(12px);
-      border-radius: 26px;
-      padding: 8px 6px;
+      border-radius: 20px;
+      padding: 6px 4px;
       display: flex;
       justify-content: space-around;
       align-items: center;
-      box-shadow: 
-        0 8px 20px rgba(160, 140, 120, 0.32),
-        inset 1px 1px 2px rgba(255, 255, 255, 0.9);
-      margin-top: 14px;
+      margin-top: 12px;
+    }
+    .bottom-tab-light {
+      background: linear-gradient(155deg, rgba(250, 245, 238, 0.95), rgba(235, 225, 212, 0.95));
+      box-shadow: 0 6px 16px rgba(160, 140, 120, 0.3), inset 1px 1px 1.5px #fff;
+    }
+    .bottom-tab-dark {
+      background: linear-gradient(155deg, #282C3D, #1C1F2C);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4), inset 1px 1px 1px rgba(255,255,255,0.1);
     }
     .tab-item {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 3px;
-      font-size: 9px;
+      gap: 2px;
+      font-size: 8px;
       font-weight: 800;
-      color: #8C8479;
-      padding: 6px 10px;
-      border-radius: 14px;
-      transition: all 0.2s ease;
-      cursor: pointer;
+      padding: 4px 6px;
+      border-radius: 10px;
     }
-    .tab-item.active {
-      color: #2C4D40;
+    .tab-item.active-light {
+      color: #1B4F4A;
       background: linear-gradient(145deg, #FAF5EE, #E6DAC8);
-      box-shadow: 
-        3px 4px 8px rgba(160, 140, 120, 0.28),
-        inset 1px 1px 1px rgba(255, 255, 255, 0.9);
-      transform: translateY(-1px);
+      box-shadow: 2px 2px 5px rgba(160, 140, 120, 0.25);
     }
-    .tab-icon {
-      font-size: 15px;
+    .tab-item.active-dark {
+      color: #FFFFFF;
+      background: linear-gradient(145deg, #E58B70, #B85842);
+      box-shadow: 2px 2px 6px rgba(229, 139, 112, 0.35);
     }
-
-    /* Домашняя полоска iPhone */
-    .home-indicator {
-      width: 120px;
+    .home-bar {
+      width: 90px;
       height: 4px;
-      background: #2D3730;
+      background: currentColor;
       border-radius: 4px;
-      margin: 12px auto 0 auto;
-      opacity: 0.35;
+      margin: 8px auto 0 auto;
+      opacity: 0.25;
     }
   </style>
 </head>
@@ -357,67 +350,65 @@
 
   <div class="container">
     
-    <!-- =============================================================== -->
-    <!-- ШАПКА В ЕДИНОМ ОБЪЕМНОМ ПАСТЕЛЬНОМ СТИЛЕ                        -->
-    <!-- =============================================================== -->
-    <div style="background: linear-gradient(155deg, #FAF4ED, #EADDCB); border-radius: 36px; padding: 28px 20px; text-align: center; box-shadow: 14px 20px 36px -4px rgba(165, 145, 125, 0.42), inset 2px 2px 3px rgba(255, 255, 255, 0.95); margin-bottom: 24px;">
-      <div style="display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(145deg, #FAF4ED, #E5D6C4); padding: 7px 18px; border-radius: 20px; box-shadow: 4px 6px 14px rgba(165, 145, 125, 0.35), inset 1px 1px 1.5px #fff; margin-bottom: 14px;">
-        <span style="width: 8px; height: 8px; border-radius: 50%; background: #4E7C6F;"></span>
-        <span style="font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #435E52;">
-          Единый тактильный стиль · Все элементы оживают при касании
+    <!-- ШАПКА -->
+    <div style="background: linear-gradient(155deg, #FAF4ED, #EADDCB); border-radius: 30px; padding: 22px 18px; text-align: center; box-shadow: 12px 18px 32px -4px rgba(165, 145, 125, 0.4), inset 1.5px 1.5px 2px #fff; margin-bottom: 22px;">
+      <div style="display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(145deg, #FAF4ED, #E5D6C4); padding: 6px 16px; border-radius: 18px; box-shadow: 3px 4px 10px rgba(165, 145, 125, 0.3); margin-bottom: 12px;">
+        <span style="font-size: 13px;">☀️ vs 🌙</span>
+        <span style="font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #2E473D;">
+          Сравнение бок о бок: Светлая и Тёмная темы
         </span>
       </div>
-      <h1 style="font-size: 28px; font-weight: 900; color: #2C3831; margin-bottom: 8px; letter-spacing: -0.5px;">
+      <h1 style="font-size: 24px; font-weight: 900; color: #2C3831; margin-bottom: 6px; letter-spacing: -0.4px;">
         Мастер-Каталог «Мои таблицы»
       </h1>
-      <p style="font-size: 14px; color: #726A60; max-width: 580px; margin: 0 auto; line-height: 1.5;">
-        Все блоки оформлены в единой 3D-эстетике наложения плотной бумаги: объемные номера, мягкие тени на 4 часа, пухлые кнопки с отдачей при клике и полный макет телефона.
+      <p style="font-size: 13px; color: #726A60; max-width: 600px; margin: 0 auto; line-height: 1.5;">
+        Все наши 6 разделов сохранены в полном объеме. По каждому пункту слева показана Светлая тема, а справа — Тёмная тема «Закатные горы» (по Скриншоту 3).
       </p>
     </div>
 
 
     <!-- =============================================================== -->
-    <!-- РАЗДЕЛ 1. СРАВНЕНИЕ ТЕНЕЙ БОК О БОК                             -->
+    <!-- РАЗДЕЛ 1. СРАВНЕНИЕ ТЕНЕЙ И ОБЪЕМА БОК О БОК                     -->
     <!-- =============================================================== -->
     <div class="section">
       <div class="section-title">
         <span class="badge-num-3d">1</span>
-        Сравнение объема: с верхней засветкой vs чистая матовая бумага
+        Сравнение объема: Светлая vs Тёмная тема
       </div>
 
-      <div class="grid-2">
-        <!-- Вариант 1 -->
-        <div class="shadow-with-glow" style="background: linear-gradient(145deg, #FAF5EE, #EFE4D6); padding: 24px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-            <strong style="font-size: 15px; font-weight: 800;">Вариант 1: С засветкой вверху</strong>
-            <span class="paper-chip" style="background: linear-gradient(135deg, #FAF5EE, #EDE2D2); font-size: 10px; padding: 4px 10px;">Светлый блик</span>
+      <div class="split-grid">
+        <!-- СЛЕВА: СВЕТЛАЯ -->
+        <div class="panel-light">
+          <div class="panel-header">
+            <span class="theme-tag" style="color: #4A6356;">☀️ Светлая тема</span>
+            <span style="font-size: 10px; font-weight: 700; color: #78736B;">Матовая бумага</span>
           </div>
-          <p style="font-size: 12px; color: #6E6860; margin-bottom: 16px; line-height: 1.45;">
-            По верхнему и левому краю идет светлая фаска-блик (как легкий отблеск лампы сверху).
+          <p style="font-size: 12px; color: #6E6860; margin-bottom: 12px;">
+            Глубокая теплая тень на 4 часа, светлый молочный градиент.
           </p>
-          <div style="background: linear-gradient(145deg, #F5EDE3, #E6D8C6); padding: 16px; border-radius: 18px; box-shadow: 8px 12px 20px -3px rgba(155, 135, 115, 0.38), inset 1px 1px 1.5px rgba(255, 255, 255, 0.9);">
-            <div style="font-size: 11px; font-weight: 700; color: #6E6860; margin-bottom: 8px;">Вложенная карточка (наведи или нажми)</div>
+          <div style="background: linear-gradient(145deg, #F5EDE3, #E6D8C6); padding: 12px; border-radius: 16px; box-shadow: 6px 9px 18px -2px rgba(155, 135, 115, 0.38);">
+            <div style="font-size: 10px; font-weight: 700; color: #6E6860; margin-bottom: 6px;">Вложенная карточка</div>
             <div style="display: flex; justify-content: space-between; align-items: center;">
-              <span style="font-size: 13px; font-weight: 800;">+7 (999) 111-22-33</span>
-              <div class="paper-btn" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2); color: #38423B;">Скопировать 📋</div>
+              <span style="font-size: 12px; font-weight: 800;">+7 (999) 111-22-33</span>
+              <div class="paper-btn-light">Скопировать 📋</div>
             </div>
           </div>
         </div>
 
-        <!-- Вариант 2 -->
-        <div class="shadow-pure-matte" style="background: linear-gradient(145deg, #FAF5EE, #EFE4D6); padding: 24px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-            <strong style="font-size: 15px; font-weight: 800;">Вариант 2: Только тень (БЕЗ засветки)</strong>
-            <span class="paper-chip" style="background: linear-gradient(135deg, #FAF5EE, #EDE2D2); font-size: 10px; padding: 4px 10px;">Чистый мат</span>
+        <!-- СПРАВА: ТЁМНАЯ -->
+        <div class="panel-dark">
+          <div class="panel-header">
+            <span class="theme-tag" style="color: #E58B70;">🌙 Тёмная тема (Закат)</span>
+            <span style="font-size: 10px; font-weight: 700; color: #A4AABF;">Сумеречный сланец</span>
           </div>
-          <p style="font-size: 12px; color: #6E6860; margin-bottom: 16px; line-height: 1.45;">
-            Чистая плотная бумага: глубокая теплая тень справа снизу, а верх ровный и матовый.
+          <p style="font-size: 12px; color: #B3B7C6; margin-bottom: 12px;">
+            Темный бархатный графит + внутренний янтарный отблеск сверху.
           </p>
-          <div style="background: linear-gradient(145deg, #F5EDE3, #E6D8C6); padding: 16px; border-radius: 18px; box-shadow: 8px 12px 20px -3px rgba(155, 135, 115, 0.38);">
-            <div style="font-size: 11px; font-weight: 700; color: #6E6860; margin-bottom: 8px;">Вложенная карточка (наведи или нажми)</div>
+          <div style="background: linear-gradient(155deg, #2B3042, #1E212E); padding: 12px; border-radius: 16px; box-shadow: 6px 9px 20px rgba(0, 0, 0, 0.5), inset 1px 1px 1px rgba(255,255,255,0.08);">
+            <div style="font-size: 10px; font-weight: 700; color: #8F95A8; margin-bottom: 6px;">Вложенная карточка</div>
             <div style="display: flex; justify-content: space-between; align-items: center;">
-              <span style="font-size: 13px; font-weight: 800;">+7 (999) 111-22-33</span>
-              <div class="paper-btn" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2); color: #38423B;">Скопировать 📋</div>
+              <span style="font-size: 12px; font-weight: 800; color: #FFFFFF;">+7 (999) 111-22-33</span>
+              <div class="paper-btn-dark">Скопировать 📋</div>
             </div>
           </div>
         </div>
@@ -426,367 +417,350 @@
 
 
     <!-- =============================================================== -->
-    <!-- РАЗДЕЛ 2. ПАЛИТРА ГРАДИЕНТОВ (20 ВАРИАНТОВ)                      -->
+    <!-- РАЗДЕЛ 2. ПАЛИТРА ГРАДИЕНТОВ (СВЕТЛАЯ И ТЁМНАЯ)                  -->
     <!-- =============================================================== -->
     <div class="section">
       <div class="section-title">
         <span class="badge-num-3d">2</span>
-        Палитра: 20 мягких градиентов (все с объемом и тактильным эффектом)
+        Палитра: Светлые пастели vs Тёмные закатные градиенты
       </div>
 
-      <!-- Голубые -->
-      <div style="font-size: 13px; font-weight: 800; color: #3A6170; margin: 12px 0 8px 0; display: flex; align-items: center; gap: 8px;">
-        <span style="width: 7px; height: 7px; border-radius: 50%; background: #6AA5BA;"></span>
-        А. Голубая свежесть (воздушные)
-      </div>
-      <div class="grid-4">
-        <div class="color-card" style="background: linear-gradient(135deg, #E6F3F7, #CDE5ED); color: #284E5E;">Морская дымка</div>
-        <div class="color-card" style="background: linear-gradient(135deg, #EBF5FB, #D4E6F1); color: #234E6B;">Ледяной лепесток</div>
-        <div class="color-card" style="background: linear-gradient(135deg, #E0F2F1, #B2DFDB); color: #1E4F4C;">Мятно-голубой</div>
-        <div class="color-card" style="background: linear-gradient(135deg, #E8EAF6, #C5CAE9); color: #303F9F;">Лазурный рассвет</div>
-      </div>
-
-      <!-- Персики и желтые -->
-      <div style="font-size: 13px; font-weight: 800; color: #8F5A38; margin: 20px 0 8px 0; display: flex; align-items: center; gap: 8px;">
-        <span style="width: 7px; height: 7px; border-radius: 50%; background: #ECA97A;"></span>
-        Б. Персиковые и солнечные желтые
-      </div>
-      <div class="grid-4">
-        <div class="color-card" style="background: linear-gradient(135deg, #FFF3E0, #FFE0B2); color: #7B4715;">Сливочный персик</div>
-        <div class="color-card" style="background: linear-gradient(135deg, #FFFDE7, #FFF9C4); color: #706208;">Лимонный крем</div>
-        <div class="color-card" style="background: linear-gradient(135deg, #FBE9E7, #FFCCBC); color: #843825;">Печеный абрикос</div>
-        <div class="color-card" style="background: linear-gradient(135deg, #FFF8E1, #FFECB3); color: #73570F;">Медовый полдень</div>
-      </div>
-
-      <!-- Розовые и лаванда -->
-      <div style="font-size: 13px; font-weight: 800; color: #7D4566; margin: 20px 0 8px 0; display: flex; align-items: center; gap: 8px;">
-        <span style="width: 7px; height: 7px; border-radius: 50%; background: #D989AB;"></span>
-        В. Розовые, пудровые и лаванда
-      </div>
-      <div class="grid-4">
-        <div class="color-card" style="background: linear-gradient(135deg, #FCE4EC, #F8BBD0); color: #752948;">Пыльная роза</div>
-        <div class="color-card" style="background: linear-gradient(135deg, #F3E5F5, #E1BEE7); color: #5F2468;">Нежная лаванда</div>
-        <div class="color-card" style="background: linear-gradient(135deg, #FFF0F5, #F5D6E3); color: #6E3350;">Зефирный румянец</div>
-        <div class="color-card" style="background: linear-gradient(135deg, #EDE7F6, #D1C4E9); color: #413066;">Сиреневый шелк</div>
-      </div>
-
-      <!-- Тройные сложные градиенты -->
-      <div style="font-size: 13px; font-weight: 800; color: #4B6B5E; margin: 20px 0 8px 0; display: flex; align-items: center; gap: 8px;">
-        <span style="width: 7px; height: 7px; border-radius: 50%; background: #7BA79D;"></span>
-        Г. Тройные сложные градиенты (стиль референса с грибочком)
-      </div>
-      <div class="grid-4">
-        <div class="color-card" style="background: linear-gradient(135deg, #FCEFE6 0%, #F5E5D5 50%, #E8D9C8 100%); color: #624838;">
-          Грибной крем 🍄
-          <span style="font-size: 9px; opacity: 0.8; font-weight: 600; margin-top: 4px;">Персик → Крем → Мокко</span>
+      <div class="split-grid">
+        <!-- СЛЕВА: СВЕТЛАЯ -->
+        <div class="panel-light">
+          <div class="panel-header">
+            <span class="theme-tag" style="color: #4A6356;">☀️ Пастель (20 вариантов)</span>
+          </div>
+          <div class="grid-colors">
+            <div class="color-box" style="background: linear-gradient(135deg, #E6F3F7, #CDE5ED); color: #284E5E;">Морская дымка</div>
+            <div class="color-box" style="background: linear-gradient(135deg, #FFF3E0, #FFE0B2); color: #7B4715;">Сливочный персик</div>
+            <div class="color-box" style="background: linear-gradient(135deg, #FCE4EC, #F8BBD0); color: #752948;">Пыльная роза</div>
+            <div class="color-box" style="background: linear-gradient(135deg, #FCEFE6, #E8D9C8); color: #624838;">Грибной крем 🍄</div>
+          </div>
         </div>
-        <div class="color-card" style="background: linear-gradient(135deg, #E6F0FA 0%, #E8E5F2 50%, #F8E8EE 100%); color: #474360;">
-          Утренний туман
-          <span style="font-size: 9px; opacity: 0.8; font-weight: 600; margin-top: 4px;">Голубой → Лаванда → Роза</span>
-        </div>
-        <div class="color-card" style="background: linear-gradient(135deg, #FFF4E6 0%, #FCE8E1 50%, #E9EFF2 100%); color: #584F52;">
-          Персиковый бриз
-          <span style="font-size: 9px; opacity: 0.8; font-weight: 600; margin-top: 4px;">Персик → Роза → Шалфей</span>
-        </div>
-        <div class="color-card" style="background: linear-gradient(135deg, #EAF2ED 0%, #F4EFE6 50%, #FCEEE8 100%); color: #475047;">
-          Фисташковое суфле
-          <span style="font-size: 9px; opacity: 0.8; font-weight: 600; margin-top: 4px;">Мята → Сливки → Пудра</span>
-        </div>
-      </div>
 
-      <!-- Мягкие переходы в глубину -->
-      <div style="font-size: 13px; font-weight: 800; color: #3E4B45; margin: 20px 0 8px 0; display: flex; align-items: center; gap: 8px;">
-        <span style="width: 7px; height: 7px; border-radius: 50%; background: #4D6E5C;"></span>
-        Д. От светлого к глубокому (для акцентных карточек)
-      </div>
-      <div class="grid-4">
-        <div class="color-card" style="background: linear-gradient(145deg, #A8C7BD, #598376); color: #FFFFFF;">Шалфей в глубину</div>
-        <div class="color-card" style="background: linear-gradient(145deg, #E8BEA9, #A9715A); color: #FFFFFF;">Теплая терракота</div>
-        <div class="color-card" style="background: linear-gradient(145deg, #B5C9DF, #6983A7); color: #FFFFFF;">Дымчатый деним</div>
-        <div class="color-card" style="background: linear-gradient(145deg, #D4BEB2, #836758); color: #FFFFFF;">Кофейный велюр</div>
+        <!-- СПРАВА: ТЁМНАЯ -->
+        <div class="panel-dark">
+          <div class="panel-header">
+            <span class="theme-tag" style="color: #E58B70;">🌙 Тёмный закат (Скриншот 3)</span>
+          </div>
+          <div class="grid-colors">
+            <div class="color-box" style="background: linear-gradient(135deg, #E58B70, #C45B45); color: #FFFFFF;">Закатный персик</div>
+            <div class="color-box" style="background: linear-gradient(135deg, #C95E47, #7A2E20); color: #FFFFFF;">Тлеющая медь</div>
+            <div class="color-box" style="background: linear-gradient(135deg, #3A4156, #222533); color: #E58B70;">Сумеречный сланец</div>
+            <div class="color-box" style="background: linear-gradient(135deg, #51424C, #252028); color: #F8C7BA;">Вечерняя слива</div>
+          </div>
+        </div>
       </div>
     </div>
 
 
     <!-- =============================================================== -->
-    <!-- РАЗДЕЛ 3. СТИЛИ КНОПОК С АНИМАЦИЕЙ НАЖАТИЯ                      -->
+    <!-- РАЗДЕЛ 3. СТИЛИ КНОПОК                                          -->
     <!-- =============================================================== -->
     <div class="section">
       <div class="section-title">
         <span class="badge-num-3d">3</span>
-        Стили кнопок (нажми пальцем или мышкой — почувствуй отдачу)
+        Стили кнопок (Парящая бумага и Зефирка)
       </div>
 
-      <div style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2); padding: 22px; border-radius: 24px; box-shadow: 10px 14px 24px -4px rgba(165, 145, 125, 0.38), inset 1.5px 1.5px 2px rgba(255,255,255,0.9);">
-        <div class="grid-4" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
-          
-          <div style="text-align: center; padding: 10px;">
-            <div style="font-size: 11px; font-weight: 800; color: #78736B; margin-bottom: 8px;">А. Парящая бумага:</div>
-            <div class="paper-btn" style="background: linear-gradient(145deg, #FAF5EE, #E6D8C6); width: 100%;">Скопировать 📋</div>
-            <div style="font-size: 10px; color: #8C8479; margin-top: 6px;">Плавный подъем при наведении</div>
+      <div class="split-grid">
+        <!-- СЛЕВА: СВЕТЛАЯ -->
+        <div class="panel-light">
+          <div class="panel-header">
+            <span class="theme-tag" style="color: #4A6356;">☀️ Светлые кнопки</span>
           </div>
-
-          <div style="text-align: center; padding: 10px;">
-            <div style="font-size: 11px; font-weight: 800; color: #78736B; margin-bottom: 8px;">Б. Пухлая зефирка:</div>
-            <div class="marshmallow-btn" style="background: linear-gradient(145deg, #FAF3EA, #EBE0D0); width: 100%;">Скопировать 📋</div>
-            <div style="font-size: 10px; color: #8C8479; margin-top: 6px;">Мягкое продавливание внутрь</div>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div>
+              <div style="font-size: 10px; color: #78736B; margin-bottom: 4px; font-weight: 700;">Парящая бумага:</div>
+              <div class="paper-btn-light" style="width: 100%;">Скопировать телефон 📋</div>
+            </div>
+            <div>
+              <div style="font-size: 10px; color: #78736B; margin-bottom: 4px; font-weight: 700;">Пухлая зефирка:</div>
+              <div class="marshmallow-btn-light" style="width: 100%; text-align: center; display: block;">Скопировать телефон 📋</div>
+            </div>
           </div>
+        </div>
 
-          <div style="text-align: center; padding: 10px;">
-            <div style="font-size: 11px; font-weight: 800; color: #78736B; margin-bottom: 8px;">В. Цветная бумага:</div>
-            <div class="paper-btn" style="background: linear-gradient(160deg, #78A59E, #4D6E5C); color: #fff; width: 100%;">Сохранить запись ✨</div>
-            <div style="font-size: 10px; color: #8C8479; margin-top: 6px;">Глубокий отклик при клике</div>
+        <!-- СПРАВА: ТЁМНАЯ -->
+        <div class="panel-dark">
+          <div class="panel-header">
+            <span class="theme-tag" style="color: #E58B70;">🌙 Тёмные кнопки</span>
           </div>
-
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div>
+              <div style="font-size: 10px; color: #A4AABF; margin-bottom: 4px; font-weight: 700;">Закатная парящая:</div>
+              <div class="paper-btn-dark" style="width: 100%;">Скопировать телефон 📋</div>
+            </div>
+            <div>
+              <div style="font-size: 10px; color: #A4AABF; margin-bottom: 4px; font-weight: 700;">Тёмная зефирка:</div>
+              <div class="marshmallow-btn-dark" style="width: 100%; text-align: center; display: block;">Скопировать телефон 📋</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
 
     <!-- =============================================================== -->
-    <!-- РАЗДЕЛ 4. СТАТУСЫ ДЛЯ ТАБЛИЦЫ                                   -->
+    <!-- РАЗДЕЛ 4. СТАТУСЫ                                               -->
     <!-- =============================================================== -->
     <div class="section">
       <div class="section-title">
         <span class="badge-num-3d">4</span>
-        Статусы (объемные чипы-наклейки с цветной точкой)
+        Статусы (чипы с точкой)
       </div>
 
-      <div style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2); padding: 22px; border-radius: 24px; box-shadow: 10px 14px 24px -4px rgba(165, 145, 125, 0.38), inset 1.5px 1.5px 2px rgba(255,255,255,0.9); display: flex; flex-wrap: wrap; gap: 14px; justify-content: center;">
-        
-        <div class="paper-chip" style="background: linear-gradient(135deg, #DCEEE5, #C6E2D4); color: #2C5749;">
-          <span style="width: 8px; height: 8px; border-radius: 50%; background: #348464; box-shadow: 0 0 5px rgba(52,132,100,0.5);"></span>
-          В работе
+      <div class="split-grid">
+        <!-- СЛЕВА: СВЕТЛАЯ -->
+        <div class="panel-light">
+          <div class="panel-header">
+            <span class="theme-tag" style="color: #4A6356;">☀️ Светлые чипы</span>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+            <div class="chip-light" style="background: linear-gradient(135deg, #DCEEE5, #C6E2D4); color: #2C5749;">
+              <span style="width: 7px; height: 7px; border-radius: 50%; background: #348464;"></span>
+              В работе
+            </div>
+            <div class="chip-light" style="background: linear-gradient(135deg, #FFF1DA, #FCE0B2); color: #7A4B13;">
+              <span style="width: 7px; height: 7px; border-radius: 50%; background: #D9822B;"></span>
+              Ждём оплату
+            </div>
+            <div class="chip-light" style="background: linear-gradient(135deg, #FDE8E3, #F9D0C7); color: #8F3A2B;">
+              <span style="width: 7px; height: 7px; border-radius: 50%; background: #C44536;"></span>
+              На паузе
+            </div>
+          </div>
         </div>
 
-        <div class="paper-chip" style="background: linear-gradient(135deg, #FFF1DA, #FCE0B2); color: #7A4B13;">
-          <span style="width: 8px; height: 8px; border-radius: 50%; background: #D9822B; box-shadow: 0 0 5px rgba(217,130,43,0.5);"></span>
-          Ждём оплату
+        <!-- СПРАВА: ТЁМНАЯ -->
+        <div class="panel-dark">
+          <div class="panel-header">
+            <span class="theme-tag" style="color: #E58B70;">🌙 Тёмные чипы (Закат)</span>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+            <div class="chip-dark" style="color: #92D7B8; border: 1px solid rgba(146, 215, 184, 0.3);">
+              <span style="width: 7px; height: 7px; border-radius: 50%; background: #4AE09C; box-shadow: 0 0 6px #4AE09C;"></span>
+              В работе
+            </div>
+            <div class="chip-dark" style="color: #F8C7BA; border: 1px solid rgba(229, 139, 112, 0.4);">
+              <span style="width: 7px; height: 7px; border-radius: 50%; background: #E58B70; box-shadow: 0 0 6px #E58B70;"></span>
+              Ждём оплату
+            </div>
+            <div class="chip-dark" style="color: #EFA6A6; border: 1px solid rgba(239, 166, 166, 0.3);">
+              <span style="width: 7px; height: 7px; border-radius: 50%; background: #E05C5C; box-shadow: 0 0 6px #E05C5C;"></span>
+              На паузе
+            </div>
+          </div>
         </div>
-
-        <div class="paper-chip" style="background: linear-gradient(135deg, #FDE8E3, #F9D0C7); color: #8F3A2B;">
-          <span style="width: 8px; height: 8px; border-radius: 50%; background: #C44536; box-shadow: 0 0 5px rgba(196,69,54,0.5);"></span>
-          На паузе
-        </div>
-
-        <div class="paper-chip" style="background: linear-gradient(135deg, #E6EFF8, #CFDFEE); color: #2D4C6E;">
-          <span style="width: 8px; height: 8px; border-radius: 50%; background: #3D6B9C; box-shadow: 0 0 5px rgba(61,107,156,0.5);"></span>
-          Завершен
-        </div>
-
       </div>
     </div>
 
 
     <!-- =============================================================== -->
-    <!-- РАЗДЕЛ 5. ГЛАВНОЕ МЕНЮ (4 РАЗДЕЛА В НАШЕМ СТИЛЕ)                -->
+    <!-- РАЗДЕЛ 5. ГЛАВНОЕ МЕНЮ (4 РАЗДЕЛА)                              -->
     <!-- =============================================================== -->
     <div class="section">
       <div class="section-title">
         <span class="badge-num-3d">5</span>
-        Главное меню: 4 ключевых раздела проекта (тактильные карточки)
+        Главное меню: 4 раздела
       </div>
 
-      <div style="background: linear-gradient(145deg, #FAF5EE, #EFE4D6); padding: 22px; border-radius: 28px; box-shadow: 12px 16px 28px -4px rgba(165, 145, 125, 0.42), inset 1.5px 1.5px 2px rgba(255,255,255,0.9);">
-        <div class="grid-4">
-          
-          <div class="menu-card-3d" style="background: linear-gradient(145deg, #F5EDE3, #E6D8C6);">
-            <div style="width: 28px; height: 28px; border-radius: 10px; background: linear-gradient(145deg, #4E6555, #384B3E); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; margin-bottom: 10px; box-shadow: 3px 4px 8px rgba(56,75,62,0.35);">01</div>
-            <div style="font-size: 13px; font-weight: 800; color: #2D3A31;">1. Клиенты</div>
-            <div style="font-size: 10px; color: #78736B; margin-top: 2px;">База, доступы, CRM</div>
+      <div class="split-grid">
+        <!-- СЛЕВА: СВЕТЛАЯ -->
+        <div class="panel-light">
+          <div class="panel-header">
+            <span class="theme-tag" style="color: #4A6356;">☀️ Светлое меню</span>
           </div>
-
-          <div class="menu-card-3d">
-            <div style="width: 28px; height: 28px; border-radius: 10px; background: linear-gradient(145deg, #EADBCA, #CEBBA5); color: #5A483E; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; margin-bottom: 10px; box-shadow: 3px 4px 8px rgba(90,72,62,0.25);">02</div>
-            <div style="font-size: 13px; font-weight: 800; color: #2D3A31;">2. Траты на ИИ</div>
-            <div style="font-size: 10px; color: #78736B; margin-top: 2px;">VPN, ChatGPT, софт</div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <div style="background: linear-gradient(145deg, #F5EDE3, #E6D8C6); padding: 10px; border-radius: 14px; box-shadow: 3px 5px 10px rgba(160,140,120,0.25);">
+              <div style="font-size: 11px; font-weight: 800;">1. Клиенты</div>
+              <div style="font-size: 9px; color: #78736B;">База и доступы</div>
+            </div>
+            <div style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2); padding: 10px; border-radius: 14px;">
+              <div style="font-size: 11px; font-weight: 800;">2. Траты ИИ</div>
+              <div style="font-size: 9px; color: #78736B;">VPN, ChatGPT</div>
+            </div>
+            <div style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2); padding: 10px; border-radius: 14px;">
+              <div style="font-size: 11px; font-weight: 800;">3. Доходы</div>
+              <div style="font-size: 9px; color: #78736B;">Оплаты</div>
+            </div>
+            <div style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2); padding: 10px; border-radius: 14px;">
+              <div style="font-size: 11px; font-weight: 800;">4. Фокус</div>
+              <div style="font-size: 9px; color: #78736B;">Задачи</div>
+            </div>
           </div>
+        </div>
 
-          <div class="menu-card-3d">
-            <div style="width: 28px; height: 28px; border-radius: 10px; background: linear-gradient(145deg, #DCEEE5, #BAD6C8); color: #2C5749; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; margin-bottom: 10px; box-shadow: 3px 4px 8px rgba(44,87,73,0.25);">03</div>
-            <div style="font-size: 13px; font-weight: 800; color: #2D3A31;">3. Мои доходы</div>
-            <div style="font-size: 10px; color: #78736B; margin-top: 2px;">Оплаты от клиентов</div>
+        <!-- СПРАВА: ТЁМНАЯ -->
+        <div class="panel-dark">
+          <div class="panel-header">
+            <span class="theme-tag" style="color: #E58B70;">🌙 Тёмное меню (Закат)</span>
           </div>
-
-          <div class="menu-card-3d">
-            <div style="width: 28px; height: 28px; border-radius: 10px; background: linear-gradient(145deg, #FDECE1, #F0CDBA); color: #8F5234; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; margin-bottom: 10px; box-shadow: 3px 4px 8px rgba(143,82,52,0.25);">04</div>
-            <div style="font-size: 13px; font-weight: 800; color: #2D3A31;">4. Фокус дня</div>
-            <div style="font-size: 10px; color: #78736B; margin-top: 2px;">Срочные задачи</div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <div style="background: linear-gradient(145deg, #E58B70, #C45B45); color: #fff; padding: 10px; border-radius: 14px; box-shadow: 3px 5px 12px rgba(229,139,112,0.35);">
+              <div style="font-size: 11px; font-weight: 800;">1. Клиенты</div>
+              <div style="font-size: 9px; opacity: 0.9;">База и доступы</div>
+            </div>
+            <div style="background: #252A3B; padding: 10px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.06);">
+              <div style="font-size: 11px; font-weight: 800; color: #E58B70;">2. Траты ИИ</div>
+              <div style="font-size: 9px; color: #9DA3B8;">VPN, ChatGPT</div>
+            </div>
+            <div style="background: #252A3B; padding: 10px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.06);">
+              <div style="font-size: 11px; font-weight: 800; color: #E58B70;">3. Доходы</div>
+              <div style="font-size: 9px; color: #9DA3B8;">Оплаты</div>
+            </div>
+            <div style="background: #252A3B; padding: 10px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.06);">
+              <div style="font-size: 11px; font-weight: 800; color: #E58B70;">4. Фокус</div>
+              <div style="font-size: 9px; color: #9DA3B8;">Задачи</div>
+            </div>
           </div>
-
         </div>
       </div>
     </div>
 
 
     <!-- =============================================================== -->
-    <!-- РАЗДЕЛ 6. НАСТОЯЩИЙ ПОЛНЫЙ ЭКРАН СМАРТФОНА                      -->
+    <!-- РАЗДЕЛ 6. ПОЛНОРАЗМЕРНЫЙ ЭКРАН IPHONE: СВЕТЛЫЙ И ТЁМНЫЙ          -->
     <!-- =============================================================== -->
     <div class="section">
       <div class="section-title">
         <span class="badge-num-3d">6</span>
-        Полноразмерный живой экран iPhone (весь интерфейс от и до)
+        Полный экран смартфона: Светлый слева · Тёмный справа
       </div>
 
-      <p style="font-size: 13px; color: #726A60; margin-bottom: 18px;">
-        Настоящий полный экран смартфона в титановом корпусе: «динамический остров», статусная строка, переключатели, живые карточки клиентов с кнопками и нижняя панель навигации.
-      </p>
-
-      <!-- Корпус телефона -->
-      <div class="phone-case">
-        <div class="phone-screen">
-          
-          <!-- Островок iPhone -->
-          <div class="dynamic-island">
-            <div class="camera-lens"></div>
+      <div class="split-grid">
+        
+        <!-- СЛЕВА: СВЕТЛЫЙ IPHONE -->
+        <div>
+          <div style="text-align: center; font-size: 12px; font-weight: 800; color: #4A6356; margin-bottom: 8px;">
+            ☀️ Светлый экран (Дневной режим)
           </div>
+          <div class="phone-case">
+            <div class="phone-screen-light">
+              <div class="dynamic-island"><div class="camera-lens"></div></div>
+              <div class="status-bar">
+                <span>09:41</span>
+                <span>100% 􀛨</span>
+              </div>
 
-          <!-- Статусная строка -->
-          <div class="status-bar">
-            <span>09:41</span>
-            <div style="display: flex; align-items: center; gap: 6px; font-size: 11px;">
-              <span>5G</span>
-              <span>􀙇</span>
-              <span style="font-size: 13px;">􀛨 100%</span>
-            </div>
-          </div>
-
-          <!-- Шапка приложения внутри телефона -->
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; padding: 0 4px;">
-            <div>
-              <div style="font-size: 10px; font-weight: 800; color: #8C8479; text-transform: uppercase; letter-spacing: 0.5px;">Четверг, 22 октября</div>
-              <div style="font-size: 20px; font-weight: 900; color: #28342C; letter-spacing: -0.3px;">Мои таблицы</div>
-            </div>
-            <!-- Индикатор статуса синхронизации -->
-            <div class="paper-chip" style="background: linear-gradient(135deg, #FAF4ED, #E5D6C4); padding: 5px 10px; font-size: 10px; color: #395B4E;">
-              <span style="width: 6px; height: 6px; border-radius: 50%; background: #4E7C6F;"></span>
-              Google Таблицы
-            </div>
-          </div>
-
-          <!-- Горизонтальные фильтры (Таблетки) -->
-          <div style="display: flex; gap: 8px; margin-bottom: 14px; overflow-x: auto; padding-bottom: 4px;">
-            <div class="paper-chip" style="background: linear-gradient(145deg, #78A59E, #517B71); color: #fff; padding: 6px 12px; font-size: 11px;">
-              Все (3)
-            </div>
-            <div class="paper-chip" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2); color: #554E45; padding: 6px 12px; font-size: 11px;">
-              В работе (1)
-            </div>
-            <div class="paper-chip" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2); color: #554E45; padding: 6px 12px; font-size: 11px;">
-              Ждут оплату (1)
-            </div>
-          </div>
-
-          <!-- Сводные плашки 2 в ряд -->
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px;">
-            <!-- Левая карточка -->
-            <div class="shadow-pure-matte" style="background: linear-gradient(145deg, #78A59E, #517B71); color: #fff; padding: 14px; border-radius: 20px; display: flex; flex-direction: column; justify-content: space-between;">
-              <div>
-                <div style="font-size: 10px; opacity: 0.9; font-weight: 700; margin-bottom: 2px;">Клиенты в работе</div>
-                <div style="display: flex; align-items: baseline; gap: 4px;">
-                  <div style="font-size: 26px; font-weight: 900;">3</div>
-                  <div style="font-size: 11px; font-weight: 700; opacity: 0.85;">проекта</div>
+              <!-- Шапка -->
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <div>
+                  <div style="font-size: 9px; font-weight: 800; color: #8C8479; text-transform: uppercase;">Четверг, 22 октября</div>
+                  <div style="font-size: 17px; font-weight: 900; color: #2C3831;">Мои таблицы</div>
+                </div>
+                <div class="chip-light" style="background: linear-gradient(135deg, #FAF4ED, #E5D6C4); font-size: 9px; padding: 3px 7px;">
+                  онлайн ☁️
                 </div>
               </div>
-              <div class="paper-btn" style="background: rgba(255,255,255,0.3); color: #fff; width: 100%; font-size: 10px; padding: 7px; text-align: center; margin-top: 8px; box-shadow: 2px 4px 10px rgba(0,0,0,0.15);">
-                + Клиент
-              </div>
-            </div>
 
-            <!-- Правая карточка: финансы -->
-            <div class="shadow-pure-matte" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2); padding: 14px; border-radius: 20px; display: flex; flex-direction: column; justify-content: space-between;">
-              <div style="background: linear-gradient(145deg, #F5EDE3, #E6D8C6); padding: 7px 10px; border-radius: 12px; margin-bottom: 6px; box-shadow: 2px 3px 6px rgba(165,145,125,0.2);">
-                <div style="font-size: 9px; color: #78736B; font-weight: 700;">Траты (ИИ / софт)</div>
-                <div style="font-size: 13px; font-weight: 900; color: #7A3F33;">4 800 ₽</div>
-              </div>
-              <div style="background: linear-gradient(145deg, #F5EDE3, #E6D8C6); padding: 7px 10px; border-radius: 12px; box-shadow: 2px 3px 6px rgba(165,145,125,0.2);">
-                <div style="font-size: 9px; color: #78736B; font-weight: 700;">Доходы (октябрь)</div>
-                <div style="font-size: 13px; font-weight: 900; color: #2C5749;">120 000 ₽</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- СПИСОК КЛИЕНТОВ (3D наложение карточек) -->
-          <div style="font-size: 12px; font-weight: 900; color: #435248; margin-bottom: 8px; padding-left: 2px;">
-            Активные проекты
-          </div>
-
-          <!-- Карточка 1: ООО «Альфа-Трейд» -->
-          <div class="shadow-pure-matte" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2); padding: 14px; border-radius: 22px; margin-bottom: 12px;">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-              <div>
-                <div class="paper-chip" style="background: linear-gradient(135deg, #DCEEE5, #C6E2D4); color: #2C5749; padding: 3px 9px; font-size: 9px; margin-bottom: 5px;">
-                  <span style="width: 6px; height: 6px; border-radius: 50%; background: #348464;"></span>
-                  В работе
+              <!-- Плашки -->
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+                <div style="background: linear-gradient(145deg, #1B4F4A, #123834); color: #fff; padding: 10px; border-radius: 16px;">
+                  <div style="font-size: 9px; opacity: 0.85;">Клиенты</div>
+                  <div style="font-size: 20px; font-weight: 900;">3</div>
+                  <div style="font-size: 8px; background: rgba(255,255,255,0.25); padding: 3px; border-radius: 6px; text-align: center; margin-top: 4px;">+ Добавить</div>
                 </div>
-                <div style="font-size: 14px; font-weight: 900; color: #2A362E;">ООО «Альфа-Трейд»</div>
-              </div>
-              <div class="paper-chip" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2); font-size: 10px; font-weight: 800; color: #7BA79D; padding: 4px 8px;">
-                Досье ↗
-              </div>
-            </div>
-
-            <!-- Вложенная карточка данных -->
-            <div style="background: linear-gradient(145deg, #F5EDE3, #E6D8C6); padding: 10px 12px; border-radius: 16px; box-shadow: 4px 6px 12px rgba(160,140,120,0.25), inset 1px 1px 1px #fff;">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <span style="font-size: 12px; font-weight: 800; color: #2D3A31;">+7 (999) 111-22-33</span>
-                <div class="paper-btn" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2); font-size: 9px; padding: 5px 10px;">Копия 📋</div>
-              </div>
-              <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #D9CCB8; padding-top: 8px;">
-                <span style="font-size: 10px; color: #78736B; font-weight: 600;">Боевая CRM-система</span>
-                <div class="paper-btn" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2); color: #4E6555; font-size: 9px; padding: 5px 10px;">Открыть CRM ↗</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Карточка 2: ИП Смирнова (Ждём оплату) -->
-          <div class="shadow-pure-matte" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2); padding: 14px; border-radius: 22px; margin-bottom: 8px;">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-              <div>
-                <div class="paper-chip" style="background: linear-gradient(135deg, #FFF1DA, #FCE0B2); color: #7A4B13; padding: 3px 9px; font-size: 9px; margin-bottom: 5px;">
-                  <span style="width: 6px; height: 6px; border-radius: 50%; background: #D9822B;"></span>
-                  Ждём оплату: 45 000 ₽
+                <div style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2); padding: 10px; border-radius: 16px; display: flex; flex-direction: column; justify-content: space-between;">
+                  <div>
+                    <div style="font-size: 9px; color: #78736B; font-weight: 700;">Доходы</div>
+                    <div style="font-size: 13px; font-weight: 900; color: #1B4F4A;">120 000 ₽</div>
+                  </div>
+                  <div style="font-size: 8px; color: #8C8479;">ИИ: 4 800 ₽</div>
                 </div>
-                <div style="font-size: 14px; font-weight: 900; color: #2A362E;">ИП Смирнова Е. В.</div>
               </div>
-              <div class="paper-chip" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2); font-size: 10px; font-weight: 800; color: #7BA79D; padding: 4px 8px;">
-                Досье ↗
-              </div>
-            </div>
 
-            <!-- Вложенная карточка данных -->
-            <div style="background: linear-gradient(145deg, #F5EDE3, #E6D8C6); padding: 10px 12px; border-radius: 16px; box-shadow: 4px 6px 12px rgba(160,140,120,0.25), inset 1px 1px 1px #fff;">
-              <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span style="font-size: 12px; font-weight: 800; color: #2D3A31;">+7 (926) 456-78-90</span>
-                <div class="paper-btn" style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2); font-size: 9px; padding: 5px 10px;">Копия 📋</div>
+              <!-- Карточка клиента -->
+              <div style="background: linear-gradient(145deg, #FAF5EE, #EDE2D2); padding: 10px; border-radius: 16px; margin-bottom: 8px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                  <span class="chip-light" style="background: linear-gradient(135deg, #DCEEE5, #C6E2D4); color: #1B4F4A; font-size: 8px; padding: 2px 6px;">В работе</span>
+                  <span style="font-size: 8px; font-weight: 800; color: #1B4F4A;">Досье ↗</span>
+                </div>
+                <div style="font-size: 12px; font-weight: 900; margin-bottom: 4px;">ООО «Альфа-Трейд»</div>
+                <div style="display: flex; justify-content: space-between; align-items: center; background: linear-gradient(145deg, #F5EDE3, #E6D8C6); padding: 6px 8px; border-radius: 10px;">
+                  <span style="font-size: 10px; font-weight: 800;">+7 (999) 111-22-33</span>
+                  <span class="paper-btn-light" style="font-size: 8px; padding: 3px 6px;">Копия 📋</span>
+                </div>
               </div>
+
+              <!-- Таб-бар -->
+              <div class="bottom-tab-bar bottom-tab-light">
+                <div class="tab-item active-light"><span>👥</span><span>Клиенты</span></div>
+                <div class="tab-item"><span>🤖</span><span>Траты</span></div>
+                <div class="tab-item"><span>💳</span><span>Доходы</span></div>
+                <div class="tab-item"><span>🎯</span><span>Фокус</span></div>
+              </div>
+              <div class="home-bar"></div>
             </div>
           </div>
-
-          <!-- Нижняя панель навигации (iOS Tab Bar) -->
-          <div class="bottom-tab-bar">
-            <div class="tab-item active">
-              <span class="tab-icon">👥</span>
-              <span>Клиенты</span>
-            </div>
-            <div class="tab-item">
-              <span class="tab-icon">🤖</span>
-              <span>Траты ИИ</span>
-            </div>
-            <div class="tab-item">
-              <span class="tab-icon">💳</span>
-              <span>Доходы</span>
-            </div>
-            <div class="tab-item">
-              <span class="tab-icon">🎯</span>
-              <span>Фокус дня</span>
-            </div>
-          </div>
-
-          <!-- Индикатор Home iPhone -->
-          <div class="home-indicator"></div>
-
         </div>
+
+        <!-- СПРАВА: ТЁМНЫЙ IPHONE -->
+        <div>
+          <div style="text-align: center; font-size: 12px; font-weight: 800; color: #E58B70; margin-bottom: 8px;">
+            🌙 Тёмный экран «Закат» (Вечерний режим)
+          </div>
+          <div class="phone-case">
+            <div class="phone-screen-dark">
+              <div class="dynamic-island"><div class="camera-lens"></div></div>
+              <div class="status-bar" style="color: #A6ABBC;">
+                <span>21:41</span>
+                <span>100% 􀛨</span>
+              </div>
+
+              <!-- Шапка -->
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <div>
+                  <div style="font-size: 9px; font-weight: 800; color: #8F95A8; text-transform: uppercase;">Четверг, 22 октября</div>
+                  <div style="font-size: 17px; font-weight: 900; color: #FFFFFF;">Мои таблицы</div>
+                </div>
+                <div class="chip-dark" style="color: #F8C7BA; font-size: 8px; padding: 3px 7px;">
+                  Ночь 🌙
+                </div>
+              </div>
+
+              <!-- Плашки -->
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+                <div style="background: linear-gradient(145deg, #E58B70, #B85842); color: #fff; padding: 10px; border-radius: 16px;">
+                  <div style="font-size: 9px; opacity: 0.9;">Клиенты</div>
+                  <div style="font-size: 20px; font-weight: 900;">3</div>
+                  <div style="font-size: 8px; background: rgba(255,255,255,0.25); padding: 3px; border-radius: 6px; text-align: center; margin-top: 4px;">+ Добавить</div>
+                </div>
+                <div style="background: linear-gradient(155deg, #2B3042, #1E212E); padding: 10px; border-radius: 16px; display: flex; flex-direction: column; justify-content: space-between;">
+                  <div>
+                    <div style="font-size: 9px; color: #9DA3B8; font-weight: 700;">Доходы</div>
+                    <div style="font-size: 13px; font-weight: 900; color: #E58B70;">120 000 ₽</div>
+                  </div>
+                  <div style="font-size: 8px; color: #7F8599;">ИИ: 4 800 ₽</div>
+                </div>
+              </div>
+
+              <!-- Карточка клиента -->
+              <div style="background: #252938; padding: 10px; border-radius: 16px; margin-bottom: 8px; border: 1px solid rgba(255,255,255,0.05);">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                  <span class="chip-dark" style="color: #F8C7BA; font-size: 8px; padding: 2px 6px;">В работе</span>
+                  <span style="font-size: 8px; font-weight: 800; color: #E58B70;">Досье ↗</span>
+                </div>
+                <div style="font-size: 12px; font-weight: 900; color: #FFF; margin-bottom: 4px;">ООО «Альфа-Трейд»</div>
+                <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.25); padding: 6px 8px; border-radius: 10px;">
+                  <span style="font-size: 10px; font-weight: 800; color: #D1D5E4;">+7 (999) 111-22-33</span>
+                  <span class="paper-btn-dark" style="font-size: 8px; padding: 3px 6px;">Копия 📋</span>
+                </div>
+              </div>
+
+              <!-- Таб-бар -->
+              <div class="bottom-tab-bar bottom-tab-dark">
+                <div class="tab-item active-dark"><span>👥</span><span>Клиенты</span></div>
+                <div class="tab-item" style="color: #8C92A6;"><span>🤖</span><span>Траты</span></div>
+                <div class="tab-item" style="color: #8C92A6;"><span>💳</span><span>Доходы</span></div>
+                <div class="tab-item" style="color: #8C92A6;"><span>🎯</span><span>Фокус</span></div>
+              </div>
+              <div class="home-bar" style="background: #FFF; opacity: 0.3;"></div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 
