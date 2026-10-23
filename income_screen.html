@@ -103,7 +103,9 @@
       .duo-grid { grid-template-columns: 1fr; }
     }
 
-    /* ---------------- ТЕЛЕФОН (IPHONE) ---------------- */
+    /* ======================================================== */
+    /* ---------------- ТЕЛЕФОН (IPHONE) ---------------------- */
+    /* ======================================================== */
     .iphone-box {
       background: #F2E8DC;
       border-radius: 46px;
@@ -164,11 +166,11 @@
       justify-content: center;
       color: #533418;
       cursor: pointer;
-      box-shadow: 4px 6px 14px rgba(185, 145, 110, 0.28), -2px -2px 6px rgba(255, 255, 255, 0.95);
-      transition: transform 0.1s ease;
+      box-shadow: 2.5px 4px 10px rgba(185, 145, 110, 0.28), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+      transition: transform 0.12s ease;
     }
     .phone-add-btn:active {
-      transform: scale(0.94);
+      transform: translateY(1.5px);
     }
 
     /* ПОИСК КЛИЕНТА (ТЕЛЕФОН) */
@@ -180,7 +182,7 @@
       align-items: center;
       gap: 10px;
       margin-bottom: 16px;
-      box-shadow: 0 3px 10px rgba(150, 125, 100, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      box-shadow: 2px 4px 10px rgba(150, 125, 100, 0.08), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.9);
     }
     .search-input {
       border: none;
@@ -195,227 +197,295 @@
       color: #A39686;
     }
 
-    /* СПИСОК КАРТОЧЕК ДОХОДОВ */
+    /* СПИСОК КАРТОЧЕК ДОХОДОВ — СКРОЛЛ БЕЗ СИСТЕМНОГО СЕРОГО ПОЛЗУНКА */
     .income-cards-list {
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 16px;
       overflow-y: auto;
-      max-height: 600px;
-      padding-right: 2px;
+      max-height: 640px;
+      padding: 2px;
+      scrollbar-width: none; /* Firefox */
+      -ms-overflow-style: none; /* IE / Edge */
+    }
+    .income-cards-list::-webkit-scrollbar {
+      display: none; /* Chrome, Safari, Opera */
+      width: 0;
+      height: 0;
     }
 
-    /* КАРТОЧКА КЛИЕНТА В ДОХОДАХ */
+    /* БАЗОВАЯ КАРТОЧКА КЛИЕНТА */
     .income-client-card {
-      border-radius: 22px;
-      padding: 14px;
+      border-radius: 24px;
+      padding: 16px;
       box-shadow: 6px 10px 24px -4px rgba(150, 125, 100, 0.22), -3px -3px 10px rgba(255, 255, 255, 0.8), inset 0 1.5px 0 rgba(255, 255, 255, 0.85);
       border: none;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 14px;
     }
-    .income-client-card.mint {
-      background: #C8E2D2;
-      color: #1E3F30;
-    }
-    .income-client-card.apricot {
-      background: #FCE8D5;
-      color: #4D3118;
-    }
-    .income-client-card.pink {
-      background: #FCD6CF;
-      color: #4D201A;
-    }
-    .income-client-card.blue {
-      background: #D3E7F8;
-      color: #16324F;
-    }
+    .income-client-card.mint { background: #C8E2D2; color: #1E3F30; }
+    .income-client-card.apricot { background: #FCE8D5; color: #4D3118; }
+    .income-client-card.pink { background: #FCD6CF; color: #4D201A; }
+    .income-client-card.blue { background: #D3E7F8; color: #16324F; }
 
-    /* ВЕРХНЯЯ ЧАСТЬ КАРТОЧКИ: АВАТАР + ИМЯ + СУММА */
+    /* ВЕРХ КАРТОЧКИ: АВАТАР + ИМЯ + СУММА ПРОЕКТА */
     .client-card-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
     .client-info-left {
       display: flex;
       align-items: center;
       gap: 10px;
+      min-width: 0;
     }
     .client-avatar {
-      width: 38px;
-      height: 38px;
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 13px;
       font-weight: 800;
-      box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.9);
       flex-shrink: 0;
+      border: none;
     }
-    .mint .client-avatar { background: #E1F2E8; color: #1E3F30; }
-    .apricot .client-avatar { background: #FFF2E5; color: #533418; }
-    .pink .client-avatar { background: #FFF0EE; color: #5A231C; }
-    .blue .client-avatar { background: #E5F2FD; color: #16324F; }
 
     .client-name-box {
       display: flex;
       flex-direction: column;
+      min-width: 0;
     }
     .client-name {
       font-size: 14px;
       font-weight: 800;
       line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .client-phone {
       font-size: 11px;
       font-weight: 600;
       opacity: 0.75;
       margin-top: 2px;
+      white-space: nowrap;
     }
 
+    /* НАЛЕПОЧКА «СУММА ПРОЕКТА» — В ОДНУ СТРОЧКУ С 3D-БУМАЖНЫМ ЭФФЕКТОМ */
     .project-sum-pill {
-      background: rgba(255, 255, 255, 0.55);
-      backdrop-filter: blur(4px);
       border-radius: 12px;
       padding: 6px 10px;
-      text-align: right;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      display: inline-flex;
+      align-items: baseline;
+      gap: 5px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      border: none;
     }
     .project-sum-label {
-      font-size: 9px;
+      font-size: 10px;
       font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
-      opacity: 0.7;
+      opacity: 0.75;
+      letter-spacing: 0.2px;
     }
     .project-sum-val {
       font-size: 13px;
       font-weight: 900;
-      white-space: nowrap;
     }
 
-    /* БУМАЖНЫЙ ВКЛАДЫШ С ПЛАТЕЖАМИ */
-    .payments-paper-slip {
-      border-radius: 16px;
-      padding: 10px 12px;
-      border: none;
+    /* БЛОК ПЛАТЕЖЕЙ НА КАРТОЧКЕ */
+    .client-payments-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
-    /* ПЛАШКИ ПЛАТЕЖЕЙ И СУММ — В ЦВЕТ КАРТОЧКИ, ТОЛЬКО СВЕТЛЕЕ (НЕ БЕЛЫЕ!) */
-    .mint .payments-paper-slip,
-    .mint .desk-payments-slip {
-      background: #F0F8F3;
-      box-shadow: 0 4px 14px rgba(45, 88, 71, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.95);
-    }
-    .mint .project-sum-pill,
-    .mint .desk-project-badge {
-      background: #E1F2E8;
-    }
-    .mint .desk-payment-item {
-      background: #E3F2E9;
-    }
-
-    .apricot .payments-paper-slip,
-    .apricot .desk-payments-slip {
-      background: #FFF7EE;
-      box-shadow: 0 4px 14px rgba(150, 110, 80, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.95);
-    }
-    .apricot .project-sum-pill,
-    .apricot .desk-project-badge {
-      background: #FCEBDC;
-    }
-    .apricot .desk-payment-item {
-      background: #FDF0E2;
-    }
-
-    .pink .payments-paper-slip,
-    .pink .desk-payments-slip {
-      background: #FFF3F0;
-      box-shadow: 0 4px 14px rgba(130, 65, 55, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.95);
-    }
-    .pink .project-sum-pill,
-    .pink .desk-project-badge {
-      background: #FCE4E0;
-    }
-    .pink .desk-payment-item {
-      background: #FDE8E4;
-    }
-
-    .blue .payments-paper-slip,
-    .blue .desk-payments-slip {
-      background: #F1F7FD;
-      box-shadow: 0 4px 14px rgba(60, 100, 140, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.95);
-    }
-    .blue .project-sum-pill,
-    .blue .desk-project-badge {
-      background: #E3EFFB;
-    }
-    .blue .desk-payment-item {
-      background: #E5F0FA;
-    }
-
-    .payments-slip-header {
+    .payments-section-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 6px;
-      cursor: pointer;
+      padding: 0 2px;
     }
-    .payments-slip-title {
+    .payments-section-title {
       font-size: 12px;
       font-weight: 800;
-      color: #383025;
-    }
-    .payments-slip-arrow {
-      color: #8C784C;
-      display: flex;
-      align-items: center;
+      letter-spacing: 0.2px;
     }
 
-    .payment-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 5px 0;
-      font-size: 12px;
-      border-bottom: 1px dashed rgba(60, 50, 40, 0.12);
-    }
-    .payment-row:last-child {
-      border-bottom: none;
-      padding-bottom: 0;
-    }
-    .payment-date {
-      color: #8A7B6D;
-      font-weight: 600;
-      font-size: 11px;
-    }
-    .payment-sum {
-      font-weight: 800;
-      color: #2F261D;
-      margin-left: auto;
-      margin-right: 8px;
-    }
-    .payment-dots-btn {
-      background: transparent;
+    /* КРУГЛАЯ 3D-КНОПОЧКА СО СТРЕЛОЧКОЙ */
+    .paper-arrow-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
       border: none;
-      color: #A39686;
-      width: 22px;
-      height: 22px;
-      border-radius: 6px;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
+      transition: transform 0.12s ease;
+      flex-shrink: 0;
     }
-    .payment-dots-btn:hover {
-      background: rgba(0, 0, 0, 0.05);
-      color: #383025;
+    .paper-arrow-btn:active {
+      transform: translateY(1.5px);
     }
 
-    /* ---------------- ДЕСКТОП (ОКНО ПРИЛОЖЕНИЯ) ---------------- */
+    /* СПИСОК ОТДЕЛЬНЫХ 3D-БУМАЖЕЧЕК ПЛАТЕЖЕЙ */
+    .payments-paper-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    /* КАЖДЫЙ ПЛАТЁЖ — ОТДЕЛЬНАЯ САМОСТОЯТЕЛЬНАЯ БУМАЖЕЧКА */
+    .payment-paper-slip {
+      border-radius: 14px;
+      padding: 9px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: none;
+      transition: transform 0.12s ease;
+    }
+    .payment-paper-slip:hover {
+      transform: translateY(-1px);
+    }
+    .payment-date {
+      font-size: 11px;
+      font-weight: 700;
+      opacity: 0.75;
+    }
+    .payment-right-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .payment-sum {
+      font-size: 13px;
+      font-weight: 900;
+    }
+    .payment-dots-btn {
+      background: rgba(0, 0, 0, 0.04);
+      border: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: inherit;
+      opacity: 0.7;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+      transition: all 0.1s ease;
+    }
+    .payment-dots-btn:hover {
+      opacity: 1;
+      background: rgba(0, 0, 0, 0.08);
+    }
+    .payment-dots-btn:active {
+      transform: scale(0.92);
+    }
+
+    /* ======================================================== */
+    /* ТОЧНЫЕ 3D-БУМАЖНЫЕ ЦВЕТА И ТЕНИ ДЛЯ КАЖДОЙ ПЛАШКИ        */
+    /* ======================================================== */
+
+    /* 1. МЯТНАЯ КАРТОЧКА (АННА СМИРНОВА) */
+    .mint .client-avatar {
+      background: #BCE0CB;
+      color: #1E3F30;
+      box-shadow: 2px 3.5px 8px rgba(45, 88, 71, 0.22), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    }
+    .mint .project-sum-pill {
+      background: #F0F8F3;
+      color: #1E3F30;
+      box-shadow: 2px 4px 10px rgba(45, 88, 71, 0.18), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    }
+    .mint .paper-arrow-btn {
+      background: #BCE0CB;
+      color: #1E3F30;
+      box-shadow: 2px 3.5px 7px rgba(45, 88, 71, 0.22), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+    .mint .payment-paper-slip {
+      background: #F0F8F3;
+      color: #1E3F30;
+      box-shadow: 2px 4px 10px -1px rgba(45, 88, 71, 0.18), -1.5px -1.5px 5px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    }
+
+    /* 2. АБРИКОСОВАЯ КАРТОЧКА (ИРИНА КУЗНЕЦОВА) */
+    .apricot .client-avatar {
+      background: #F6D7BC;
+      color: #4D3118;
+      box-shadow: 2px 3.5px 8px rgba(150, 110, 80, 0.22), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    }
+    .apricot .project-sum-pill {
+      background: #FFF7EE;
+      color: #4D3118;
+      box-shadow: 2px 4px 10px rgba(150, 110, 80, 0.18), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    }
+    .apricot .paper-arrow-btn {
+      background: #F6D7BC;
+      color: #4D3118;
+      box-shadow: 2px 3.5px 7px rgba(150, 110, 80, 0.22), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+    .apricot .payment-paper-slip {
+      background: #FFF7EE;
+      color: #4D3118;
+      box-shadow: 2px 4px 10px -1px rgba(150, 110, 80, 0.16), -1.5px -1.5px 5px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    }
+
+    /* 3. РОЗОВАЯ КАРТОЧКА (МАРИЯ ЛЕБЕДЕВА) */
+    .pink .client-avatar {
+      background: #F7C2B9;
+      color: #4D201A;
+      box-shadow: 2px 3.5px 8px rgba(130, 65, 55, 0.22), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    }
+    .pink .project-sum-pill {
+      background: #FFF3F0;
+      color: #4D201A;
+      box-shadow: 2px 4px 10px rgba(130, 65, 55, 0.18), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    }
+    .pink .paper-arrow-btn {
+      background: #F7C2B9;
+      color: #4D201A;
+      box-shadow: 2px 3.5px 7px rgba(130, 65, 55, 0.22), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+    .pink .payment-paper-slip {
+      background: #FFF3F0;
+      color: #4D201A;
+      box-shadow: 2px 4px 10px -1px rgba(130, 65, 55, 0.18), -1.5px -1.5px 5px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    }
+
+    /* 4. ГОЛУБАЯ КАРТОЧКА (ДМИТРИЙ КОВАЛЁВ) */
+    .blue .client-avatar {
+      background: #BFDCF6;
+      color: #16324F;
+      box-shadow: 2px 3.5px 8px rgba(60, 100, 140, 0.22), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    }
+    .blue .project-sum-pill {
+      background: #F1F7FD;
+      color: #16324F;
+      box-shadow: 2px 4px 10px rgba(60, 100, 140, 0.18), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    }
+    .blue .paper-arrow-btn {
+      background: #BFDCF6;
+      color: #16324F;
+      box-shadow: 2px 3.5px 7px rgba(60, 100, 140, 0.22), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+    .blue .payment-paper-slip {
+      background: #F1F7FD;
+      color: #16324F;
+      box-shadow: 2px 4px 10px -1px rgba(60, 100, 140, 0.18), -1.5px -1.5px 5px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    }
+
+
+    /* ======================================================== */
+    /* ---------------- ДЕСКТОП (ОКНО ПРИЛОЖЕНИЯ) -------------- */
+    /* ======================================================== */
     .desktop-window {
       background: #F8EFE4;
       border-radius: 28px;
@@ -431,7 +501,7 @@
       .desktop-window { grid-template-columns: 1fr; }
     }
 
-    /* БОКОВОЕ МЕНЮ НАВИГАЦИИ */
+    /* БОКОВОЕ МЕНЮ */
     .desk-sidebar {
       display: flex;
       flex-direction: column;
@@ -498,14 +568,13 @@
       width: 20px;
     }
 
-    /* ОСНОВНАЯ ОБЛАСТЬ ДЕСКТОПА */
+    /* ОСНОВНОЙ КОНТЕНТ ДЕСКТОПА */
     .desk-main-content {
       display: flex;
       flex-direction: column;
       gap: 18px;
     }
 
-    /* ВЕРХНЯЯ СТРОКА ДЕСКТОПА: ЗАГОЛОВОК + ПОИСК + КНОПКА ДОБАВИТЬ */
     .desk-top-bar {
       display: flex;
       justify-content: space-between;
@@ -534,7 +603,7 @@
       align-items: center;
       gap: 10px;
       width: 280px;
-      box-shadow: 0 3px 10px rgba(150, 125, 100, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      box-shadow: 2px 4px 10px rgba(150, 125, 100, 0.08), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.9);
     }
     .desk-add-btn {
       background: #FCE8D5;
@@ -548,27 +617,27 @@
       align-items: center;
       gap: 8px;
       cursor: pointer;
-      box-shadow: 4px 6px 14px rgba(185, 145, 110, 0.25), -2px -2px 6px rgba(255, 255, 255, 0.9);
+      box-shadow: 2.5px 4px 10px rgba(185, 145, 110, 0.25), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.9);
       transition: transform 0.1s ease;
       white-space: nowrap;
     }
     .desk-add-btn:active {
-      transform: scale(0.97);
+      transform: translateY(1.5px);
     }
 
-    /* ШИРОКИЕ ГОРИЗОНТАЛЬНЫЕ КАРТОЧКИ КЛИЕНТОВ (ДЕСКТОП) */
+    /* ШИРОКИЕ БЕНТО-КАРТОЧКИ КЛИЕНТОВ (ДЕСКТОП) */
     .desk-income-list {
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 16px;
     }
     .desk-client-bento-card {
-      border-radius: 22px;
-      padding: 16px 20px;
+      border-radius: 24px;
+      padding: 18px 22px;
       display: grid;
       grid-template-columns: 280px 1fr;
-      gap: 20px;
-      align-items: center;
+      gap: 24px;
+      align-items: start;
       box-shadow: 8px 14px 28px -4px rgba(150, 125, 100, 0.22), -4px -4px 14px rgba(255, 255, 255, 0.85), inset 0 1.5px 0 rgba(255, 255, 255, 0.85);
       border: none;
       transition: transform 0.15s ease;
@@ -576,7 +645,7 @@
     .desk-client-bento-card:hover {
       transform: translateY(-1.5px);
     }
-    @media (max-width: 760px) {
+    @media (max-width: 820px) {
       .desk-client-bento-card { grid-template-columns: 1fr; }
     }
 
@@ -585,11 +654,11 @@
     .desk-client-bento-card.pink { background: #FCD6CF; color: #4D201A; }
     .desk-client-bento-card.blue { background: #D3E7F8; color: #16324F; }
 
-    /* ЛЕВАЯ ЧАСТЬ ДЕСКТОПНОЙ КАРТОЧКИ: ИНФО О КЛИЕНТЕ */
+    /* ЛЕВАЯ ЧАСТЬ ДЕСКТОПА: ПРОФИЛЬ */
     .desk-card-profile {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 14px;
     }
     .desk-profile-header {
       display: flex;
@@ -605,14 +674,8 @@
       justify-content: center;
       font-size: 15px;
       font-weight: 800;
-      box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.9);
       flex-shrink: 0;
     }
-    .mint .desk-avatar-big { background: #E1F2E8; color: #1E3F30; }
-    .apricot .desk-avatar-big { background: #FFF2E5; color: #533418; }
-    .pink .desk-avatar-big { background: #FFF0EE; color: #5A231C; }
-    .blue .desk-avatar-big { background: #E5F2FD; color: #16324F; }
-
     .desk-profile-name {
       font-size: 16px;
       font-weight: 800;
@@ -625,73 +688,31 @@
       margin-top: 3px;
     }
 
-    .desk-project-badge {
-      background: rgba(255, 255, 255, 0.55);
-      backdrop-filter: blur(4px);
-      border-radius: 12px;
-      padding: 8px 12px;
+    /* ПРАВАЯ ЧАСТЬ ДЕСКТОПА: ПЛАТЕЖИ В ВИДЕ 3D-БУМАЖЕЧЕК */
+    .desk-payments-block {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.9);
-    }
-    .desk-badge-label {
-      font-size: 11px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
-      opacity: 0.75;
-    }
-    .desk-badge-sum {
-      font-size: 15px;
-      font-weight: 900;
-    }
-
-    /* ПРАВАЯ ЧАСТЬ ДЕСКТОПНОЙ КАРТОЧКИ: БУМАЖНЫЙ ВКЛАДЫШ С ПЛАТЕЖАМИ */
-    .desk-payments-slip {
-      border-radius: 18px;
-      padding: 12px 16px;
-      border: none;
-    }
-    .desk-slip-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-      padding-bottom: 6px;
-      border-bottom: 1px dashed rgba(60, 50, 40, 0.12);
-    }
-    .desk-slip-title {
-      font-size: 13px;
-      font-weight: 800;
-      color: #383025;
-    }
-
-    .desk-payment-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      flex-direction: column;
       gap: 10px;
     }
-    .desk-payment-item {
+    .desk-payments-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 6px 10px;
-      background: #FAF7F2;
-      border-radius: 10px;
+      padding: 0 2px;
     }
-    .desk-item-date {
-      font-size: 12px;
-      color: #8A7B6D;
-      font-weight: 600;
-    }
-    .desk-item-sum {
+    .desk-payments-title {
       font-size: 13px;
       font-weight: 800;
-      color: #2F261D;
+      letter-spacing: 0.2px;
     }
 
-    /* ИНФО-ПОДВАЛ */
+    .desk-payments-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 10px;
+    }
+
+    /* ПОДВАЛ */
     .info-footer {
       margin-top: 28px;
       text-align: center;
@@ -723,15 +744,17 @@
 
     <!-- ЗАГОЛОВОК -->
     <div class="top-header">
-      <span class="badge-status">ЭКРАН 2 • ИНТЕРАКТИВНЫЙ МАКЕТ</span>
+      <span class="badge-status">ЭКРАН 2 • ТАКТИЛЬНЫЙ МАКЕТ «3D-БУМАЖЕЧКИ»</span>
       <h1 class="screen-title">Раздел «Доходы»</h1>
-      <p class="screen-desc">Карточки клиентов с проектами, история оплат на мягких бумажечках и чистый скандинавский шрифт Manrope</p>
+      <p class="screen-desc">Каждый платёж и сумма — отдельная выпуклая бумажечка со своей тенью. Без лишних серых ползунков.</p>
     </div>
 
-    <!-- ОСНОВНАЯ СЕТКА: ТЕЛЕФОН + КОМПЬЮТЕР -->
+    <!-- СЕТКА: ТЕЛЕФОН + КОМПЬЮТЕР -->
     <div class="duo-grid">
       
-      <!-- ================= 1. ТЕЛЕФОН (IPHONE) ================= -->
+      <!-- ======================================================== -->
+      <!-- ================= 1. ТЕЛЕФОН (IPHONE) ================== -->
+      <!-- ======================================================== -->
       <div class="iphone-box">
         <div class="iphone-screen">
           <div class="iphone-island"></div>
@@ -744,7 +767,7 @@
             </div>
           </div>
 
-          <!-- Шапка: Доходы + плюсик -->
+          <!-- Шапка: Доходы + круглая кнопочка с плюсиком -->
           <div class="phone-income-header">
             <div class="phone-income-title">Доходы</div>
             <button class="phone-add-btn" title="Добавить клиента или платёж">
@@ -758,10 +781,10 @@
             <input type="text" class="search-input" placeholder="Поиск клиента...">
           </div>
 
-          <!-- Список карточек клиентов -->
+          <!-- Список карточек клиентов (чистый скролл пальцем без серого ползунка) -->
           <div class="income-cards-list">
 
-            <!-- 1. Анна Смирнова (Мята) -->
+            <!-- 1. Анна Смирнова (Нежная мята) -->
             <div class="income-client-card mint">
               <div class="client-card-top">
                 <div class="client-info-left">
@@ -771,38 +794,47 @@
                     <span class="client-phone">+7 916 123-45-67</span>
                   </div>
                 </div>
+                <!-- Отдельная бумажечка-налепочка «Сумма проекта» в одну строчку -->
                 <div class="project-sum-pill">
-                  <div class="project-sum-label">Сумма проекта</div>
-                  <div class="project-sum-val">120 000 ₽</div>
+                  <span class="project-sum-label">Проект:</span>
+                  <span class="project-sum-val">120 000 ₽</span>
                 </div>
               </div>
 
-              <!-- Бумажный вкладыш: Платежи -->
-              <div class="payments-paper-slip">
-                <div class="payments-slip-header">
-                  <span class="payments-slip-title">Платежи (2)</span>
-                  <span class="payments-slip-arrow">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                  </span>
-                </div>
-                <div class="payment-row">
-                  <span class="payment-date">12.05.2024</span>
-                  <span class="payment-sum">60 000 ₽</span>
-                  <button class="payment-dots-btn">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+              <!-- Блок платежей с отдельными бумажечками -->
+              <div class="client-payments-section">
+                <div class="payments-section-header">
+                  <span class="payments-section-title">Платежи (2)</span>
+                  <button class="paper-arrow-btn" title="Развернуть">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                   </button>
                 </div>
-                <div class="payment-row">
-                  <span class="payment-date">25.05.2024</span>
-                  <span class="payment-sum">40 000 ₽</span>
-                  <button class="payment-dots-btn">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
-                  </button>
+                <div class="payments-paper-list">
+                  <!-- Платёж 1: отдельная 3D-бумажечка -->
+                  <div class="payment-paper-slip">
+                    <span class="payment-date">12.05.2024</span>
+                    <div class="payment-right-group">
+                      <span class="payment-sum">60 000 ₽</span>
+                      <button class="payment-dots-btn" title="Действия">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+                      </button>
+                    </div>
+                  </div>
+                  <!-- Платёж 2: отдельная 3D-бумажечка -->
+                  <div class="payment-paper-slip">
+                    <span class="payment-date">25.05.2024</span>
+                    <div class="payment-right-group">
+                      <span class="payment-sum">40 000 ₽</span>
+                      <button class="payment-dots-btn" title="Действия">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <!-- 2. Ирина Кузнецова (Абрикос) -->
+            <!-- 2. Ирина Кузнецова (Тёплый абрикос) -->
             <div class="income-client-card apricot">
               <div class="client-card-top">
                 <div class="client-info-left">
@@ -813,38 +845,45 @@
                   </div>
                 </div>
                 <div class="project-sum-pill">
-                  <div class="project-sum-label">Сумма проекта</div>
-                  <div class="project-sum-val">85 000 ₽</div>
+                  <span class="project-sum-label">Проект:</span>
+                  <span class="project-sum-val">85 000 ₽</span>
                 </div>
               </div>
 
-              <!-- Бумажный вкладыш: Платежи -->
-              <div class="payments-paper-slip">
-                <div class="payments-slip-header">
-                  <span class="payments-slip-title">Платежи (3)</span>
-                  <span class="payments-slip-arrow">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                  </span>
+              <div class="client-payments-section">
+                <div class="payments-section-header">
+                  <span class="payments-section-title">Платежи (3)</span>
+                  <button class="paper-arrow-btn" title="Развернуть">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                  </button>
                 </div>
-                <div class="payment-row">
-                  <span class="payment-date">10.04.2024</span>
-                  <span class="payment-sum">30 000 ₽</span>
-                  <button class="payment-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
-                </div>
-                <div class="payment-row">
-                  <span class="payment-date">28.04.2024</span>
-                  <span class="payment-sum">30 000 ₽</span>
-                  <button class="payment-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
-                </div>
-                <div class="payment-row">
-                  <span class="payment-date">15.05.2024</span>
-                  <span class="payment-sum">25 000 ₽</span>
-                  <button class="payment-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                <div class="payments-paper-list">
+                  <div class="payment-paper-slip">
+                    <span class="payment-date">10.04.2024</span>
+                    <div class="payment-right-group">
+                      <span class="payment-sum">30 000 ₽</span>
+                      <button class="payment-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                    </div>
+                  </div>
+                  <div class="payment-paper-slip">
+                    <span class="payment-date">28.04.2024</span>
+                    <div class="payment-right-group">
+                      <span class="payment-sum">30 000 ₽</span>
+                      <button class="payment-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                    </div>
+                  </div>
+                  <div class="payment-paper-slip">
+                    <span class="payment-date">15.05.2024</span>
+                    <div class="payment-right-group">
+                      <span class="payment-sum">25 000 ₽</span>
+                      <button class="payment-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <!-- 3. Мария Лебедева (Розовый) -->
+            <!-- 3. Мария Лебедева (Пудровая роза) -->
             <div class="income-client-card pink">
               <div class="client-card-top">
                 <div class="client-info-left">
@@ -855,28 +894,31 @@
                   </div>
                 </div>
                 <div class="project-sum-pill">
-                  <div class="project-sum-label">Сумма проекта</div>
-                  <div class="project-sum-val">50 000 ₽</div>
+                  <span class="project-sum-label">Проект:</span>
+                  <span class="project-sum-val">50 000 ₽</span>
                 </div>
               </div>
 
-              <!-- Бумажный вкладыш: Платежи -->
-              <div class="payments-paper-slip">
-                <div class="payments-slip-header">
-                  <span class="payments-slip-title">Платежи (1)</span>
-                  <span class="payments-slip-arrow">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                  </span>
+              <div class="client-payments-section">
+                <div class="payments-section-header">
+                  <span class="payments-section-title">Платежи (1)</span>
+                  <button class="paper-arrow-btn" title="Развернуть">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                  </button>
                 </div>
-                <div class="payment-row">
-                  <span class="payment-date">05.05.2024</span>
-                  <span class="payment-sum">50 000 ₽</span>
-                  <button class="payment-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                <div class="payments-paper-list">
+                  <div class="payment-paper-slip">
+                    <span class="payment-date">05.05.2024</span>
+                    <div class="payment-right-group">
+                      <span class="payment-sum">50 000 ₽</span>
+                      <button class="payment-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <!-- 4. Дмитрий Ковалёв (Голубой) -->
+            <!-- 4. Дмитрий Ковалёв (Небесно-голубой) -->
             <div class="income-client-card blue">
               <div class="client-card-top">
                 <div class="client-info-left">
@@ -887,28 +929,33 @@
                   </div>
                 </div>
                 <div class="project-sum-pill">
-                  <div class="project-sum-label">Сумма проекта</div>
-                  <div class="project-sum-val">200 000 ₽</div>
+                  <span class="project-sum-label">Проект:</span>
+                  <span class="project-sum-val">200 000 ₽</span>
                 </div>
               </div>
 
-              <!-- Бумажный вкладыш: Платежи -->
-              <div class="payments-paper-slip">
-                <div class="payments-slip-header">
-                  <span class="payments-slip-title">Платежи (2)</span>
-                  <span class="payments-slip-arrow">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                  </span>
+              <div class="client-payments-section">
+                <div class="payments-section-header">
+                  <span class="payments-section-title">Платежи (2)</span>
+                  <button class="paper-arrow-btn" title="Развернуть">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                  </button>
                 </div>
-                <div class="payment-row">
-                  <span class="payment-date">20.03.2024</span>
-                  <span class="payment-sum">100 000 ₽</span>
-                  <button class="payment-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
-                </div>
-                <div class="payment-row">
-                  <span class="payment-date">18.04.2024</span>
-                  <span class="payment-sum">100 000 ₽</span>
-                  <button class="payment-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                <div class="payments-paper-list">
+                  <div class="payment-paper-slip">
+                    <span class="payment-date">20.03.2024</span>
+                    <div class="payment-right-group">
+                      <span class="payment-sum">100 000 ₽</span>
+                      <button class="payment-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                    </div>
+                  </div>
+                  <div class="payment-paper-slip">
+                    <span class="payment-date">18.04.2024</span>
+                    <div class="payment-right-group">
+                      <span class="payment-sum">100 000 ₽</span>
+                      <button class="payment-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -917,10 +964,12 @@
         </div>
       </div>
 
-      <!-- ================= 2. ДЕСКТОП (ОКНО ПРИЛОЖЕНИЯ) ================= -->
+      <!-- ======================================================== -->
+      <!-- ================= 2. ДЕСКТОП (КОМПЬЮТЕР) =============== -->
+      <!-- ======================================================== -->
       <div class="desktop-window">
         
-        <!-- ЛЕВАЯ НАВИГАЦИОННАЯ ПАНЕЛЬ -->
+        <!-- ЛЕВАЯ НАВИГАЦИЯ -->
         <div class="desk-sidebar">
           <div class="sidebar-user-chip">
             <div class="sidebar-avatar">
@@ -963,7 +1012,6 @@
         <!-- ОСНОВНОЙ КОНТЕНТ ДЕСКТОПА -->
         <div class="desk-main-content">
           
-          <!-- ВЕРХНЯЯ СТРОКА: ДОХОДЫ + ПОИСК + ДОБАВИТЬ КЛИЕНТА -->
           <div class="desk-top-bar">
             <div class="desk-page-title">Доходы</div>
             <div class="desk-controls">
@@ -985,36 +1033,40 @@
             <div class="desk-client-bento-card mint">
               <div class="desk-card-profile">
                 <div class="desk-profile-header">
-                  <div class="desk-avatar-big">АС</div>
+                  <div class="client-avatar desk-avatar-big">АС</div>
                   <div>
                     <div class="desk-profile-name">Анна Смирнова</div>
                     <div class="desk-profile-phone">+7 916 123-45-67</div>
                   </div>
                 </div>
-                <div class="desk-project-badge">
-                  <span class="desk-badge-label">Сумма проекта</span>
-                  <span class="desk-badge-sum">120 000 ₽</span>
+                <div class="project-sum-pill" style="width: fit-content;">
+                  <span class="project-sum-label">Сумма проекта:</span>
+                  <span class="project-sum-val">120 000 ₽</span>
                 </div>
               </div>
 
-              <!-- Вкладыш с платежами справа -->
-              <div class="desk-payments-slip">
-                <div class="desk-slip-header">
-                  <span class="desk-slip-title">Платежи по проекту (2)</span>
-                  <span class="payments-slip-arrow">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                  </span>
+              <!-- Правая часть: список платежей как отдельные 3D-бумажечки -->
+              <div class="desk-payments-block">
+                <div class="desk-payments-header">
+                  <span class="desk-payments-title">Платежи по проекту (2)</span>
+                  <button class="paper-arrow-btn" title="Развернуть">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                  </button>
                 </div>
-                <div class="desk-payment-grid">
-                  <div class="desk-payment-item">
-                    <span class="desk-item-date">12.05.2024</span>
-                    <span class="desk-item-sum">60 000 ₽</span>
-                    <button class="payment-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                <div class="desk-payments-grid">
+                  <div class="payment-paper-slip">
+                    <span class="payment-date">12.05.2024</span>
+                    <div class="payment-right-group">
+                      <span class="payment-sum">60 000 ₽</span>
+                      <button class="payment-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                    </div>
                   </div>
-                  <div class="desk-payment-item">
-                    <span class="desk-item-date">25.05.2024</span>
-                    <span class="desk-item-sum">40 000 ₽</span>
-                    <button class="payment-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                  <div class="payment-paper-slip">
+                    <span class="payment-date">25.05.2024</span>
+                    <div class="payment-right-group">
+                      <span class="payment-sum">40 000 ₽</span>
+                      <button class="payment-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1024,38 +1076,44 @@
             <div class="desk-client-bento-card apricot">
               <div class="desk-card-profile">
                 <div class="desk-profile-header">
-                  <div class="desk-avatar-big">ИК</div>
+                  <div class="client-avatar desk-avatar-big">ИК</div>
                   <div>
                     <div class="desk-profile-name">Ирина Кузнецова</div>
                     <div class="desk-profile-phone">+7 905 987-65-43</div>
                   </div>
                 </div>
-                <div class="desk-project-badge">
-                  <span class="desk-badge-label">Сумма проекта</span>
-                  <span class="desk-badge-sum">85 000 ₽</span>
+                <div class="project-sum-pill" style="width: fit-content;">
+                  <span class="project-sum-label">Сумма проекта:</span>
+                  <span class="project-sum-val">85 000 ₽</span>
                 </div>
               </div>
 
-              <div class="desk-payments-slip">
-                <div class="desk-slip-header">
-                  <span class="desk-slip-title">Платежи по проекту (3)</span>
-                  <span class="payments-slip-arrow"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
+              <div class="desk-payments-block">
+                <div class="desk-payments-header">
+                  <span class="desk-payments-title">Платежи по проекту (3)</span>
+                  <button class="paper-arrow-btn" title="Развернуть"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></button>
                 </div>
-                <div class="desk-payment-grid">
-                  <div class="desk-payment-item">
-                    <span class="desk-item-date">10.04.2024</span>
-                    <span class="desk-item-sum">30 000 ₽</span>
-                    <button class="payment-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                <div class="desk-payments-grid">
+                  <div class="payment-paper-slip">
+                    <span class="payment-date">10.04.2024</span>
+                    <div class="payment-right-group">
+                      <span class="payment-sum">30 000 ₽</span>
+                      <button class="payment-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                    </div>
                   </div>
-                  <div class="desk-payment-item">
-                    <span class="desk-item-date">28.04.2024</span>
-                    <span class="desk-item-sum">30 000 ₽</span>
-                    <button class="payment-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                  <div class="payment-paper-slip">
+                    <span class="payment-date">28.04.2024</span>
+                    <div class="payment-right-group">
+                      <span class="payment-sum">30 000 ₽</span>
+                      <button class="payment-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                    </div>
                   </div>
-                  <div class="desk-payment-item">
-                    <span class="desk-item-date">15.05.2024</span>
-                    <span class="desk-item-sum">25 000 ₽</span>
-                    <button class="payment-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                  <div class="payment-paper-slip">
+                    <span class="payment-date">15.05.2024</span>
+                    <div class="payment-right-group">
+                      <span class="payment-sum">25 000 ₽</span>
+                      <button class="payment-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1065,28 +1123,30 @@
             <div class="desk-client-bento-card pink">
               <div class="desk-card-profile">
                 <div class="desk-profile-header">
-                  <div class="desk-avatar-big">МЛ</div>
+                  <div class="client-avatar desk-avatar-big">МЛ</div>
                   <div>
                     <div class="desk-profile-name">Мария Лебедева</div>
                     <div class="desk-profile-phone">+7 926 555-11-22</div>
                   </div>
                 </div>
-                <div class="desk-project-badge">
-                  <span class="desk-badge-label">Сумма проекта</span>
-                  <span class="desk-badge-sum">50 000 ₽</span>
+                <div class="project-sum-pill" style="width: fit-content;">
+                  <span class="project-sum-label">Сумма проекта:</span>
+                  <span class="project-sum-val">50 000 ₽</span>
                 </div>
               </div>
 
-              <div class="desk-payments-slip">
-                <div class="desk-slip-header">
-                  <span class="desk-slip-title">Платежи по проекту (1)</span>
-                  <span class="payments-slip-arrow"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
+              <div class="desk-payments-block">
+                <div class="desk-payments-header">
+                  <span class="desk-payments-title">Платежи по проекту (1)</span>
+                  <button class="paper-arrow-btn" title="Развернуть"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></button>
                 </div>
-                <div class="desk-payment-grid">
-                  <div class="desk-payment-item">
-                    <span class="desk-item-date">05.05.2024</span>
-                    <span class="desk-item-sum">50 000 ₽</span>
-                    <button class="payment-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                <div class="desk-payments-grid">
+                  <div class="payment-paper-slip">
+                    <span class="payment-date">05.05.2024</span>
+                    <div class="payment-right-group">
+                      <span class="payment-sum">50 000 ₽</span>
+                      <button class="payment-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1096,33 +1156,37 @@
             <div class="desk-client-bento-card blue">
               <div class="desk-card-profile">
                 <div class="desk-profile-header">
-                  <div class="desk-avatar-big">ДК</div>
+                  <div class="client-avatar desk-avatar-big">ДК</div>
                   <div>
                     <div class="desk-profile-name">Дмитрий Ковалёв</div>
                     <div class="desk-profile-phone">+7 909 333-44-55</div>
                   </div>
                 </div>
-                <div class="desk-project-badge">
-                  <span class="desk-badge-label">Сумма проекта</span>
-                  <span class="desk-badge-sum">200 000 ₽</span>
+                <div class="project-sum-pill" style="width: fit-content;">
+                  <span class="project-sum-label">Сумма проекта:</span>
+                  <span class="project-sum-val">200 000 ₽</span>
                 </div>
               </div>
 
-              <div class="desk-payments-slip">
-                <div class="desk-slip-header">
-                  <span class="desk-slip-title">Платежи по проекту (2)</span>
-                  <span class="payments-slip-arrow"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
+              <div class="desk-payments-block">
+                <div class="desk-payments-header">
+                  <span class="desk-payments-title">Платежи по проекту (2)</span>
+                  <button class="paper-arrow-btn" title="Развернуть"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></button>
                 </div>
-                <div class="desk-payment-grid">
-                  <div class="desk-payment-item">
-                    <span class="desk-item-date">20.03.2024</span>
-                    <span class="desk-item-sum">100 000 ₽</span>
-                    <button class="payment-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                <div class="desk-payments-grid">
+                  <div class="payment-paper-slip">
+                    <span class="payment-date">20.03.2024</span>
+                    <div class="payment-right-group">
+                      <span class="payment-sum">100 000 ₽</span>
+                      <button class="payment-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                    </div>
                   </div>
-                  <div class="desk-payment-item">
-                    <span class="desk-item-date">18.04.2024</span>
-                    <span class="desk-item-sum">100 000 ₽</span>
-                    <button class="payment-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                  <div class="payment-paper-slip">
+                    <span class="payment-date">18.04.2024</span>
+                    <div class="payment-right-group">
+                      <span class="payment-sum">100 000 ₽</span>
+                      <button class="payment-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                    </div>
                   </div>
                 </div>
               </div>
