@@ -53,6 +53,18 @@
     window.onAuthSuccess = function () {
       loadLiveData();
     };
+
+    // 7. Клик по плашке расхода открывает окно изменения суммы и тарифа
+    document.addEventListener('click', function (e) {
+      var slip = e.target.closest('.expense-paper-slip');
+      if (!slip) return;
+      if (e.target.closest('.status-pill')) return; // Клик по статусу обрабатывается отдельно
+      var nameEl = slip.querySelector('.expense-item-name');
+      var title = nameEl ? nameEl.textContent.trim() : '';
+      if (typeof window.openEditExpenseModal === 'function') {
+        window.openEditExpenseModal(title, slip);
+      }
+    });
   });
 
   // Загрузка живых данных и обновление текущего экрана
@@ -498,7 +510,8 @@
         '        </div>',
         '      </div>',
         '    </div>',
-        '    <div style="display: flex; gap: 12px; justify-content: stretch;">',
+        '    <div style="display: flex; gap: 10px; align-items: center; justify-content: stretch;">',
+        '      <button type="button" id="exp-modal-archive" style="display: none; background: #FCD6CF; color: #58241B; border: none; outline: none; border-radius: 14px; padding: 12px 14px; font-size: 13px; font-weight: 800; cursor: pointer; box-shadow: 2px 3px 6px rgba(180, 100, 90, 0.2); transition: all 0.15s ease; white-space: nowrap;">В архив</button>',
         '      <button type="button" id="exp-modal-cancel" style="flex: 1; min-height: 44px; background: #FDF1CC; color: #5B481D; border: none; outline: none; border-radius: 14px; padding: 12px 16px; font-size: 14px; font-weight: 800; cursor: pointer; box-shadow: 2px 3px 6px rgba(160, 125, 85, 0.2); transition: all 0.15s ease; display: inline-flex; align-items: center; justify-content: center; text-align: center;">Отмена</button>',
         '      <button type="submit" id="exp-modal-submit" style="flex: 1; min-height: 44px; background: #C8E2D2; color: #1E3F30; border: none; outline: none; border-radius: 14px; padding: 12px 16px; font-size: 14px; font-weight: 900; cursor: pointer; box-shadow: 2px 3px 7px rgba(70, 130, 95, 0.25); transition: all 0.15s ease; display: inline-flex; align-items: center; justify-content: center; text-align: center;">Сохранить</button>',
         '    </div>',
@@ -510,28 +523,135 @@
       var selectedExpenseColor = '#D3E7F8';
       var checkSvg = '<svg class="exp-check-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#3D2B1F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
       var colorBtns = expModal.querySelectorAll('.exp-color-opt');
+
+      function selectColorDot(color) {
+        selectedExpenseColor = color || '#D3E7F8';
+        for (var i = 0; i < colorBtns.length; i++) {
+          var btnColor = colorBtns[i].getAttribute('data-color');
+          if (btnColor && btnColor.toLowerCase() === selectedExpenseColor.toLowerCase()) {
+            colorBtns[i].classList.add('active');
+            colorBtns[i].innerHTML = checkSvg;
+            colorBtns[i].style.boxShadow = '2px 4px 8px rgba(120, 90, 60, 0.28)';
+            colorBtns[i].style.transform = 'scale(1.12)';
+          } else {
+            colorBtns[i].classList.remove('active');
+            colorBtns[i].innerHTML = '';
+            colorBtns[i].style.boxShadow = '1px 2px 4px rgba(120, 90, 60, 0.15)';
+            colorBtns[i].style.transform = 'scale(1)';
+          }
+        }
+      }
+
       for (var ci = 0; ci < colorBtns.length; ci++) {
         colorBtns[ci].addEventListener('click', function () {
-          for (var cj = 0; cj < colorBtns.length; cj++) {
-            colorBtns[cj].classList.remove('active');
-            colorBtns[cj].innerHTML = '';
-            colorBtns[cj].style.boxShadow = '1px 2px 4px rgba(120, 90, 60, 0.15)';
-            colorBtns[cj].style.transform = 'scale(1)';
-          }
-          this.classList.add('active');
-          this.innerHTML = checkSvg;
-          this.style.boxShadow = '2px 4px 8px rgba(120, 90, 60, 0.28)';
-          this.style.transform = 'scale(1.12)';
-          selectedExpenseColor = this.getAttribute('data-color');
+          selectColorDot(this.getAttribute('data-color'));
         });
       }
 
-      var closeExpModal = function () { expModal.classList.remove('active'); };
+      var currentEditingSlip = null;
+      var currentEditingPayment = null;
+
+      window.openAddExpenseModal = function () {
+        currentEditingSlip = null;
+        currentEditingPayment = null;
+        var modalTitle = expModal.querySelector('.mytables-paper-modal > div:first-child span:first-child');
+        if (modalTitle) modalTitle.textContent = '+ Новый расход';
+        document.getElementById('exp-in-title').value = '';
+        document.getElementById('exp-in-day').value = new Date().getDate();
+        document.getElementById('exp-in-amount').value = '';
+        document.getElementById('exp-in-url').value = '';
+        var archBtn = document.getElementById('exp-modal-archive');
+        if (archBtn) archBtn.style.display = 'none';
+        selectColorDot('#D3E7F8');
+        expModal.classList.add('active');
+        document.getElementById('exp-in-title').focus();
+      };
+
+      window.openEditExpenseModal = function (title, slipEl) {
+        currentEditingSlip = slipEl;
+        var p = null;
+        if (window.MyTablesCalendar && window.MyTablesCalendar.state && window.MyTablesCalendar.state.payments) {
+          p = window.MyTablesCalendar.state.payments.find(function (item) {
+            return item.title && (item.title.toLowerCase() === title.toLowerCase() || item.title.toLowerCase().indexOf(title.toLowerCase()) !== -1 || title.toLowerCase().indexOf(item.title.toLowerCase()) !== -1);
+          });
+        }
+        currentEditingPayment = p;
+
+        var name = title;
+        var day = 15;
+        var amount = 1500;
+        var url = '';
+        var color = '#D3E7F8';
+
+        if (p) {
+          name = p.title || title;
+          day = p.dayOfMonth || 15;
+          amount = p.currentRate || p.amount || 1500;
+          url = p.shopUrl || '';
+          color = p.color || '#D3E7F8';
+        } else if (slipEl) {
+          var priceEl = slipEl.querySelector('.expense-item-price');
+          if (priceEl) amount = Number(priceEl.textContent.replace(/[^\d]/g, '')) || 1500;
+          var dateEl = slipEl.querySelector('.expense-item-date');
+          if (dateEl) day = Number(dateEl.textContent.replace(/[^\d]/g, '')) || 15;
+        }
+
+        var modalTitle = expModal.querySelector('.mytables-paper-modal > div:first-child span:first-child');
+        if (modalTitle) modalTitle.textContent = '✎ Изменить платеж';
+
+        document.getElementById('exp-in-title').value = name;
+        document.getElementById('exp-in-day').value = day;
+        document.getElementById('exp-in-amount').value = amount;
+        document.getElementById('exp-in-url').value = url;
+
+        selectColorDot(color);
+
+        var archBtn = document.getElementById('exp-modal-archive');
+        if (archBtn) archBtn.style.display = 'inline-flex';
+
+        expModal.classList.add('active');
+        document.getElementById('exp-in-amount').focus();
+      };
+
+      var closeExpModal = function () {
+        currentEditingSlip = null;
+        currentEditingPayment = null;
+        expModal.classList.remove('active');
+      };
       document.getElementById('exp-modal-close').addEventListener('click', closeExpModal);
       document.getElementById('exp-modal-cancel').addEventListener('click', closeExpModal);
       expModal.addEventListener('click', function (e) {
         if (e.target === expModal) closeExpModal();
       });
+
+      // Кнопка «В архив»
+      var archBtn = document.getElementById('exp-modal-archive');
+      if (archBtn) {
+        archBtn.addEventListener('click', function () {
+          var titleToArchive = (document.getElementById('exp-in-title').value || '').trim();
+          if (!confirm('Отправить платёж «' + titleToArchive + '» в архив? Все прошлые оплаты сохранятся в истории Google Таблиц.')) {
+            return;
+          }
+          var oldTitle = currentEditingPayment ? currentEditingPayment.title : titleToArchive;
+          var allSlips = document.querySelectorAll('.expense-paper-slip');
+          for (var si = 0; si < allSlips.length; si++) {
+            var sName = allSlips[si].querySelector('.expense-item-name');
+            if (sName && (sName.textContent.trim().toLowerCase() === oldTitle.toLowerCase() || sName.textContent.trim().toLowerCase() === titleToArchive.toLowerCase())) {
+              allSlips[si].remove();
+            }
+          }
+          if (currentEditingPayment) {
+            currentEditingPayment.isArchived = true;
+          }
+          if (window.MyTablesCalendar && typeof window.MyTablesCalendar.updateSummaryCards === 'function') {
+            window.MyTablesCalendar.updateSummaryCards();
+          }
+          if (window.MyTablesCalendar && typeof window.MyTablesCalendar.renderCalendar === 'function') {
+            window.MyTablesCalendar.renderCalendar();
+          }
+          closeExpModal();
+        });
+      }
 
       document.getElementById('exp-modal-form').addEventListener('submit', function (e) {
         e.preventDefault();
@@ -556,6 +676,46 @@
         var submitBtn = document.getElementById('exp-modal-submit');
         submitBtn.textContent = 'Сохраняю...';
         submitBtn.disabled = true;
+
+        // Если это РЕДАКТИРОВАНИЕ существующего платежа
+        if (currentEditingSlip) {
+          var oldTitle = currentEditingPayment ? currentEditingPayment.title : (currentEditingSlip.querySelector('.expense-item-name') ? currentEditingSlip.querySelector('.expense-item-name').textContent.trim() : title);
+          var allSlips = document.querySelectorAll('.expense-paper-slip');
+          for (var sIdx = 0; sIdx < allSlips.length; sIdx++) {
+            var sName = allSlips[sIdx].querySelector('.expense-item-name');
+            if (sName && (sName.textContent.trim().toLowerCase() === oldTitle.toLowerCase() || sName.textContent.trim().toLowerCase() === title.toLowerCase())) {
+              sName.textContent = title;
+              var sPrice = allSlips[sIdx].querySelector('.expense-item-price');
+              if (sPrice) sPrice.textContent = formatRub(amount);
+              var sDate = allSlips[sIdx].querySelector('.expense-item-date');
+              if (sDate) sDate.textContent = '• ' + day + ' мар';
+              var sLogo = allSlips[sIdx].querySelector('.service-logo-circle');
+              if (sLogo && selectedExpenseColor) {
+                sLogo.style.color = selectedExpenseColor;
+              }
+            }
+          }
+          if (currentEditingPayment) {
+            currentEditingPayment.title = title;
+            currentEditingPayment.currentRate = amount;
+            currentEditingPayment.dayOfMonth = day;
+            if (url) currentEditingPayment.shopUrl = url;
+            currentEditingPayment.color = selectedExpenseColor;
+          }
+          if (window.MyTablesCalendar && typeof window.MyTablesCalendar.updateSummaryCards === 'function') {
+            window.MyTablesCalendar.updateSummaryCards();
+          }
+          if (window.MyTablesCalendar && typeof window.MyTablesCalendar.renderCalendar === 'function') {
+            window.MyTablesCalendar.renderCalendar();
+          }
+          submitBtn.textContent = 'Сохранено ✓';
+          setTimeout(function () {
+            submitBtn.textContent = 'Сохранить';
+            submitBtn.disabled = false;
+            closeExpModal();
+          }, 300);
+          return;
+        }
 
         // Автоопределение категории
         var cat = 'other';
@@ -760,15 +920,9 @@
       var expModal = document.getElementById('mytables-expense-modal');
       if (!expModal) {
         injectAddModal();
-        expModal = document.getElementById('mytables-expense-modal');
       }
-      if (expModal) {
-        document.getElementById('exp-in-title').value = '';
-        document.getElementById('exp-in-day').value = new Date().getDate();
-        document.getElementById('exp-in-amount').value = '';
-        document.getElementById('exp-in-url').value = '';
-        expModal.classList.add('active');
-        document.getElementById('exp-in-title').focus();
+      if (typeof window.openAddExpenseModal === 'function') {
+        window.openAddExpenseModal();
       }
       return;
     }

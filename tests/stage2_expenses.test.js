@@ -109,6 +109,14 @@ async function runAllTests() {
     assert(appJs.includes('window.MyTablesCalendar.updateSummaryCards()'), 'Должен вызываться реактивный пересчет плашки расходов');
   });
 
+  // Тест 8: Редактирование суммы/тарифа платежа по клику на саму плашку и архивация
+  await runTest('test_edit_and_archive_expense: клик по плашке платежа открывает модалку редактирования суммы и кнопку архивации', () => {
+    assert(indexHtml.includes('.expense-paper-slip {\n      border-radius: 16px;\n      padding: 10px 12px;\n      display: flex;\n      justify-content: space-between;\n      align-items: center;\n      border: none;\n      cursor: pointer;') || indexHtml.includes('cursor: pointer'), 'Плашка должна иметь cursor: pointer для интуитивного клика');
+    assert(appJs.includes('window.openEditExpenseModal'), 'Должна быть функция openEditExpenseModal');
+    assert(appJs.includes('id="exp-modal-archive"'), 'В модалке должна быть кнопка «В архив» для отмены подписки');
+    assert(appJs.includes("modalTitle.textContent = '✎ Изменить платеж'"), 'Заголовок модалки должен меняться на «✎ Изменить платеж»');
+  });
+
   console.log('\n======================================================');
   console.log(`ИТОГО Стейдж 2: Пройдено: ${testsPassed}, Ошибок: ${testsFailed}`);
   console.log('======================================================\n');
