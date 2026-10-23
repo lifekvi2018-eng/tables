@@ -436,18 +436,18 @@
       var btnClass = isNeedPay ? 'btn-pay-toggle need-pay' : 'btn-pay-toggle';
       var payBtnStyle = isNeedPay
         ? 'padding:9px 16px;border-radius:12px;border:none;font-size:12px;font-weight:900;cursor:pointer;background:#C8E2D2;color:#1E3F30;box-shadow:2px 3px 7px rgba(70,130,95,0.25),-1px -1px 2px rgba(255,255,255,0.8);'
-        : 'padding:9px 16px;border-radius:12px;border:none;font-size:12px;font-weight:900;cursor:pointer;background:#FCE8D5;color:#6D3E14;box-shadow:inset 1px 1px 3px rgba(150,110,70,0.2);';
+        : 'padding:9px 16px;border-radius:12px;border:none;font-size:12px;font-weight:900;cursor:pointer;background:#EADBC8;color:#6A553E;box-shadow:inset 1px 1px 3px rgba(130,100,70,0.2);';
 
-      // Плашка строго в стиле «3D-Бумажечки»: нежные сливки из палитры (#FDF1CC), никаких рамок/подводок, мягкая тень
+      // Вариант 2: плашка тёплый персик (#FCE8D5), кнопка «В магазин» тёплые сливки (#FDF1CC, не белая!), кнопка оплаты нежная мята (#C8E2D2). Без подводок!
       return [
-        '<div class="popover-item" style="background:#FDF1CC;border:none;border-radius:18px;padding:14px;margin-bottom:10px;box-shadow:3px 5px 14px rgba(150,125,95,0.18),-2px -2px 6px rgba(255,255,255,0.85);">',
-        '  <div class="popover-item-title" style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:800;color:#5B481D;">',
+        '<div class="popover-item" style="background:#FCE8D5;border:none;border-radius:18px;padding:14px;margin-bottom:10px;box-shadow:3px 5px 14px rgba(170,130,95,0.2),-2px -2px 6px rgba(255,255,255,0.85);">',
+        '  <div class="popover-item-title" style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:800;color:#6D3E14;">',
         '    <span style="width:10px;height:10px;border-radius:50%;background:' + item.color + ';display:inline-block;box-shadow:0 1px 2px rgba(100,80,60,0.25);"></span>',
         '    <span>' + escapeHtml(item.title) + '</span>',
         '  </div>',
-        '  <div class="popover-item-sum" style="font-size:18px;font-weight:900;color:#4A3E25;margin:6px 0 12px 0;">' + item.amount.toLocaleString('ru-RU') + ' ₽</div>',
+        '  <div class="popover-item-sum" style="font-size:18px;font-weight:900;color:#4A2708;margin:6px 0 12px 0;">' + item.amount.toLocaleString('ru-RU') + ' ₽</div>',
         '  <div class="popover-actions" style="display:flex;gap:8px;">',
-        '    <a href="' + escapeHtml(item.shopUrl) + '" target="_blank" rel="noopener noreferrer" class="btn-shop-link" style="flex:1;padding:9px 12px;border-radius:12px;background:#FAF2E7;border:none;color:#4A3E25;text-decoration:none;font-size:12px;font-weight:800;text-align:center;display:inline-flex;align-items:center;justify-content:center;gap:4px;box-shadow:2px 3px 6px rgba(150,125,100,0.18),-1px -1px 2px rgba(255,255,255,0.9);">В магазин ↗</a>',
+        '    <a href="' + escapeHtml(item.shopUrl) + '" target="_blank" rel="noopener noreferrer" class="btn-shop-link" style="flex:1;padding:9px 12px;border-radius:12px;background:#FDF1CC;border:none;color:#5B481D;text-decoration:none;font-size:12px;font-weight:800;text-align:center;display:inline-flex;align-items:center;justify-content:center;gap:4px;box-shadow:2px 3px 6px rgba(160,125,85,0.2),-1px -1px 2px rgba(255,255,255,0.9);">В магазин ↗</a>',
         '    <button class="' + btnClass + '" data-id="' + item.id + '" onclick="window.MyTablesCalendar.onPayToggleClick(event, \'' + item.id + '\', ' + day + ')" style="' + payBtnStyle + '">' + item.buttonText + '</button>',
         '  </div>',
         '</div>'
@@ -531,9 +531,9 @@
       if (res.isPaid) {
         btn.classList.remove('need-pay');
         btn.innerText = '✓ Оплачено';
-        btn.style.background = '#FCE8D5';
-        btn.style.color = '#6D3E14';
-        btn.style.boxShadow = 'inset 1px 1px 3px rgba(150,110,70,0.2)';
+        btn.style.background = '#EADBC8';
+        btn.style.color = '#6A553E';
+        btn.style.boxShadow = 'inset 1px 1px 3px rgba(130,100,70,0.2)';
       } else {
         btn.classList.add('need-pay');
         btn.innerText = 'Оплатить';
