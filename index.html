@@ -1785,7 +1785,8 @@
       align-items: center;
       gap: 4px;
       cursor: pointer;
-      border: none;
+      border: none !important;
+      outline: none !important;
       transition: all 0.12s ease;
       white-space: nowrap;
     }
@@ -1795,9 +1796,9 @@
       box-shadow: 1.5px 3px 7px rgba(45, 88, 71, 0.20), inset 0 1px 0 rgba(255, 255, 255, 0.9);
     }
     .status-pill.unpaid {
-      background: #FAF7F2;
-      color: #6A5B4C;
-      box-shadow: 1.5px 3px 7px rgba(100, 80, 60, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+      background: #FCE8D5;
+      color: #58241B;
+      box-shadow: 1.5px 3px 7px rgba(170, 130, 95, 0.20), inset 0 1px 0 rgba(255, 255, 255, 0.9);
     }
     .status-dot {
       width: 6px;
@@ -1805,25 +1806,41 @@
       border-radius: 50%;
     }
     .status-pill.paid .status-dot { background: #2E6B4A; }
-    .status-pill.unpaid .status-dot { border: 1.5px solid #8C784C; background: transparent; }
+    .status-pill.unpaid .status-dot { background: #A0522D; border: none; }
 
-    .expense-dots-btn {
-      background: transparent;
-      border: none;
-      width: 24px;
-      height: 24px;
-      border-radius: 7px;
-      display: flex;
+    /* КНОПКА «В МАГАЗИН ↗» (СЛИВОЧНЫЙ #FDF1CC, БЕЗ РАМОК) */
+    .expense-shop-btn {
+      background: #FDF1CC;
+      color: #5B481D;
+      border: none !important;
+      outline: none !important;
+      padding: 5px 9px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 800;
+      text-decoration: none;
+      display: inline-flex;
       align-items: center;
-      justify-content: center;
+      gap: 3px;
+      box-shadow: 1.5px 2.5px 5px rgba(190, 170, 110, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      transition: all 0.12s ease;
+      white-space: nowrap;
       cursor: pointer;
-      color: inherit;
-      opacity: 0.65;
-      transition: all 0.1s ease;
     }
-    .expense-dots-btn:hover {
-      opacity: 1;
-      background: rgba(0, 0, 0, 0.06);
+    .expense-shop-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 2px 3.5px 7px rgba(190, 170, 110, 0.32);
+    }
+    .expense-shop-btn:active {
+      transform: translateY(1px);
+    }
+    .expense-shop-btn:focus,
+    .expense-shop-btn:focus-visible,
+    .status-pill:focus,
+    .status-pill:focus-visible,
+    button:focus,
+    button:focus-visible {
+      outline: none !important;
     }
 
     /* ТАБ-БАР МОБИЛКИ ВНИЗУ */
@@ -3553,8 +3570,8 @@
                     </div>
                   </div>
                   <div class="expense-item-right">
-                    <button class="status-pill paid"><span class="status-dot"></span> Оплачено</button>
-                    <button class="expense-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                    <a href="https://claude.ai" target="_blank" class="expense-shop-btn">В магазин ↗</a>
+                    <button class="status-pill paid" onclick="window.toggleExpenseItemStatus(event, this)"><span class="status-dot"></span> Оплачено</button>
                   </div>
                 </div>
 
@@ -3573,8 +3590,8 @@
                     </div>
                   </div>
                   <div class="expense-item-right">
-                    <button class="status-pill unpaid"><span class="status-dot"></span> Оплатить</button>
-                    <button class="expense-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                    <a href="https://gemini.google.com" target="_blank" class="expense-shop-btn">В магазин ↗</a>
+                    <button class="status-pill unpaid" onclick="window.toggleExpenseItemStatus(event, this)"><span class="status-dot"></span> Оплатить</button>
                   </div>
                 </div>
 
@@ -3593,8 +3610,8 @@
                     </div>
                   </div>
                   <div class="expense-item-right">
-                    <button class="status-pill unpaid"><span class="status-dot"></span> Оплатить</button>
-                    <button class="expense-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                    <a href="https://chatgpt.com" target="_blank" class="expense-shop-btn">В магазин ↗</a>
+                    <button class="status-pill unpaid" onclick="window.toggleExpenseItemStatus(event, this)"><span class="status-dot"></span> Оплатить</button>
                   </div>
                 </div>
               </div>
@@ -3609,7 +3626,7 @@
                   </div>
                   <span class="cat-name">Интернет и связь</span>
                 </div>
-                <button class="cat-add-btn">
+                <button class="cat-add-btn" title="Добавить подписку">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                 </button>
               </div>
@@ -3630,8 +3647,8 @@
                     </div>
                   </div>
                   <div class="expense-item-right">
-                    <button class="status-pill paid"><span class="status-dot"></span> Оплачено</button>
-                    <button class="expense-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                    <a href="https://megafon.ru" target="_blank" class="expense-shop-btn">В магазин ↗</a>
+                    <button class="status-pill paid" onclick="window.toggleExpenseItemStatus(event, this)"><span class="status-dot"></span> Оплачено</button>
                   </div>
                 </div>
 
@@ -3650,8 +3667,8 @@
                     </div>
                   </div>
                   <div class="expense-item-right">
-                    <button class="status-pill unpaid"><span class="status-dot"></span> Оплатить</button>
-                    <button class="expense-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                    <a href="https://tbank.ru" target="_blank" class="expense-shop-btn">В магазин ↗</a>
+                    <button class="status-pill unpaid" onclick="window.toggleExpenseItemStatus(event, this)"><span class="status-dot"></span> Оплатить</button>
                   </div>
                 </div>
               </div>
@@ -3666,7 +3683,7 @@
                   </div>
                   <span class="cat-name">VPN</span>
                 </div>
-                <button class="cat-add-btn">
+                <button class="cat-add-btn" title="Добавить подписку">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                 </button>
               </div>
@@ -3687,8 +3704,8 @@
                     </div>
                   </div>
                   <div class="expense-item-right">
-                    <button class="status-pill paid"><span class="status-dot"></span> Оплачено</button>
-                    <button class="expense-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                    <a href="https://vpngenerator.org" target="_blank" class="expense-shop-btn">В магазин ↗</a>
+                    <button class="status-pill paid" onclick="window.toggleExpenseItemStatus(event, this)"><span class="status-dot"></span> Оплачено</button>
                   </div>
                 </div>
 
@@ -3707,8 +3724,8 @@
                     </div>
                   </div>
                   <div class="expense-item-right">
-                    <button class="status-pill unpaid"><span class="status-dot"></span> Оплатить</button>
-                    <button class="expense-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                    <a href="https://vpngenerator.org" target="_blank" class="expense-shop-btn">В магазин ↗</a>
+                    <button class="status-pill unpaid" onclick="window.toggleExpenseItemStatus(event, this)"><span class="status-dot"></span> Оплатить</button>
                   </div>
                 </div>
               </div>
@@ -4268,10 +4285,8 @@
                     </div>
                   </div>
                   <div class="expense-item-right">
-                    <button class="status-pill paid" title="Нажмите, чтобы изменить статус">
-                      <span class="status-dot"></span> Оплачено
-                    </button>
-                    <button class="expense-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                    <a href="https://claude.ai" target="_blank" class="expense-shop-btn">В магазин ↗</a>
+                    <button class="status-pill paid" onclick="window.toggleExpenseItemStatus(event, this)"><span class="status-dot"></span> Оплачено</button>
                   </div>
                 </div>
 
@@ -4291,10 +4306,8 @@
                     </div>
                   </div>
                   <div class="expense-item-right">
-                    <button class="status-pill unpaid" title="Нажмите, чтобы отметить оплату">
-                      <span class="status-dot"></span> Оплатить
-                    </button>
-                    <button class="expense-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                    <a href="https://gemini.google.com" target="_blank" class="expense-shop-btn">В магазин ↗</a>
+                    <button class="status-pill unpaid" onclick="window.toggleExpenseItemStatus(event, this)"><span class="status-dot"></span> Оплатить</button>
                   </div>
                 </div>
 
@@ -4314,10 +4327,8 @@
                     </div>
                   </div>
                   <div class="expense-item-right">
-                    <button class="status-pill unpaid">
-                      <span class="status-dot"></span> Оплатить
-                    </button>
-                    <button class="expense-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                    <a href="https://chatgpt.com" target="_blank" class="expense-shop-btn">В магазин ↗</a>
+                    <button class="status-pill unpaid" onclick="window.toggleExpenseItemStatus(event, this)"><span class="status-dot"></span> Оплатить</button>
                   </div>
                 </div>
               </div>
@@ -4332,7 +4343,7 @@
                   </div>
                   <span class="cat-name">Интернет и связь</span>
                 </div>
-                <button class="cat-add-btn">
+                <button class="cat-add-btn" title="Добавить подписку">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                 </button>
               </div>
@@ -4353,8 +4364,8 @@
                     </div>
                   </div>
                   <div class="expense-item-right">
-                    <button class="status-pill paid"><span class="status-dot"></span> Оплачено</button>
-                    <button class="expense-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                    <a href="https://megafon.ru" target="_blank" class="expense-shop-btn">В магазин ↗</a>
+                    <button class="status-pill paid" onclick="window.toggleExpenseItemStatus(event, this)"><span class="status-dot"></span> Оплачено</button>
                   </div>
                 </div>
 
@@ -4373,8 +4384,8 @@
                     </div>
                   </div>
                   <div class="expense-item-right">
-                    <button class="status-pill unpaid"><span class="status-dot"></span> Оплатить</button>
-                    <button class="expense-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                    <a href="https://tbank.ru" target="_blank" class="expense-shop-btn">В магазин ↗</a>
+                    <button class="status-pill unpaid" onclick="window.toggleExpenseItemStatus(event, this)"><span class="status-dot"></span> Оплатить</button>
                   </div>
                 </div>
               </div>
@@ -4389,7 +4400,7 @@
                   </div>
                   <span class="cat-name">VPN</span>
                 </div>
-                <button class="cat-add-btn">
+                <button class="cat-add-btn" title="Добавить подписку">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                 </button>
               </div>
@@ -4410,8 +4421,8 @@
                     </div>
                   </div>
                   <div class="expense-item-right">
-                    <button class="status-pill paid"><span class="status-dot"></span> Оплачено</button>
-                    <button class="expense-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                    <a href="https://vpngenerator.org" target="_blank" class="expense-shop-btn">В магазин ↗</a>
+                    <button class="status-pill paid" onclick="window.toggleExpenseItemStatus(event, this)"><span class="status-dot"></span> Оплачено</button>
                   </div>
                 </div>
 
@@ -4430,8 +4441,8 @@
                     </div>
                   </div>
                   <div class="expense-item-right">
-                    <button class="status-pill unpaid"><span class="status-dot"></span> Оплатить</button>
-                    <button class="expense-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                    <a href="https://vpngenerator.org" target="_blank" class="expense-shop-btn">В магазин ↗</a>
+                    <button class="status-pill unpaid" onclick="window.toggleExpenseItemStatus(event, this)"><span class="status-dot"></span> Оплатить</button>
                   </div>
                 </div>
               </div>
