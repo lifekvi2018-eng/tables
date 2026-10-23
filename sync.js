@@ -145,8 +145,8 @@
       var user = {
         authorized: true,
         email: cleanEmail,
-        name: 'Кристина',
-        avatar: 'К',
+        name: 'Аня',
+        avatar: 'А',
         loginTime: new Date().toISOString()
       };
       storage.set(CONFIG.AUTH_STORAGE_KEY, user);
@@ -671,6 +671,14 @@
     var emailHolders = document.querySelectorAll('.mytables-user-email');
     for (var i = 0; i < emailHolders.length; i++) {
       emailHolders[i].textContent = user ? user.email : 'Не авторизован';
+    }
+    var nameHolders = document.querySelectorAll('.sidebar-user-name');
+    for (var j = 0; j < nameHolders.length; j++) {
+      nameHolders[j].textContent = user && user.name ? user.name : 'Аня';
+    }
+    var avatarHolders = document.querySelectorAll('.sidebar-avatar');
+    for (var k = 0; k < avatarHolders.length; k++) {
+      avatarHolders[k].textContent = user && user.avatar ? user.avatar : 'А';
     }
   }
 

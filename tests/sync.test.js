@@ -99,6 +99,8 @@ async function runAllTests() {
     const user = MyTablesSync.getCurrentUser();
     assert.ok(user);
     assert.strictEqual(user.email, 'lifekvi2018@gmail.com');
+    assert.strictEqual(user.name, 'Аня');
+    assert.strictEqual(user.avatar, 'А');
   });
 
   await runTest('Выход (logout) сбрасывает авторизацию', () => {

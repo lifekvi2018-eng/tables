@@ -2876,14 +2876,30 @@
       color: #2F261D;
     }
     .desk-nav-btn.active {
-      background: #5A4E40;
-      color: #FAF4EB;
-      box-shadow: 0 4px 14px rgba(90, 78, 64, 0.28);
+      background: #FDF1CC;
+      color: #5B481D;
+      box-shadow: 2px 3px 6px rgba(190, 170, 110, 0.25);
     }
-    .desk-nav-btn.active.main-tab { background: #5A4E40; color: #FAF4EB; }
-    .desk-nav-btn.active.income-tab { background: #1E3F30; color: #FAF4EB; }
-    .desk-nav-btn.active.expenses-tab { background: #6E2F26; color: #FAF4EB; }
-    .desk-nav-btn.active.clients-tab { background: #16324F; color: #FAF4EB; }
+    .desk-nav-btn.active.main-tab {
+      background: #FDF1CC !important;
+      color: #5B481D !important;
+      box-shadow: 2px 3px 6px rgba(190, 170, 110, 0.25) !important;
+    }
+    .desk-nav-btn.active.income-tab {
+      background: #C8E2D2 !important;
+      color: #1E3F30 !important;
+      box-shadow: 2px 3px 6px rgba(120, 170, 140, 0.25) !important;
+    }
+    .desk-nav-btn.active.expenses-tab {
+      background: #FCD6CF !important;
+      color: #58241B !important;
+      box-shadow: 2px 3px 6px rgba(190, 120, 110, 0.25) !important;
+    }
+    .desk-nav-btn.active.clients-tab {
+      background: #D3E7F8 !important;
+      color: #16324F !important;
+      box-shadow: 2px 3px 6px rgba(110, 150, 190, 0.25) !important;
+    }
 
     /* МОБИЛЬНЫЙ ТАБ-БАР */
     .mob-tab-btn {
@@ -2899,10 +2915,33 @@
       background: transparent;
       transition: all 0.15s ease;
     }
+    .mob-tab-btn:hover {
+      background: #EFE4D6;
+    }
     .mob-tab-btn.active {
-      background: #5A4E40;
-      color: #FAF4EB;
-      box-shadow: 2px 4px 10px rgba(90,78,64,0.3);
+      background: #FDF1CC;
+      color: #5B481D;
+      box-shadow: 2px 3px 6px rgba(190, 170, 110, 0.25);
+    }
+    .mob-tab-btn.active[data-tab="main"] {
+      background: #FDF1CC !important;
+      color: #5B481D !important;
+      box-shadow: 2px 3px 6px rgba(190, 170, 110, 0.25) !important;
+    }
+    .mob-tab-btn.active[data-tab="income"] {
+      background: #C8E2D2 !important;
+      color: #1E3F30 !important;
+      box-shadow: 2px 3px 6px rgba(120, 170, 140, 0.25) !important;
+    }
+    .mob-tab-btn.active[data-tab="expenses"] {
+      background: #FCD6CF !important;
+      color: #58241B !important;
+      box-shadow: 2px 3px 6px rgba(190, 120, 110, 0.25) !important;
+    }
+    .mob-tab-btn.active[data-tab="clients"] {
+      background: #D3E7F8 !important;
+      color: #16324F !important;
+      box-shadow: 2px 3px 6px rgba(110, 150, 190, 0.25) !important;
     }
   </style>
 </head>
@@ -2917,11 +2956,11 @@
       <!-- ЛЕВЫЙ САЙДБАР ДЕСКТОПА -->
       <div class="desk-sidebar" style="display: flex; flex-direction: column; gap: 6px;">
         
-        <!-- Профиль Кристины -->
+        <!-- Профиль Ани -->
         <div class="sidebar-user-chip" style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; margin-bottom: 12px; background: #F2E5D5; border-radius: 16px; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);">
-          <div class="sidebar-avatar" style="width: 32px; height: 32px; border-radius: 50%; background: #FAF2E7; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; color: #5A4E40;">К</div>
+          <div class="sidebar-avatar" style="width: 32px; height: 32px; border-radius: 50%; background: #FAF2E7; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; color: #5A4E40;">А</div>
           <div style="flex: 1; min-width: 0;">
-            <div class="sidebar-user-name" style="font-size: 13px; font-weight: 800; color: #2F261D;">Кристина</div>
+            <div class="sidebar-user-name" style="font-size: 13px; font-weight: 800; color: #2F261D;">Аня</div>
             <div class="mytables-user-email" style="font-size: 10px; color: #726453; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">lifekvi2018@gmail.com</div>
           </div>
           <button class="mytables-logout-btn" title="Выйти" style="background: none; border: none; cursor: pointer; color: #726453; padding: 2px;">
@@ -2932,7 +2971,7 @@
         <!-- Кнопки переключения 4 экранов -->
         <button class="desk-nav-btn main-tab active" data-tab="main" onclick="switchAppTab('main')">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-          <span>Мой мир ♡</span>
+          <span>Главная</span>
         </button>
 
         <button class="desk-nav-btn income-tab" data-tab="income" onclick="switchAppTab('income')">
@@ -2961,21 +3000,16 @@
 
       <!-- ОСНОВНОЙ КОНТЕНТ ДЕСКТОПА (ПЕРЕКЛЮЧАЕТСЯ БЕЗ ПЕРЕЗАГРУЗКИ) -->
       <div style="flex: 1; min-width: 0;">
-        <div id="desk-view-main" class="app-tab-pane active">          <div style="display: flex; flex-direction: column; gap: 16px;">
+        <div id="desk-view-main" class="app-tab-pane active"><div style="display: flex; flex-direction: column; gap: 16px;">
             
             <!-- Шапка десктопа -->
             <div style="display: flex; justify-content: space-between; align-items: center; gap: 16px;">
-              <div style="font-size: 24px; font-weight: 900; color: #2F261D; letter-spacing: -0.3px;">Мой мир ♡</div>
+              <div style="font-size: 24px; font-weight: 900; color: #2F261D; letter-spacing: -0.3px;">Главная</div>
               <div style="flex: 1; max-width: 320px; background: #FAF2E7; border-radius: 14px; padding: 8px 14px; display: flex; align-items: center; gap: 8px; box-shadow: inset 1.5px 2px 5px rgba(150, 130, 110, 0.15); border: none; font-size: 12px; color: #726453;">
                 <span>🔍</span>
                 <span>Поиск...</span>
               </div>
-              <div class="cat-circle" title="Профиль">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                  <circle cx="12" cy="8" r="4.2" stroke="#5A4E40" stroke-width="2"/>
-                  <path d="M4 20C4 16.5 7.6 14 12 14C16.4 14 20 16.5 20 20" stroke="#5A4E40" stroke-width="2" stroke-linecap="round"/>
-                </svg>
-              </div>
+              <div class="cat-circle sidebar-avatar" title="Профиль: Аня" style="font-size: 14px; font-weight: 800; color: #5B481D;">А</div>
             </div>
 
             <!-- ============================================================== -->
@@ -3238,8 +3272,18 @@
                       <div style="width: 30px; height: 30px; border-radius: 50%; background: #FDF1CC; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #5B481D; font-size: 12px;">К</div>
                       <div>
                         <div style="font-weight: 800; color: #163B59;">Катя</div>
-                        <div style="font-size: 10px; color: #3A6488;">Консультации</div></div>
-        <div id="desk-view-income" class="app-tab-pane" style="display:none;">        <div class="desk-main-content">
+                        <div style="font-size: 10px; color: #3A6488;">Консультации</div>
+                      </div>
+                    </div>
+                    <span class="sub-arrow-clients"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+          </div></div>
+        <div id="desk-view-income" class="app-tab-pane" style="display:none;"><div class="desk-main-content">
           
           <div class="desk-top-bar">
             <div class="desk-page-title">Доходы</div>
@@ -3419,8 +3463,12 @@
                   </div>
                 </div>
               </div>
-            </div></div>
-        <div id="desk-view-expenses" class="app-tab-pane" style="display:none;">        <div class="desk-main-content">
+            </div>
+
+          </div>
+
+        </div></div>
+        <div id="desk-view-expenses" class="app-tab-pane" style="display:none;"><div class="desk-main-content">
           
           <!-- ВЕРХНЯЯ СТРОКА: РАСХОДЫ ♡ + ПОИСК + ДОБАВИТЬ ПЛАТЕЖ -->
           <div class="desk-top-bar">
@@ -3630,8 +3678,11 @@
                 </div>
               </div>
             </div>
-</div>
-        <div id="desk-view-clients" class="app-tab-pane" style="display:none;">        <div class="desk-main-content">
+
+          </div>
+
+        </div></div>
+        <div id="desk-view-clients" class="app-tab-pane" style="display:none;"><div class="desk-main-content">
           
           <div class="desk-top-bar">
             <div class="desk-page-title">
@@ -3850,23 +3901,7 @@
 
           </div>
 
-        </div>
-
-      </div>
-
-    </div>
-
-    <div class="info-footer">
-      «Мои таблицы» • Экран «Клиенты ♡» • Тактильный дизайн «3D-Бумажечки» • Шрифт Manrope
-    </div>
-
-  </div>
-
-  <script>
-    function showMobileView(view) {
-      const listView = document.getElementById('mobile-list-view');
-      const dossierView = document.getElementById('mobile-dossier-view');
-      const btnList = document.getElementById('btn-tab-list');</div>
+        </div></div>
       </div>
 
     </div>
@@ -3880,18 +3915,9 @@
     
     <!-- Содержимое мобильного экрана -->
     <div style="flex: 1; padding-bottom: 70px;">
-      <div id="mob-view-main" class="mob-tab-pane active">              <span>100% 🔋</span>
-            </div>
-
-            <!-- Шапка -->
-            <div class="iphone-header">
-              <div class="iphone-title">Мой мир ♡</div>
-              <div class="cat-circle" title="Профиль">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                  <circle cx="12" cy="8" r="4.2" stroke="#5A4E40" stroke-width="2"/>
-                  <path d="M4 20C4 16.5 7.6 14 12 14C16.4 14 20 16.5 20 20" stroke="#5A4E40" stroke-width="2" stroke-linecap="round"/>
-                </svg>
-              </div>
+      <div id="mob-view-main" class="mob-tab-pane active"><div class="iphone-header">
+              <div class="iphone-title">Главная</div>
+              <div class="cat-circle sidebar-avatar" title="Профиль: Аня" style="font-size: 14px; font-weight: 800; color: #5B481D;">А</div>
             </div>
 
             <!-- Календарь на телефоне: СЛИВОЧНЫЙ #FDF1CC -->
@@ -3934,7 +3960,7 @@
                     <div id="mob-income-sum" style="font-size: 11px; font-weight: 700; opacity: 0.85; margin-top: 2px;">125 500 ₽</div>
                   </div>
                 </div>
-                <button class="arrow-btn" onclick="location.href='income_screen.html'">›</button>
+                <button class="arrow-btn" onclick="switchAppTab('income')">›</button>
               </div>
 
               <!-- Расходы -->
@@ -3952,7 +3978,7 @@
                     <div id="mob-expense-sum" style="font-size: 11px; font-weight: 700; opacity: 0.85; margin-top: 2px;">28 400 ₽</div>
                   </div>
                 </div>
-                <button class="arrow-btn" onclick="location.href='expenses_screen.html'">›</button>
+                <button class="arrow-btn" onclick="switchAppTab('expenses')">›</button>
               </div>
 
               <!-- Клиенты -->
@@ -3971,18 +3997,11 @@
                     <div id="mob-clients-count" style="font-size: 11px; font-weight: 700; opacity: 0.85; margin-top: 2px;">12 активных</div>
                   </div>
                 </div>
-                <button class="arrow-btn" onclick="location.href='clients_screen.html'">›</button>
+                <button class="arrow-btn" onclick="switchAppTab('clients')">›</button>
               </div>
 
-            </div>
-
-            <!-- Таб-бар мобилки: Сливочный песок --></div>
-      <div id="mob-view-income" class="mob-tab-pane" style="display:none;">              <svg width="13" height="11" viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="6" width="18" height="12" rx="3"/><path d="M22 10v4"/></svg>
-            </div>
-          </div>
-
-          <!-- Шапка: Доходы + круглая кнопочка с плюсиком -->
-          <div class="phone-income-header">
+            </div></div>
+      <div id="mob-view-income" class="mob-tab-pane" style="display:none;"><div class="phone-income-header">
             <div class="phone-income-title">Доходы</div>
             <button class="phone-add-btn btn-plus-income" title="Добавить клиента или платёж">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
@@ -4145,9 +4164,37 @@
                 <div class="project-sum-pill">
                   <span class="project-sum-label">Проект:</span>
                   <span class="project-sum-val">200 000 ₽</span>
-                </div></div>
-      <div id="mob-view-expenses" class="mob-tab-pane" style="display:none;">          <!-- Шапка телефона: Расходы ♡ + аватарка -->
-          <div class="phone-header-row">
+                </div>
+              </div>
+
+              <div class="client-payments-section">
+                <div class="payments-section-header">
+                  <span class="payments-section-title">Платежи (2)</span>
+                  <button class="paper-arrow-btn" title="Развернуть">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                  </button>
+                </div>
+                <div class="payments-paper-list">
+                  <div class="payment-paper-slip">
+                    <span class="payment-date">20.03.2024</span>
+                    <div class="payment-right-group">
+                      <span class="payment-sum">100 000 ₽</span>
+                      <button class="payment-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                    </div>
+                  </div>
+                  <div class="payment-paper-slip">
+                    <span class="payment-date">18.04.2024</span>
+                    <div class="payment-right-group">
+                      <span class="payment-sum">100 000 ₽</span>
+                      <button class="payment-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div></div>
+      <div id="mob-view-expenses" class="mob-tab-pane" style="display:none;"><div class="phone-header-row">
             <div class="phone-title">
               Расходы <span class="phone-heart">♡</span>
             </div>
@@ -4363,11 +4410,8 @@
               </div>
             </div>
 
-          </div>
-
-          <!-- Нижний таб-бар телефона --></div>
-      <div id="mob-view-clients" class="mob-tab-pane" style="display:none;">          <!-- Переключатель видов на телефоне: Список / Анкета Анны -->
-          <div class="mobile-view-tabs">
+          </div></div>
+      <div id="mob-view-clients" class="mob-tab-pane" style="display:none;"><div class="mobile-view-tabs">
             <button class="mobile-tab-toggle active" id="btn-tab-list" onclick="showMobileView('list')">
               📋 Список клиентов
             </button>
@@ -4629,7 +4673,8 @@
 
               </div>
             </div>
-</div>
+
+          </div></div>
     </div>
 
     <!-- Мобильный таб-бар снизу экрана -->
@@ -4657,6 +4702,26 @@
   <script src="app.js"></script>
 
   <script>
+    // ПЕРЕКЛЮЧЕНИЕ МОБИЛЬНОГО ВИДА КЛИЕНТОВ (СПИСОК / АНКЕТА)
+    function showMobileView(view) {
+      var listView = document.getElementById('mobile-list-view');
+      var dossierView = document.getElementById('mobile-dossier-view');
+      var btnList = document.getElementById('btn-tab-list');
+      var btnDossier = document.getElementById('btn-tab-dossier');
+
+      if (view === 'dossier') {
+        if (listView) listView.style.display = 'none';
+        if (dossierView) dossierView.style.display = 'flex';
+        if (btnList) btnList.classList.remove('active');
+        if (btnDossier) btnDossier.classList.add('active');
+      } else {
+        if (listView) listView.style.display = 'flex';
+        if (dossierView) dossierView.style.display = 'none';
+        if (btnList) btnList.classList.add('active');
+        if (btnDossier) btnDossier.classList.remove('active');
+      }
+    }
+
     // ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ПРИЛОЖЕНИЯ
     window.currentActiveTab = 'main';
 
@@ -4704,6 +4769,8 @@
           if (res && res.data && typeof window.updateScreenData === 'function') {
             window.updateScreenData(res.data, tabName);
           }
+        }).catch(function (e) {
+          console.warn('Sync load on tab switch:', e);
         });
       }
     }
