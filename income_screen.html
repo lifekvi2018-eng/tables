@@ -318,16 +318,19 @@
 
     /* КРУГЛАЯ 3D-КНОПОЧКА СО СТРЕЛОЧКОЙ */
     .paper-arrow-btn {
-      width: 28px;
-      height: 28px;
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
       border: none;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: transform 0.12s ease;
+      transition: transform 0.12s ease, box-shadow 0.12s ease;
       flex-shrink: 0;
+    }
+    .paper-arrow-btn:hover {
+      transform: translateY(-1px);
     }
     .paper-arrow-btn:active {
       transform: translateY(1.5px);
@@ -337,21 +340,21 @@
     .payments-paper-list {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 9px;
     }
 
     /* КАЖДЫЙ ПЛАТЁЖ — ОТДЕЛЬНАЯ САМОСТОЯТЕЛЬНАЯ БУМАЖЕЧКА */
     .payment-paper-slip {
       border-radius: 14px;
-      padding: 9px 12px;
+      padding: 10px 14px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       border: none;
-      transition: transform 0.12s ease;
+      transition: transform 0.12s ease, box-shadow 0.12s ease;
     }
     .payment-paper-slip:hover {
-      transform: translateY(-1px);
+      transform: translateY(-1.5px);
     }
     .payment-date {
       font-size: 11px;
@@ -391,93 +394,96 @@
     }
 
     /* ======================================================== */
-    /* ТОЧНЫЕ 3D-БУМАЖНЫЕ ЦВЕТА И ТЕНИ ДЛЯ КАЖДОЙ ПЛАШКИ        */
+    /* ТОЧНЫЕ 3D-БУМАЖНЫЕ ЦВЕТА И ЕДИНЫЕ ТЕНИ (ВНИЗУ-СПРАВА)    */
     /* ======================================================== */
 
     /* 1. МЯТНАЯ КАРТОЧКА (АННА СМИРНОВА) */
     .mint .client-avatar {
-      background: #BCE0CB;
+      background: #E8F6EE; /* Светлее плашки! */
       color: #1E3F30;
-      box-shadow: 2px 3.5px 8px rgba(45, 88, 71, 0.22), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+      box-shadow: 2.5px 4.5px 10px rgba(30, 55, 40, 0.16), 1px 1.5px 3px rgba(30, 55, 40, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.95);
     }
     .mint .project-sum-pill {
       background: #F0F8F3;
       color: #1E3F30;
-      box-shadow: 2px 4px 10px rgba(45, 88, 71, 0.18), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+      box-shadow: 3px 5px 12px rgba(30, 55, 40, 0.14), 1px 2px 4px rgba(30, 55, 40, 0.08), inset 0 1.5px 0 rgba(255, 255, 255, 0.95);
     }
     .mint .paper-arrow-btn {
-      background: #BCE0CB;
+      background: #E8F6EE; /* Светлее плашки! */
       color: #1E3F30;
-      box-shadow: 2px 3.5px 7px rgba(45, 88, 71, 0.22), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      box-shadow: 2.5px 4.5px 10px rgba(30, 55, 40, 0.16), 1px 1.5px 3px rgba(30, 55, 40, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.95);
     }
     .mint .payment-paper-slip {
       background: #F0F8F3;
       color: #1E3F30;
-      box-shadow: 2px 4px 10px -1px rgba(45, 88, 71, 0.18), -1.5px -1.5px 5px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+      box-shadow: 3px 5.5px 14px rgba(30, 55, 40, 0.15), 1px 2px 4px rgba(30, 55, 40, 0.08), inset 0 1.5px 0 rgba(255, 255, 255, 0.95);
     }
 
     /* 2. АБРИКОСОВАЯ КАРТОЧКА (ИРИНА КУЗНЕЦОВА) */
     .apricot .client-avatar {
-      background: #F6D7BC;
+      background: #FFF5EB; /* Светлее плашки! */
       color: #4D3118;
-      box-shadow: 2px 3.5px 8px rgba(150, 110, 80, 0.22), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+      box-shadow: 2.5px 4.5px 10px rgba(70, 45, 20, 0.16), 1px 1.5px 3px rgba(70, 45, 20, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.95);
     }
     .apricot .project-sum-pill {
       background: #FFF7EE;
       color: #4D3118;
-      box-shadow: 2px 4px 10px rgba(150, 110, 80, 0.18), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+      box-shadow: 3px 5px 12px rgba(70, 45, 20, 0.14), 1px 2px 4px rgba(70, 45, 20, 0.08), inset 0 1.5px 0 rgba(255, 255, 255, 0.95);
     }
     .apricot .paper-arrow-btn {
-      background: #F6D7BC;
+      background: #FFF5EB; /* Светлее плашки! */
       color: #4D3118;
-      box-shadow: 2px 3.5px 7px rgba(150, 110, 80, 0.22), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      box-shadow: 2.5px 4.5px 10px rgba(70, 45, 20, 0.16), 1px 1.5px 3px rgba(70, 45, 20, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.95);
     }
     .apricot .payment-paper-slip {
       background: #FFF7EE;
       color: #4D3118;
-      box-shadow: 2px 4px 10px -1px rgba(150, 110, 80, 0.16), -1.5px -1.5px 5px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+      box-shadow: 3px 5.5px 14px rgba(70, 45, 20, 0.15), 1px 2px 4px rgba(70, 45, 20, 0.08), inset 0 1.5px 0 rgba(255, 255, 255, 0.95);
     }
 
     /* 3. РОЗОВАЯ КАРТОЧКА (МАРИЯ ЛЕБЕДЕВА) */
     .pink .client-avatar {
-      background: #F7C2B9;
+      background: #FFF2EF; /* Светлее плашки! */
       color: #4D201A;
-      box-shadow: 2px 3.5px 8px rgba(130, 65, 55, 0.22), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+      box-shadow: 2.5px 4.5px 10px rgba(70, 25, 20, 0.16), 1px 1.5px 3px rgba(70, 25, 20, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.95);
     }
     .pink .project-sum-pill {
       background: #FFF3F0;
       color: #4D201A;
-      box-shadow: 2px 4px 10px rgba(130, 65, 55, 0.18), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+      box-shadow: 3px 5px 12px rgba(70, 25, 20, 0.14), 1px 2px 4px rgba(70, 25, 20, 0.08), inset 0 1.5px 0 rgba(255, 255, 255, 0.95);
     }
     .pink .paper-arrow-btn {
-      background: #F7C2B9;
+      background: #FFF2EF; /* Светлее плашки! */
       color: #4D201A;
-      box-shadow: 2px 3.5px 7px rgba(130, 65, 55, 0.22), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      box-shadow: 2.5px 4.5px 10px rgba(70, 25, 20, 0.16), 1px 1.5px 3px rgba(70, 25, 20, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.95);
     }
     .pink .payment-paper-slip {
       background: #FFF3F0;
       color: #4D201A;
-      box-shadow: 2px 4px 10px -1px rgba(130, 65, 55, 0.18), -1.5px -1.5px 5px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+      box-shadow: 3px 5.5px 14px rgba(70, 25, 20, 0.15), 1px 2px 4px rgba(70, 25, 20, 0.08), inset 0 1.5px 0 rgba(255, 255, 255, 0.95);
     }
 
     /* 4. ГОЛУБАЯ КАРТОЧКА (ДМИТРИЙ КОВАЛЁВ) */
     .blue .client-avatar {
-      background: #BFDCF6;
+      background: #EDF6FD; /* Светлее плашки! */
       color: #16324F;
-      box-shadow: 2px 3.5px 8px rgba(60, 100, 140, 0.22), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+      box-shadow: 2.5px 4.5px 10px rgba(25, 50, 80, 0.16), 1px 1.5px 3px rgba(25, 50, 80, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.95);
     }
     .blue .project-sum-pill {
       background: #F1F7FD;
       color: #16324F;
-      box-shadow: 2px 4px 10px rgba(60, 100, 140, 0.18), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+      box-shadow: 3px 5px 12px rgba(25, 50, 80, 0.14), 1px 2px 4px rgba(25, 50, 80, 0.08), inset 0 1.5px 0 rgba(255, 255, 255, 0.95);
     }
     .blue .paper-arrow-btn {
-      background: #BFDCF6;
+      background: #EDF6FD; /* Светлее плашки! */
       color: #16324F;
-      box-shadow: 2px 3.5px 7px rgba(60, 100, 140, 0.22), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      box-shadow: 2.5px 4.5px 10px rgba(25, 50, 80, 0.16), 1px 1.5px 3px rgba(25, 50, 80, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.95);
     }
     .blue .payment-paper-slip {
       background: #F1F7FD;
+      color: #16324F;
+      box-shadow: 3px 5.5px 14px rgba(25, 50, 80, 0.15), 1px 2px 4px rgba(25, 50, 80, 0.08), inset 0 1.5px 0 rgba(255, 255, 255, 0.95);
+    }
       color: #16324F;
       box-shadow: 2px 4px 10px -1px rgba(60, 100, 140, 0.18), -1.5px -1.5px 5px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.95);
     }
@@ -806,7 +812,7 @@
                 <div class="payments-section-header">
                   <span class="payments-section-title">Платежи (2)</span>
                   <button class="paper-arrow-btn" title="Развернуть">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                   </button>
                 </div>
                 <div class="payments-paper-list">
@@ -854,7 +860,7 @@
                 <div class="payments-section-header">
                   <span class="payments-section-title">Платежи (3)</span>
                   <button class="paper-arrow-btn" title="Развернуть">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                   </button>
                 </div>
                 <div class="payments-paper-list">
@@ -903,7 +909,7 @@
                 <div class="payments-section-header">
                   <span class="payments-section-title">Платежи (1)</span>
                   <button class="paper-arrow-btn" title="Развернуть">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                   </button>
                 </div>
                 <div class="payments-paper-list">
@@ -938,7 +944,7 @@
                 <div class="payments-section-header">
                   <span class="payments-section-title">Платежи (2)</span>
                   <button class="paper-arrow-btn" title="Развернуть">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                   </button>
                 </div>
                 <div class="payments-paper-list">
@@ -1050,7 +1056,7 @@
                 <div class="desk-payments-header">
                   <span class="desk-payments-title">Платежи по проекту (2)</span>
                   <button class="paper-arrow-btn" title="Развернуть">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                   </button>
                 </div>
                 <div class="desk-payments-grid">
@@ -1091,7 +1097,7 @@
               <div class="desk-payments-block">
                 <div class="desk-payments-header">
                   <span class="desk-payments-title">Платежи по проекту (3)</span>
-                  <button class="paper-arrow-btn" title="Развернуть"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></button>
+                  <button class="paper-arrow-btn" title="Развернуть"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></button>
                 </div>
                 <div class="desk-payments-grid">
                   <div class="payment-paper-slip">
@@ -1138,7 +1144,7 @@
               <div class="desk-payments-block">
                 <div class="desk-payments-header">
                   <span class="desk-payments-title">Платежи по проекту (1)</span>
-                  <button class="paper-arrow-btn" title="Развернуть"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></button>
+                  <button class="paper-arrow-btn" title="Развернуть"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></button>
                 </div>
                 <div class="desk-payments-grid">
                   <div class="payment-paper-slip">
@@ -1171,7 +1177,7 @@
               <div class="desk-payments-block">
                 <div class="desk-payments-header">
                   <span class="desk-payments-title">Платежи по проекту (2)</span>
-                  <button class="paper-arrow-btn" title="Развернуть"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></button>
+                  <button class="paper-arrow-btn" title="Развернуть"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></button>
                 </div>
                 <div class="desk-payments-grid">
                   <div class="payment-paper-slip">
