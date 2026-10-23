@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Экран 3: «Расходы ♡» — Мои таблицы</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif !important;
+    }
+    body, button, input, select, textarea, span, div, p, h1, h2, h3 {
+      font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif !important;
+    }
+
+    body {
+      background: #FAF2E7;
+      color: #383025;
+      padding: 20px 14px;
+      line-height: 1.4;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* ВЕРХНЕЕ МЕНЮ ПЕРЕКЛЮЧЕНИЯ ЭКРАНОВ */
+    .screen-switcher {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 22px;
+      flex-wrap: wrap;
+    }
+    .switcher-btn {
+      padding: 8px 16px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 800;
+      color: #726453;
+      background: #EADBCC;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .switcher-btn:hover {
+      background: #DFD0BE;
+      color: #2F261D;
+    }
+    .switcher-btn.active {
+      background: #5A4E40;
+      color: #FFFFFF;
+      box-shadow: 0 4px 12px rgba(90, 78, 64, 0.25);
+    }
+
+    /* ЗАГОЛОВОК СТРАНИЦЫ */
+    .top-header {
+      margin-bottom: 24px;
+      text-align: center;
+    }
+    .badge-status {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 14px;
+      border-radius: 8px;
+      background: #FCD6CF;
+      color: #4D201A;
+      margin-bottom: 8px;
+      box-shadow: 0 2px 8px rgba(130, 65, 55, 0.12);
+    }
+    .screen-title {
+      font-size: 26px;
+      font-weight: 900;
+      color: #2F261D;
+      letter-spacing: -0.4px;
+    }
+    .screen-desc {
+      font-size: 14px;
+      color: #726453;
+      margin-top: 4px;
+    }
+
+    /* СЕТКА: ТЕЛЕФОН СЛЕВА, ДЕСКТОП СПРАВА */
+    .duo-grid {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 32px;
+      align-items: start;
+    }
+    @media (max-width: 1120px) {
+      .duo-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ======================================================== */
+    /* ---------------- ТЕЛЕФОН (IPHONE) ---------------------- */
+    /* ======================================================== */
+    .iphone-box {
+      background: #F2E8DC;
+      border-radius: 46px;
+      padding: 12px;
+      box-shadow: 14px 24px 50px -6px rgba(150, 125, 100, 0.32), 4px 8px 16px rgba(150, 125, 100, 0.15);
+      border: 4px solid #EADBCC;
+      max-width: 380px;
+      margin: 0 auto;
+    }
+    .iphone-screen {
+      background: #FAF2E7;
+      border-radius: 36px;
+      padding: 16px 14px 16px 14px;
+      min-height: 740px;
+      display: flex;
+      flex-direction: column;
+    }
+    .iphone-island {
+      width: 90px;
+      height: 22px;
+      background: #2B241E;
+      border-radius: 12px;
+      margin: 0 auto 10px auto;
+    }
+    .iphone-status {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 800;
+      color: #5A4E40;
+      margin-bottom: 14px;
+      padding: 0 6px;
+    }
+
+    /* ШАПКА ТЕЛЕФОНА */
+    .phone-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      padding: 0 4px;
+    }
+    .phone-title {
+      font-size: 24px;
+      font-weight: 900;
+      color: #2F261D;
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .phone-heart {
+      color: #D97368;
+      font-size: 20px;
+    }
+    .user-avatar-circle {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #FCEFD9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #5A4E40;
+      box-shadow: 2.5px 4px 10px rgba(160, 135, 110, 0.25), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    }
+
+    /* БОЛЬШАЯ КНОПКА ДОБАВИТЬ ПЛАТЕЖ */
+    .add-payment-pill-btn {
+      width: 100%;
+      background: #FDF1CC;
+      color: #5B481D;
+      border: none;
+      border-radius: 18px;
+      padding: 12px 18px;
+      font-size: 14px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      margin-bottom: 16px;
+      box-shadow: 2.5px 4.5px 12px rgba(185, 160, 110, 0.28), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+      transition: transform 0.12s ease;
+    }
+    .add-payment-pill-btn:active {
+      transform: translateY(1.5px);
+    }
+
+    /* СПИСОК КАТЕГОРИЙ РАСХОДОВ (БЕЗ СЕРОГО ПОЛЗУНКА) */
+    .expenses-scroll-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      overflow-y: auto;
+      max-height: 550px;
+      padding: 2px;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .expenses-scroll-list::-webkit-scrollbar {
+      display: none;
+      width: 0;
+      height: 0;
+    }
+
+    /* БАЗОВАЯ КАРТОЧКА КАТЕГОРИИ РАСХОДОВ */
+    .expense-cat-card {
+      border-radius: 24px;
+      padding: 16px;
+      box-shadow: 6px 10px 24px -4px rgba(150, 125, 100, 0.22), -3px -3px 10px rgba(255, 255, 255, 0.8), inset 0 1.5px 0 rgba(255, 255, 255, 0.85);
+      border: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .expense-cat-card.pink { background: #FCD6CF; color: #4D201A; }
+    .expense-cat-card.mint { background: #C8E2D2; color: #1E3F30; }
+    .expense-cat-card.blue { background: #D3E7F8; color: #16324F; }
+
+    /* ШАПКА КАТЕГОРИИ */
+    .cat-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 2px;
+    }
+    .cat-title-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .cat-badge-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 800;
+      flex-shrink: 0;
+      box-shadow: 2px 3.5px 8px rgba(35, 30, 20, 0.12), -1px -1px 3px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    }
+    .cat-name {
+      font-size: 15px;
+      font-weight: 900;
+      letter-spacing: -0.2px;
+    }
+
+    /* КРУГЛАЯ 3D-КНОПКА ПЛЮСИКА (СВЕТЛЕЕ ПЛАШКИ) */
+    .cat-add-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.12s ease;
+      flex-shrink: 0;
+      box-shadow: 2.5px 4.5px 10px rgba(35, 30, 20, 0.14), 1px 1.5px 3px rgba(35, 30, 20, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    }
+    .cat-add-btn:active {
+      transform: translateY(1.5px);
+    }
+
+    /* СПИСОК ПЛАТЕЖЕЙ В КАТЕГОРИИ */
+    .cat-items-list {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    /* ОТДЕЛЬНАЯ 3D-БУМАЖЕЧКА ПЛАТЕЖА */
+    .expense-paper-slip {
+      border-radius: 16px;
+      padding: 10px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: none;
+      transition: transform 0.12s ease, box-shadow 0.12s ease;
+    }
+    .expense-paper-slip:hover {
+      transform: translateY(-1.5px);
+    }
+
+    .expense-item-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+    .service-logo-circle {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 1.5px 3px 6px rgba(35, 30, 20, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+    .expense-item-info {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .expense-item-name {
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .expense-item-sub {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 2px;
+    }
+    .expense-item-price {
+      font-size: 12px;
+      font-weight: 900;
+    }
+    .expense-item-date {
+      font-size: 10px;
+      font-weight: 700;
+      opacity: 0.7;
+    }
+
+    .expense-item-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    /* СТАТУСНЫЕ ПЛАШКИ: «ОПЛАЧЕНО» И «ОПЛАТИТЬ» */
+    .status-pill {
+      border-radius: 20px;
+      padding: 5px 10px;
+      font-size: 10px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      border: none;
+      transition: all 0.12s ease;
+      white-space: nowrap;
+    }
+    .status-pill.paid {
+      background: #C8E2D2;
+      color: #1E3F30;
+      box-shadow: 1.5px 3px 7px rgba(45, 88, 71, 0.20), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+    .status-pill.unpaid {
+      background: #FAF7F2;
+      color: #6A5B4C;
+      box-shadow: 1.5px 3px 7px rgba(100, 80, 60, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    }
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+    .status-pill.paid .status-dot { background: #2E6B4A; }
+    .status-pill.unpaid .status-dot { border: 1.5px solid #8C784C; background: transparent; }
+
+    .expense-dots-btn {
+      background: transparent;
+      border: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: inherit;
+      opacity: 0.65;
+      transition: all 0.1s ease;
+    }
+    .expense-dots-btn:hover {
+      opacity: 1;
+      background: rgba(0, 0, 0, 0.06);
+    }
+
+    /* ТАБ-БАР МОБИЛКИ ВНИЗУ */
+    .tabbar-box {
+      background: #F5ECE0;
+      border-radius: 26px;
+      padding: 6px 8px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      box-shadow: 6px 10px 24px -4px rgba(140, 120, 100, 0.22), -2px -2px 6px rgba(255, 255, 255, 0.8);
+      margin-top: 14px;
+      border: none;
+    }
+    .tab-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #7A6C5B;
+      text-decoration: none;
+    }
+    .tab-btn.active {
+      background: #FCD6CF;
+      color: #4D201A;
+      box-shadow: 2px 3px 6px rgba(150, 80, 75, 0.25);
+    }
+
+    /* ======================================================== */
+    /* ТОЧНЫЕ 3D-БУМАЖНЫЕ ЦВЕТА И ТЕНИ                          */
+    /* ======================================================== */
+
+    /* 1. РОЗОВАЯ КАТЕГОРИЯ: ИИ СЕРВИСЫ */
+    .pink .cat-badge-icon { background: #FFF2EF; color: #4D201A; }
+    .pink .cat-add-btn { background: #FFF2EF; color: #4D201A; }
+    .pink .expense-paper-slip {
+      background: #FFF3F0;
+      color: #4D201A;
+      box-shadow: 3px 5.5px 14px rgba(70, 25, 20, 0.15), 1px 2px 4px rgba(70, 25, 20, 0.08), inset 0 1.5px 0 rgba(255, 255, 255, 0.95);
+    }
+    .pink .service-logo-circle { background: #FFE8E3; }
+
+    /* 2. МЯТНАЯ КАТЕГОРИЯ: ИНТЕРНЕТ И СВЯЗЬ */
+    .mint .cat-badge-icon { background: #E8F6EE; color: #1E3F30; }
+    .mint .cat-add-btn { background: #E8F6EE; color: #1E3F30; }
+    .mint .expense-paper-slip {
+      background: #F0F8F3;
+      color: #1E3F30;
+      box-shadow: 3px 5.5px 14px rgba(30, 55, 40, 0.15), 1px 2px 4px rgba(30, 55, 40, 0.08), inset 0 1.5px 0 rgba(255, 255, 255, 0.95);
+    }
+    .mint .service-logo-circle { background: #DCF2E4; }
+
+    /* 3. ГОЛУБАЯ КАТЕГОРИЯ: VPN */
+    .blue .cat-badge-icon { background: #EDF6FD; color: #16324F; }
+    .blue .cat-add-btn { background: #EDF6FD; color: #16324F; }
+    .blue .expense-paper-slip {
+      background: #F1F7FD;
+      color: #16324F;
+      box-shadow: 3px 5.5px 14px rgba(25, 50, 80, 0.15), 1px 2px 4px rgba(25, 50, 80, 0.08), inset 0 1.5px 0 rgba(255, 255, 255, 0.95);
+    }
+    .blue .service-logo-circle { background: #E2F0FC; }
+
+
+    /* ======================================================== */
+    /* ---------------- ДЕСКТОП (КОМПЬЮТЕР) ------------------- */
+    /* ======================================================== */
+    .desktop-window {
+      background: #F8EFE4;
+      border-radius: 28px;
+      padding: 24px;
+      box-shadow: 14px 22px 48px -6px rgba(160, 135, 110, 0.30), 4px 6px 14px rgba(160, 135, 110, 0.14), -4px -4px 14px rgba(255, 255, 255, 0.9);
+      border: none;
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 24px;
+      min-height: 740px;
+    }
+    @media (max-width: 900px) {
+      .desktop-window { grid-template-columns: 1fr; }
+    }
+
+    /* БОКОВОЕ МЕНЮ */
+    .desk-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .sidebar-user-chip {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      margin-bottom: 12px;
+      background: #F2E5D5;
+      border-radius: 16px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+    .sidebar-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #FAF2E7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 800;
+      color: #5A4E40;
+    }
+    .sidebar-user-name {
+      font-size: 13px;
+      font-weight: 800;
+      color: #2F261D;
+    }
+
+    .desk-nav-item {
+      min-height: 42px;
+      border-radius: 14px;
+      padding: 0 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+      font-weight: 800;
+      color: #5A4E40;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      text-align: left;
+      text-decoration: none;
+      transition: all 0.12s ease;
+    }
+    .desk-nav-item:hover {
+      background: #EFE4D6;
+      color: #2F261D;
+    }
+    .desk-nav-item.active-pink {
+      color: #4D201A;
+      background: #FCD6CF;
+      box-shadow: 4px 6px 14px -2px rgba(150, 80, 75, 0.28), -2px -2px 6px rgba(255, 255, 255, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+    .nav-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+    }
+
+    /* ОСНОВНОЙ КОНТЕНТ ДЕСКТОПА */
+    .desk-main-content {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .desk-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .desk-page-title {
+      font-size: 26px;
+      font-weight: 900;
+      color: #2F261D;
+      letter-spacing: -0.4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .desk-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+      justify-content: flex-end;
+    }
+    .desk-search-box {
+      background: #FFFDF9;
+      border-radius: 14px;
+      padding: 9px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 240px;
+      box-shadow: 2px 4px 10px rgba(150, 125, 100, 0.08), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+    .search-input {
+      border: none;
+      background: transparent;
+      outline: none;
+      font-size: 13px;
+      color: #2F261D;
+      width: 100%;
+      font-weight: 600;
+    }
+    .search-input::placeholder { color: #A39686; }
+
+    .desk-add-btn {
+      background: #FDF1CC;
+      color: #5B481D;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 14px;
+      font-size: 13px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      box-shadow: 2.5px 4.5px 12px rgba(185, 160, 110, 0.28), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+      transition: transform 0.1s ease;
+      white-space: nowrap;
+    }
+    .desk-add-btn:active {
+      transform: translateY(1.5px);
+    }
+
+    /* ТРИ ВЕРТИКАЛЬНЫЕ КОЛОНКИ КАТЕГОРИЙ (ДЕСКТОП BENTO) */
+    .desk-categories-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      align-items: start;
+    }
+    @media (max-width: 980px) {
+      .desk-categories-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ПОДВАЛ */
+    .info-footer {
+      margin-top: 28px;
+      text-align: center;
+      font-size: 13px;
+      color: #8C784C;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- ПЕРЕКЛЮЧАТЕЛЬ ЭКРАНОВ ВВЕРХУ -->
+    <div class="screen-switcher">
+      <a href="main_screen.html" class="switcher-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        1. Главный экран (Мой мир ♡)
+      </a>
+      <a href="income_screen.html" class="switcher-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+        2. Экран «Доходы»
+      </a>
+      <a href="expenses_screen.html" class="switcher-btn active">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" x2="21" y1="6" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        3. Экран «Расходы ♡»
+      </a>
+      <a href="макеты.html" class="switcher-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/></svg>
+        Каталог всех макетов
+      </a>
+    </div>
+
+    <!-- ЗАГОЛОВОК -->
+    <div class="top-header">
+      <span class="badge-status">ЭКРАН 3 • ТАКТИЛЬНЫЙ МАКЕТ «3D-БУМАЖЕЧКИ»</span>
+      <h1 class="screen-title">Раздел «Расходы ♡»</h1>
+      <p class="screen-desc">Категории подписок и услуг, статусы «Оплачено» / «Оплатить» и тактильные 3D-слои с единым светом.</p>
+    </div>
+
+    <!-- ОСНОВНАЯ СЕТКА: ТЕЛЕФОН + КОМПЬЮТЕР -->
+    <div class="duo-grid">
+      
+      <!-- ======================================================== -->
+      <!-- ================= 1. ТЕЛЕФОН (IPHONE) ================== -->
+      <!-- ======================================================== -->
+      <div class="iphone-box">
+        <div class="iphone-screen">
+          <div class="iphone-island"></div>
+          
+          <div class="iphone-status">
+            <span>9:41</span>
+            <div style="display:flex; gap:5px; align-items:center;">
+              <svg width="13" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L12 22l7.03-4.39C20.26 16.07 21 14.12 21 12c0-4.97-4.03-9-9-9z"/></svg>
+              <svg width="13" height="11" viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="6" width="18" height="12" rx="3"/><path d="M22 10v4"/></svg>
+            </div>
+          </div>
+
+          <!-- Шапка телефона: Расходы ♡ + аватарка -->
+          <div class="phone-header-row">
+            <div class="phone-title">
+              Расходы <span class="phone-heart">♡</span>
+            </div>
+            <div class="user-avatar-circle">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+          </div>
+
+          <!-- Кнопка «+ Добавить платеж» -->
+          <button class="add-payment-pill-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Добавить платеж
+          </button>
+
+          <!-- Список категорий расходов (без серого ползунка) -->
+          <div class="expenses-scroll-list">
+
+            <!-- 1. ИИ сервисы (Розовая карточка) -->
+            <div class="expense-cat-card pink">
+              <div class="cat-card-header">
+                <div class="cat-title-left">
+                  <div class="cat-badge-icon">AI</div>
+                  <span class="cat-name">ИИ сервисы</span>
+                </div>
+                <button class="cat-add-btn" title="Добавить подписку">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                </button>
+              </div>
+
+              <div class="cat-items-list">
+                <!-- Claude -->
+                <div class="expense-paper-slip">
+                  <div class="expense-item-left">
+                    <div class="service-logo-circle" style="color:#D96B27;">
+                      <!-- Солнце / Искра Claude -->
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+                    </div>
+                    <div class="expense-item-info">
+                      <span class="expense-item-name">Claude</span>
+                      <div class="expense-item-sub">
+                        <span class="expense-item-price">1 500 ₽</span>
+                        <span class="expense-item-date">• 12 мар</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="expense-item-right">
+                    <button class="status-pill paid" title="Нажмите, чтобы изменить статус">
+                      <span class="status-dot"></span> Оплачено
+                    </button>
+                    <button class="expense-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                  </div>
+                </div>
+
+                <!-- Gemini -->
+                <div class="expense-paper-slip">
+                  <div class="expense-item-left">
+                    <div class="service-logo-circle" style="color:#3B78E7;">
+                      <!-- Ромб / Звезда Gemini -->
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L14.8 9.2L22 12L14.8 14.8L12 22L9.2 14.8L2 12L9.2 9.2L12 2Z"/></svg>
+                    </div>
+                    <div class="expense-item-info">
+                      <span class="expense-item-name">Gemini</span>
+                      <div class="expense-item-sub">
+                        <span class="expense-item-price">1 500 ₽</span>
+                        <span class="expense-item-date">• 15 мар</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="expense-item-right">
+                    <button class="status-pill unpaid" title="Нажмите, чтобы отметить оплату">
+                      <span class="status-dot"></span> Оплатить
+                    </button>
+                    <button class="expense-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                  </div>
+                </div>
+
+                <!-- ChatGPT -->
+                <div class="expense-paper-slip">
+                  <div class="expense-item-left">
+                    <div class="service-logo-circle" style="color:#10A37F;">
+                      <!-- Спираль ChatGPT -->
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 2a10 10 0 0 1 10 10c0 5.52-4.48 10-10 10S2 17.52 2 12"/><path d="M12 6a6 6 0 0 1 6 6c0 3.31-2.69 6-6 6s-6-2.69-6-6"/><circle cx="12" cy="12" r="2"/></svg>
+                    </div>
+                    <div class="expense-item-info">
+                      <span class="expense-item-name">ChatGPT</span>
+                      <div class="expense-item-sub">
+                        <span class="expense-item-price">1 500 ₽</span>
+                        <span class="expense-item-date">• 21 мар</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="expense-item-right">
+                    <button class="status-pill unpaid">
+                      <span class="status-dot"></span> Оплатить
+                    </button>
+                    <button class="expense-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 2. Интернет и связь (Мятная карточка) -->
+            <div class="expense-cat-card mint">
+              <div class="cat-card-header">
+                <div class="cat-title-left">
+                  <div class="cat-badge-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+                  </div>
+                  <span class="cat-name">Интернет и связь</span>
+                </div>
+                <button class="cat-add-btn">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                </button>
+              </div>
+
+              <div class="cat-items-list">
+                <!-- Домашний интернет -->
+                <div class="expense-paper-slip">
+                  <div class="expense-item-left">
+                    <div class="service-logo-circle" style="color:#2B5E43;">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect width="20" height="8" x="2" y="14" rx="2"/><path d="M6 18h.01"/><path d="M10 18h.01"/><path d="M15 10v4"/><path d="M9 10v4"/></svg>
+                    </div>
+                    <div class="expense-item-info">
+                      <span class="expense-item-name">Домашний интернет</span>
+                      <div class="expense-item-sub">
+                        <span class="expense-item-price">1 200 ₽</span>
+                        <span class="expense-item-date">• 5 мар</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="expense-item-right">
+                    <button class="status-pill paid"><span class="status-dot"></span> Оплачено</button>
+                    <button class="expense-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                  </div>
+                </div>
+
+                <!-- Мобильный телефон -->
+                <div class="expense-paper-slip">
+                  <div class="expense-item-left">
+                    <div class="service-logo-circle" style="color:#2B5E43;">
+                      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                    </div>
+                    <div class="expense-item-info">
+                      <span class="expense-item-name">Мобильный телефон</span>
+                      <div class="expense-item-sub">
+                        <span class="expense-item-price">500 ₽</span>
+                        <span class="expense-item-date">• 18 мар</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="expense-item-right">
+                    <button class="status-pill unpaid"><span class="status-dot"></span> Оплатить</button>
+                    <button class="expense-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 3. VPN (Голубая карточка) -->
+            <div class="expense-cat-card blue">
+              <div class="cat-card-header">
+                <div class="cat-title-left">
+                  <div class="cat-badge-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                  </div>
+                  <span class="cat-name">VPN</span>
+                </div>
+                <button class="cat-add-btn">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                </button>
+              </div>
+
+              <div class="cat-items-list">
+                <!-- VPN (компьютер) -->
+                <div class="expense-paper-slip">
+                  <div class="expense-item-left">
+                    <div class="service-logo-circle" style="color:#1C4A73;">
+                      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect width="18" height="12" x="3" y="4" rx="2"/><line x1="2" x2="22" y1="20" y2="20"/></svg>
+                    </div>
+                    <div class="expense-item-info">
+                      <span class="expense-item-name">VPN (компьютер)</span>
+                      <div class="expense-item-sub">
+                        <span class="expense-item-price">1 200 ₽</span>
+                        <span class="expense-item-date">• 7 мар</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="expense-item-right">
+                    <button class="status-pill paid"><span class="status-dot"></span> Оплачено</button>
+                    <button class="expense-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                  </div>
+                </div>
+
+                <!-- VPN (телефон) -->
+                <div class="expense-paper-slip">
+                  <div class="expense-item-left">
+                    <div class="service-logo-circle" style="color:#1C4A73;">
+                      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                    </div>
+                    <div class="expense-item-info">
+                      <span class="expense-item-name">VPN (телефон)</span>
+                      <div class="expense-item-sub">
+                        <span class="expense-item-price">1 200 ₽</span>
+                        <span class="expense-item-date">• 14 мар</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="expense-item-right">
+                    <button class="status-pill unpaid"><span class="status-dot"></span> Оплатить</button>
+                    <button class="expense-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Нижний таб-бар телефона -->
+          <div class="tabbar-box">
+            <a href="main_screen.html" class="tab-btn" title="Главная">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </a>
+            <div class="tab-btn" title="Календарь">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+            </div>
+            <a href="income_screen.html" class="tab-btn" title="Доходы">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            </a>
+            <div class="tab-btn active" title="Расходы">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" x2="21" y1="6" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            </div>
+            <div class="tab-btn" title="Профиль">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ======================================================== -->
+      <!-- ================= 2. ДЕСКТОП (КОМПЬЮТЕР) =============== -->
+      <!-- ======================================================== -->
+      <div class="desktop-window">
+        
+        <!-- ЛЕВАЯ НАВИГАЦИЯ (СТРОГО СЛЕВА 200px) -->
+        <div class="desk-sidebar">
+          <div class="sidebar-user-chip">
+            <div class="sidebar-avatar">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <div class="sidebar-user-name">Мой мир ♡</div>
+          </div>
+
+          <a href="main_screen.html" class="desk-nav-item">
+            <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
+            Главная
+          </a>
+
+          <button class="desk-nav-item">
+            <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg></span>
+            Календарь
+          </button>
+
+          <a href="income_screen.html" class="desk-nav-item">
+            <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg></span>
+            Доходы
+          </a>
+
+          <!-- Активная плашка Расходов (пудрово-розовая) -->
+          <button class="desk-nav-item active-pink">
+            <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" x2="21" y1="6" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></span>
+            Расходы
+          </button>
+
+          <button class="desk-nav-item">
+            <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+            Клиенты
+          </button>
+
+          <button class="desk-nav-item">
+            <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></span>
+            Настройки
+          </button>
+        </div>
+
+        <!-- ОСНОВНОЙ КОНТЕНТ ДЕСКТОПА (СПРАВА) -->
+        <div class="desk-main-content">
+          
+          <!-- ВЕРХНЯЯ СТРОКА: РАСХОДЫ ♡ + ПОИСК + ДОБАВИТЬ ПЛАТЕЖ -->
+          <div class="desk-top-bar">
+            <div class="desk-page-title">
+              Расходы <span class="phone-heart" style="font-size:22px;">♡</span>
+            </div>
+            <div class="desk-controls">
+              <div class="desk-search-box">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8C784C" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" class="search-input" placeholder="Поиск...">
+              </div>
+              <button class="desk-add-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                Добавить платеж
+              </button>
+            </div>
+          </div>
+
+          <!-- 3 ВЕРТИКАЛЬНЫЕ КОЛОНКИ КАТЕГОРИЙ (BENTO) -->
+          <div class="desk-categories-grid">
+
+            <!-- КОЛОНКА 1: ИИ СЕРВИСЫ (РОЗОВАЯ) -->
+            <div class="expense-cat-card pink">
+              <div class="cat-card-header">
+                <div class="cat-title-left">
+                  <div class="cat-badge-icon">AI</div>
+                  <span class="cat-name">ИИ сервисы</span>
+                </div>
+                <button class="cat-add-btn" title="Добавить подписку">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                </button>
+              </div>
+
+              <div class="cat-items-list">
+                <!-- Claude -->
+                <div class="expense-paper-slip">
+                  <div class="expense-item-left">
+                    <div class="service-logo-circle" style="color:#D96B27;">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+                    </div>
+                    <div class="expense-item-info">
+                      <span class="expense-item-name">Claude</span>
+                      <div class="expense-item-sub">
+                        <span class="expense-item-price">1 500 ₽</span>
+                        <span class="expense-item-date">• 12 мар</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="expense-item-right">
+                    <button class="status-pill paid"><span class="status-dot"></span> Оплачено</button>
+                    <button class="expense-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                  </div>
+                </div>
+
+                <!-- Gemini -->
+                <div class="expense-paper-slip">
+                  <div class="expense-item-left">
+                    <div class="service-logo-circle" style="color:#3B78E7;">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L14.8 9.2L22 12L14.8 14.8L12 22L9.2 14.8L2 12L9.2 9.2L12 2Z"/></svg>
+                    </div>
+                    <div class="expense-item-info">
+                      <span class="expense-item-name">Gemini</span>
+                      <div class="expense-item-sub">
+                        <span class="expense-item-price">1 500 ₽</span>
+                        <span class="expense-item-date">• 15 мар</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="expense-item-right">
+                    <button class="status-pill unpaid"><span class="status-dot"></span> Оплатить</button>
+                    <button class="expense-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                  </div>
+                </div>
+
+                <!-- ChatGPT -->
+                <div class="expense-paper-slip">
+                  <div class="expense-item-left">
+                    <div class="service-logo-circle" style="color:#10A37F;">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 2a10 10 0 0 1 10 10c0 5.52-4.48 10-10 10S2 17.52 2 12"/><path d="M12 6a6 6 0 0 1 6 6c0 3.31-2.69 6-6 6s-6-2.69-6-6"/><circle cx="12" cy="12" r="2"/></svg>
+                    </div>
+                    <div class="expense-item-info">
+                      <span class="expense-item-name">ChatGPT</span>
+                      <div class="expense-item-sub">
+                        <span class="expense-item-price">1 500 ₽</span>
+                        <span class="expense-item-date">• 21 мар</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="expense-item-right">
+                    <button class="status-pill unpaid"><span class="status-dot"></span> Оплатить</button>
+                    <button class="expense-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- КОЛОНКА 2: ИНТЕРНЕТ И СВЯЗЬ (МЯТНАЯ) -->
+            <div class="expense-cat-card mint">
+              <div class="cat-card-header">
+                <div class="cat-title-left">
+                  <div class="cat-badge-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+                  </div>
+                  <span class="cat-name">Интернет и связь</span>
+                </div>
+                <button class="cat-add-btn">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                </button>
+              </div>
+
+              <div class="cat-items-list">
+                <!-- Домашний интернет -->
+                <div class="expense-paper-slip">
+                  <div class="expense-item-left">
+                    <div class="service-logo-circle" style="color:#2B5E43;">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect width="20" height="8" x="2" y="14" rx="2"/><path d="M6 18h.01"/><path d="M10 18h.01"/><path d="M15 10v4"/><path d="M9 10v4"/></svg>
+                    </div>
+                    <div class="expense-item-info">
+                      <span class="expense-item-name">Домашний интернет</span>
+                      <div class="expense-item-sub">
+                        <span class="expense-item-price">1 200 ₽</span>
+                        <span class="expense-item-date">• 5 мар</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="expense-item-right">
+                    <button class="status-pill paid"><span class="status-dot"></span> Оплачено</button>
+                    <button class="expense-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                  </div>
+                </div>
+
+                <!-- Мобильный телефон -->
+                <div class="expense-paper-slip">
+                  <div class="expense-item-left">
+                    <div class="service-logo-circle" style="color:#2B5E43;">
+                      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                    </div>
+                    <div class="expense-item-info">
+                      <span class="expense-item-name">Мобильный телефон</span>
+                      <div class="expense-item-sub">
+                        <span class="expense-item-price">500 ₽</span>
+                        <span class="expense-item-date">• 18 мар</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="expense-item-right">
+                    <button class="status-pill unpaid"><span class="status-dot"></span> Оплатить</button>
+                    <button class="expense-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- КОЛОНКА 3: VPN (ГОЛУБАЯ) -->
+            <div class="expense-cat-card blue">
+              <div class="cat-card-header">
+                <div class="cat-title-left">
+                  <div class="cat-badge-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                  </div>
+                  <span class="cat-name">VPN</span>
+                </div>
+                <button class="cat-add-btn">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                </button>
+              </div>
+
+              <div class="cat-items-list">
+                <!-- VPN (компьютер) -->
+                <div class="expense-paper-slip">
+                  <div class="expense-item-left">
+                    <div class="service-logo-circle" style="color:#1C4A73;">
+                      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect width="18" height="12" x="3" y="4" rx="2"/><line x1="2" x2="22" y1="20" y2="20"/></svg>
+                    </div>
+                    <div class="expense-item-info">
+                      <span class="expense-item-name">VPN (компьютер)</span>
+                      <div class="expense-item-sub">
+                        <span class="expense-item-price">1 200 ₽</span>
+                        <span class="expense-item-date">• 7 мар</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="expense-item-right">
+                    <button class="status-pill paid"><span class="status-dot"></span> Оплачено</button>
+                    <button class="expense-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                  </div>
+                </div>
+
+                <!-- VPN (телефон) -->
+                <div class="expense-paper-slip">
+                  <div class="expense-item-left">
+                    <div class="service-logo-circle" style="color:#1C4A73;">
+                      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                    </div>
+                    <div class="expense-item-info">
+                      <span class="expense-item-name">VPN (телефон)</span>
+                      <div class="expense-item-sub">
+                        <span class="expense-item-price">1 200 ₽</span>
+                        <span class="expense-item-date">• 14 мар</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="expense-item-right">
+                    <button class="status-pill unpaid"><span class="status-dot"></span> Оплатить</button>
+                    <button class="expense-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="info-footer">
+      «Мои таблицы» • Экран «Расходы ♡» • Тактильный дизайн «3D-Бумажечки» • Шрифт Manrope
+    </div>
+
+  </div>
+
+</body>
+</html>
