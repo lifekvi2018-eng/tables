@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Выбор шрифта для «Моих таблиц»</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800;900&family=Nunito:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #FAF2E7;
+      color: #383025;
+      padding: 24px 16px 50px 16px;
+      font-family: -apple-system, sans-serif;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 900;
+      padding: 5px 14px;
+      border-radius: 999px;
+      background: #5A4E40;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+    .page-title {
+      font-size: 26px;
+      font-weight: 900;
+      color: #2F261D;
+      letter-spacing: -0.3px;
+    }
+    .page-sub {
+      font-size: 14px;
+      color: #726453;
+      margin-top: 6px;
+      max-width: 680px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Сетка 3 колонок для сравнения */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+      align-items: start;
+    }
+    @media (max-width: 960px) {
+      .compare-grid { grid-template-columns: 1fr; }
+    }
+
+    .option-card {
+      background: #F5ECE0;
+      border-radius: 26px;
+      padding: 20px;
+      box-shadow: 10px 16px 36px -4px rgba(160, 135, 110, 0.28), -4px -4px 12px rgba(255, 255, 255, 0.9);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .option-header {
+      padding-bottom: 12px;
+      border-bottom: 1px dashed #DCCBBA;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .option-num {
+      font-size: 11px;
+      font-weight: 900;
+      padding: 3px 10px;
+      border-radius: 8px;
+      background: #E8D8C6;
+      color: #4A3E31;
+    }
+    .option-name {
+      font-size: 18px;
+      font-weight: 900;
+      color: #2F261D;
+      margin-top: 4px;
+    }
+    .option-desc {
+      font-size: 12px;
+      color: #7A6C5B;
+      margin-top: 2px;
+    }
+
+    /* ШРИФТЫ */
+    .font-nunito { font-family: 'Nunito', -apple-system, sans-serif !important; }
+    .font-manrope { font-family: 'Manrope', -apple-system, sans-serif !important; }
+    .font-jakarta { font-family: 'Plus Jakarta Sans', -apple-system, sans-serif !important; }
+
+    /* КАРТОЧКА ДОХОДОВ */
+    .card-income {
+      background: #C8E2D2;
+      border-radius: 20px;
+      padding: 14px;
+      box-shadow: 6px 12px 24px -4px rgba(100, 145, 120, 0.32), -3px -3px 10px rgba(255, 255, 255, 0.85), inset 0 1.5px 0 rgba(255, 255, 255, 0.85);
+    }
+    .card-expense {
+      background: #FCD6CF;
+      border-radius: 20px;
+      padding: 14px;
+      box-shadow: 6px 12px 24px -4px rgba(175, 120, 115, 0.32), -3px -3px 10px rgba(255, 255, 255, 0.85), inset 0 1.5px 0 rgba(255, 255, 255, 0.85);
+    }
+
+    .sub-item-inc {
+      background: #F0F8F3;
+      border-radius: 13px;
+      padding: 10px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 2px 4px 10px -1px rgba(50, 90, 70, 0.20), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+      margin-bottom: 7px;
+    }
+    .sub-item-exp {
+      background: #FFF3F0;
+      border-radius: 13px;
+      padding: 10px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 2px 4px 10px -1px rgba(130, 65, 55, 0.18), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+      margin-bottom: 7px;
+    }
+
+    /* ИДЕАЛЬНЫЙ ДИЗАЙНЕРСКИЙ ПЛЮСИК */
+    .btn-plus {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 2px 4px 8px rgba(45, 88, 71, 0.22), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      transition: transform 0.15s ease;
+    }
+    .btn-plus-inc { background: #D8EFE0; color: #1E4A35; }
+    .btn-plus-exp { background: #FCE3DE; color: #6E2F26; box-shadow: 2px 4px 8px rgba(140, 60, 50, 0.20), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.9); }
+
+    /* ИДЕАЛЬНАЯ ДИЗАЙНЕРСКАЯ СТРЕЛОЧКА */
+    .btn-arrow {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 2px 3.5px 7px rgba(45, 88, 71, 0.22), -1px -1px 3px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+    .btn-arrow-inc { background: #D8EFE0; color: #1E4A35; }
+    .btn-arrow-exp { background: #FCE3DE; color: #6E2F26; box-shadow: 2px 3.5px 7px rgba(140, 60, 50, 0.20), -1px -1px 3px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.9); }
+
+    .sample-digits {
+      background: #FAF2E7;
+      border-radius: 14px;
+      padding: 12px;
+      box-shadow: inset 1px 2px 4px rgba(150, 130, 110, 0.12);
+      text-align: center;
+    }
+    .sample-digits-title {
+      font-size: 11px;
+      font-weight: 800;
+      color: #7A6C5B;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .digits-big {
+      font-size: 20px;
+      font-weight: 900;
+      color: #2F261D;
+      letter-spacing: -0.3px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <div class="page-header">
+      <span class="badge">★ ВЫБОР ШРИФТА ДЛЯ ИНТЕРФЕЙСА</span>
+      <h1 class="page-title">Как будут выглядеть цифры, надписи и значки</h1>
+      <p class="page-sub">
+        Посмотри, как смотрятся суммы, названия плашек, новый векторный плюсик и стрелочка в трёх разных характерах. Выбери тот, который приятнее всего глазу!
+      </p>
+    </div>
+
+    <div class="compare-grid">
+
+      <!-- ======================================================== -->
+      <!-- ВАРИАНТ 1: NUNITO (МЯГКИЙ, КРУГЛЫЙ, ТАКТИЛЬНЫЙ)          -->
+      <!-- ======================================================== -->
+      <div class="option-card font-nunito">
+        
+        <div class="option-header">
+          <div>
+            <div class="option-name">1. Мягкий и тёплый</div>
+            <div class="option-desc">Шрифт: <b>Nunito</b> (округлый, нежный, уютный)</div>
+          </div>
+          <span class="option-num">Вариант 1</span>
+        </div>
+
+        <!-- Пример цифр -->
+        <div class="sample-digits">
+          <div class="sample-digits-title">Крупные цифры и суммы</div>
+          <div class="digits-big">125 500 ₽ • 45 000 ₽ • 850 ₽</div>
+          <div style="font-size: 12px; font-weight: 700; color: #5A4E40; margin-top: 4px;">
+            1 2 3 4 5 6 7 8 9 0 • 24 марта 2025
+          </div>
+        </div>
+
+        <!-- Карточка Доходы -->
+        <div class="card-income">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 16px; font-weight: 900; color: #1E3F30;">Доходы</span>
+              <span style="font-size: 13px; font-weight: 800; color: #326049; opacity: 0.9;">125 500 ₽</span>
+            </div>
+            <!-- Новый векторный плюсик с круглыми кончиками -->
+            <button class="btn-plus btn-plus-inc" title="Добавить">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 3V13M3 8H13" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+
+          <div class="sub-item-inc">
+            <div>
+              <div style="font-weight: 800; color: #1E3F30; font-size: 13px;">Проект Сайт</div>
+              <div style="font-size: 10px; color: #4A6E5A; font-weight: 700;">ИП Иванов • 12 мар</div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-weight: 900; color: #1E3F30; font-size: 13px;">+ 45 000 ₽</span>
+              <span class="btn-arrow btn-arrow-inc">
+                <svg width="10" height="10" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+            </div>
+          </div>
+
+          <div class="sub-item-inc">
+            <div>
+              <div style="font-weight: 800; color: #1E3F30; font-size: 13px;">Проект Дизайн</div>
+              <div style="font-size: 10px; color: #4A6E5A; font-weight: 700;">ООО Вектор • 4 мар</div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-weight: 900; color: #1E3F30; font-size: 13px;">+ 30 000 ₽</span>
+              <span class="btn-arrow btn-arrow-inc">
+                <svg width="10" height="10" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Карточка Расходы -->
+        <div class="card-expense">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 16px; font-weight: 900; color: #58241B;">Расходы</span>
+              <span style="font-size: 13px; font-weight: 800; color: #7B352B; opacity: 0.9;">28 400 ₽</span>
+            </div>
+            <button class="btn-plus btn-plus-exp" title="Добавить">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 3V13M3 8H13" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+
+          <div class="sub-item-exp">
+            <div>
+              <div style="font-weight: 800; color: #58241B; font-size: 13px;">VPN и Сервисы</div>
+              <div style="font-size: 10px; color: #8A4C42; font-weight: 700;">15 мар</div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-weight: 900; color: #6E2F26; font-size: 13px;">850 ₽</span>
+              <span class="btn-arrow btn-arrow-exp">
+                <svg width="10" height="10" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div style="font-size: 12px; color: #6A5B49; line-height: 1.4; background: #EFE4D6; padding: 10px 12px; border-radius: 12px;">
+          💬 <b>Ощущение:</b> Тёплый, дружелюбный, «пухлый». Буквы и цифры имеют мягкие скруглённые хвостики. Идеален для тактильного уюта.
+        </div>
+
+      </div>
+
+      <!-- ======================================================== -->
+      <!-- ВАРИАНТ 2: MANROPE (СКАНДИНАВСКИЙ ШИК, СТИЛЬНЫЙ)         -->
+      <!-- ======================================================== -->
+      <div class="option-card font-manrope">
+        
+        <div class="option-header">
+          <div>
+            <div class="option-name">2. Скандинавский стиль</div>
+            <div class="option-desc">Шрифт: <b>Manrope</b> (дорогой, лаконичный)</div>
+          </div>
+          <span class="option-num">Вариант 2</span>
+        </div>
+
+        <div class="sample-digits">
+          <div class="sample-digits-title">Крупные цифры и суммы</div>
+          <div class="digits-big">125 500 ₽ • 45 000 ₽ • 850 ₽</div>
+          <div style="font-size: 12px; font-weight: 700; color: #5A4E40; margin-top: 4px;">
+            1 2 3 4 5 6 7 8 9 0 • 24 марта 2025
+          </div>
+        </div>
+
+        <div class="card-income">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 16px; font-weight: 900; color: #1E3F30;">Доходы</span>
+              <span style="font-size: 13px; font-weight: 800; color: #326049; opacity: 0.9;">125 500 ₽</span>
+            </div>
+            <button class="btn-plus btn-plus-inc" title="Добавить">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 3V13M3 8H13" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+
+          <div class="sub-item-inc">
+            <div>
+              <div style="font-weight: 800; color: #1E3F30; font-size: 13px;">Проект Сайт</div>
+              <div style="font-size: 10px; color: #4A6E5A; font-weight: 700;">ИП Иванов • 12 мар</div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-weight: 900; color: #1E3F30; font-size: 13px;">+ 45 000 ₽</span>
+              <span class="btn-arrow btn-arrow-inc">
+                <svg width="10" height="10" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+            </div>
+          </div>
+
+          <div class="sub-item-inc">
+            <div>
+              <div style="font-weight: 800; color: #1E3F30; font-size: 13px;">Проект Дизайн</div>
+              <div style="font-size: 10px; color: #4A6E5A; font-weight: 700;">ООО Вектор • 4 мар</div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-weight: 900; color: #1E3F30; font-size: 13px;">+ 30 000 ₽</span>
+              <span class="btn-arrow btn-arrow-inc">
+                <svg width="10" height="10" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-expense">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 16px; font-weight: 900; color: #58241B;">Расходы</span>
+              <span style="font-size: 13px; font-weight: 800; color: #7B352B; opacity: 0.9;">28 400 ₽</span>
+            </div>
+            <button class="btn-plus btn-plus-exp" title="Добавить">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 3V13M3 8H13" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+
+          <div class="sub-item-exp">
+            <div>
+              <div style="font-weight: 800; color: #58241B; font-size: 13px;">VPN и Сервисы</div>
+              <div style="font-size: 10px; color: #8A4C42; font-weight: 700;">15 мар</div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-weight: 900; color: #6E2F26; font-size: 13px;">850 ₽</span>
+              <span class="btn-arrow btn-arrow-exp">
+                <svg width="10" height="10" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div style="font-size: 12px; color: #6A5B49; line-height: 1.4; background: #EFE4D6; padding: 10px 12px; border-radius: 12px;">
+          💬 <b>Ощущение:</b> Современный, стильный, уверенный. Цифры очень аккуратные, ровные, выглядят премиально и дорого.
+        </div>
+
+      </div>
+
+      <!-- ======================================================== -->
+      <!-- ВАРИАНТ 3: PLUS JAKARTA SANS (ПРЕМИУМ SHADCN)             -->
+      <!-- ======================================================== -->
+      <div class="option-card font-jakarta">
+        
+        <div class="option-header">
+          <div>
+            <div class="option-name">3. Премиальный shadcn</div>
+            <div class="option-desc">Шрифт: <b>Plus Jakarta</b> (чистый, европейский)</div>
+          </div>
+          <span class="option-num">Вариант 3</span>
+        </div>
+
+        <div class="sample-digits">
+          <div class="sample-digits-title">Крупные цифры и суммы</div>
+          <div class="digits-big">125 500 ₽ • 45 000 ₽ • 850 ₽</div>
+          <div style="font-size: 12px; font-weight: 700; color: #5A4E40; margin-top: 4px;">
+            1 2 3 4 5 6 7 8 9 0 • 24 марта 2025
+          </div>
+        </div>
+
+        <div class="card-income">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 16px; font-weight: 800; color: #1E3F30;">Доходы</span>
+              <span style="font-size: 13px; font-weight: 700; color: #326049; opacity: 0.9;">125 500 ₽</span>
+            </div>
+            <button class="btn-plus btn-plus-inc" title="Добавить">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 3V13M3 8H13" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+
+          <div class="sub-item-inc">
+            <div>
+              <div style="font-weight: 700; color: #1E3F30; font-size: 13px;">Проект Сайт</div>
+              <div style="font-size: 10px; color: #4A6E5A; font-weight: 600;">ИП Иванов • 12 мар</div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-weight: 800; color: #1E3F30; font-size: 13px;">+ 45 000 ₽</span>
+              <span class="btn-arrow btn-arrow-inc">
+                <svg width="10" height="10" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+            </div>
+          </div>
+
+          <div class="sub-item-inc">
+            <div>
+              <div style="font-weight: 700; color: #1E3F30; font-size: 13px;">Проект Дизайн</div>
+              <div style="font-size: 10px; color: #4A6E5A; font-weight: 600;">ООО Вектор • 4 мар</div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-weight: 800; color: #1E3F30; font-size: 13px;">+ 30 000 ₽</span>
+              <span class="btn-arrow btn-arrow-inc">
+                <svg width="10" height="10" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-expense">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 16px; font-weight: 800; color: #58241B;">Расходы</span>
+              <span style="font-size: 13px; font-weight: 700; color: #7B352B; opacity: 0.9;">28 400 ₽</span>
+            </div>
+            <button class="btn-plus btn-plus-exp" title="Добавить">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 3V13M3 8H13" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+
+          <div class="sub-item-exp">
+            <div>
+              <div style="font-weight: 700; color: #58241B; font-size: 13px;">VPN и Сервисы</div>
+              <div style="font-size: 10px; color: #8A4C42; font-weight: 600;">15 мар</div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-weight: 800; color: #6E2F26; font-size: 13px;">850 ₽</span>
+              <span class="btn-arrow btn-arrow-exp">
+                <svg width="10" height="10" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div style="font-size: 12px; color: #6A5B49; line-height: 1.4; background: #EFE4D6; padding: 10px 12px; border-radius: 12px;">
+          💬 <b>Ощущение:</b> Чёткий, деловой, технологичный. Буквы открытые, цифры выстроены с математической строгостью.
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</body>
+</html>
