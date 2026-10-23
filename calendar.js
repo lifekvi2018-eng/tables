@@ -357,18 +357,26 @@
       var content = String(d);
 
       if (dots.length === 1) {
-        // Один платёж: число в цветном кружке
+        // Один платёж: число в нежном цветном кружке с правильным контрастным текстом
         var bg = dots[0];
-        cellStyle += ' background: ' + bg + '; border-radius: 50%; width: 26px; height: 26px; margin: 0 auto; display: flex; align-items: center; justify-content: center; box-shadow: 2px 3.5px 7px rgba(120,100,80,0.2), inset 0 1px 0 rgba(255,255,255,0.9);';
+        var textColor = '#4A3E25';
+        if (bg === '#D3E7F8') textColor = '#1B4567';
+        else if (bg === '#FCD6CF') textColor = '#6E2F26';
+        else if (bg === '#FDF1CC' || bg === '#F7E4A8') textColor = '#5B481D';
+        else if (bg === '#FCE8D5') textColor = '#6D3E14';
+        else if (bg === '#DBCCE9') textColor = '#442B5B';
+
+        cellStyle += ' background: ' + bg + '; color: ' + textColor + '; border-radius: 50%; width: 26px; height: 26px; margin: 0 auto; display: flex; align-items: center; justify-content: center; box-shadow: 1.5px 2.5px 5px rgba(140,115,90,0.18), inset 0 1px 0 rgba(255,255,255,0.9); font-weight: 800;';
       } else if (dots.length >= 2) {
-        // Два или более платежей: парные цветные точки
-        cellStyle += ' border: 2px solid #5B481D; border-radius: 50%; width: 26px; height: 26px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative;';
-        var dotsHtml = '<div style="display: flex; gap: 2px; position: absolute; bottom: 1px;">';
-        dots.forEach(function (color) {
-          dotsHtml += '<span style="width: 5px; height: 5px; border-radius: 50%; background: ' + color + '; display: inline-block;"></span>';
+        // Два или более платежей: аккуратная мягкая плашечка и мини-точки под числом (без грубых чёрных ободков)
+        cellStyle += ' width: 28px; height: 28px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 10px; background: rgba(250, 244, 235, 0.7); box-shadow: 1px 2px 4px rgba(180, 155, 125, 0.15);';
+        var visibleDots = dots.slice(0, 3);
+        var dotsHtml = '<div style="display: flex; gap: 3px; align-items: center; justify-content: center; margin-top: 2px;">';
+        visibleDots.forEach(function (color) {
+          dotsHtml += '<span style="width: 5px; height: 5px; border-radius: 50%; background: ' + color + '; display: inline-block; box-shadow: 0 1px 2px rgba(100,80,60,0.2);"></span>';
         });
         dotsHtml += '</div>';
-        content = '<span style="line-height: 1; margin-top: -3px;">' + d + '</span>' + dotsHtml;
+        content = '<span style="line-height: 1; font-size: 11px; font-weight: 800; color: #4A3E25;">' + d + '</span>' + dotsHtml;
       }
 
       html.push('<div class="' + cellClasses + '" style="' + cellStyle + '" data-day="' + d + '" onclick="window.MyTablesCalendar.onDayClick(event, ' + d + ')">' + content + '</div>');
@@ -419,16 +427,20 @@
     var itemsHtml = popoverData.map(function (item) {
       var isNeedPay = !item.isPaid;
       var btnClass = isNeedPay ? 'btn-pay-toggle need-pay' : 'btn-pay-toggle';
+      var payBtnStyle = isNeedPay
+        ? 'padding:8px 14px;border-radius:12px;border:none;font-size:11px;font-weight:900;cursor:pointer;background:#FCD6CF;color:#58241B;box-shadow:1px 2px 5px rgba(180,90,90,0.2);'
+        : 'padding:8px 14px;border-radius:12px;border:none;font-size:11px;font-weight:900;cursor:pointer;background:#C8E2D2;color:#1E3F30;box-shadow:1px 2px 5px rgba(60,120,90,0.2);';
+
       return [
-        '<div class="popover-item" style="background: #F4E8D9; border-radius: 16px; padding: 10px 12px; margin-bottom: 8px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.9);">',
-        '  <div class="popover-item-title" style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:800;color:#2F261D;">',
-        '    <span style="width:10px;height:10px;border-radius:50%;background:' + item.color + ';display:inline-block;"></span>',
+        '<div class="popover-item" style="background: #FAF4EB; border-radius: 16px; padding: 12px 14px; margin-bottom: 10px; border: 1.5px solid #F0E3D3; box-shadow: 1px 2px 4px rgba(170,145,120,0.12), inset 0 1px 0 rgba(255,255,255,0.9);">',
+        '  <div class="popover-item-title" style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:800;color:#2F261D;">',
+        '    <span style="width:10px;height:10px;border-radius:50%;background:' + item.color + ';display:inline-block;box-shadow:0 1px 2px rgba(100,80,60,0.2);"></span>',
         '    <span>' + escapeHtml(item.title) + '</span>',
         '  </div>',
-        '  <div class="popover-item-sum" style="font-size:14px;font-weight:900;color:#4A3E25;margin:4px 0 8px 0;">' + item.amount.toLocaleString('ru-RU') + ' ₽</div>',
+        '  <div class="popover-item-sum" style="font-size:16px;font-weight:900;color:#4A3E25;margin:6px 0 10px 0;">' + item.amount.toLocaleString('ru-RU') + ' ₽</div>',
         '  <div class="popover-actions" style="display:flex;gap:8px;">',
-        '    <a href="' + escapeHtml(item.shopUrl) + '" target="_blank" rel="noopener noreferrer" class="btn-shop-link" style="flex:1;padding:6px 10px;border-radius:10px;background:#E8DAC8;color:#4A3E25;text-decoration:none;font-size:11px;font-weight:800;text-align:center;display:inline-flex;align-items:center;justify-content:center;gap:4px;">В магазин ↗</a>',
-        '    <button class="' + btnClass + '" data-id="' + item.id + '" onclick="window.MyTablesCalendar.onPayToggleClick(event, \'' + item.id + '\', ' + day + ')" style="padding:6px 12px;border-radius:10px;border:none;font-size:11px;font-weight:900;cursor:pointer;">' + item.buttonText + '</button>',
+        '    <a href="' + escapeHtml(item.shopUrl) + '" target="_blank" rel="noopener noreferrer" class="btn-shop-link" style="flex:1;padding:8px 12px;border-radius:12px;background:#FAF2E7;border:1.5px solid #E2D3C0;color:#4A3E25;text-decoration:none;font-size:11px;font-weight:800;text-align:center;display:inline-flex;align-items:center;justify-content:center;gap:4px;box-shadow:1px 2px 4px rgba(160,135,110,0.15);">В магазин ↗</a>',
+        '    <button class="' + btnClass + '" data-id="' + item.id + '" onclick="window.MyTablesCalendar.onPayToggleClick(event, \'' + item.id + '\', ' + day + ')" style="' + payBtnStyle + '">' + item.buttonText + '</button>',
         '  </div>',
         '</div>'
       ].join('');
@@ -511,9 +523,15 @@
       if (res.isPaid) {
         btn.classList.remove('need-pay');
         btn.innerText = '✓ Оплачено';
+        btn.style.background = '#C8E2D2';
+        btn.style.color = '#1E3F30';
+        btn.style.boxShadow = '1px 2px 5px rgba(60,120,90,0.2)';
       } else {
         btn.classList.add('need-pay');
         btn.innerText = 'Оплатить';
+        btn.style.background = '#FCD6CF';
+        btn.style.color = '#58241B';
+        btn.style.boxShadow = '1px 2px 5px rgba(180,90,90,0.2)';
       }
     }
   }
