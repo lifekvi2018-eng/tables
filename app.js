@@ -488,19 +488,19 @@
         '      </div>',
         '      <div>',
         '        <label style="font-size: 11px; font-weight: 800; color: #6D3E14; display: block; margin-bottom: 7px;">Цвет карточки</label>',
-        '        <div id="exp-color-dots-row" style="display: flex; gap: 10px; align-items: center;">',
-        '          <button type="button" class="exp-color-opt active" data-color="#D3E7F8" style="width: 28px; height: 28px; border-radius: 50%; background: #D3E7F8; border: none; cursor: pointer; box-shadow: 0 0 0 2px #FAF2E7, 0 0 0 4px #5B481D; transform: scale(1.1); transition: all 0.15s ease; outline: none;"></button>',
-        '          <button type="button" class="exp-color-opt" data-color="#C8E2D2" style="width: 28px; height: 28px; border-radius: 50%; background: #C8E2D2; border: none; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.15); transition: all 0.15s ease; outline: none;"></button>',
-        '          <button type="button" class="exp-color-opt" data-color="#FCE8D5" style="width: 28px; height: 28px; border-radius: 50%; background: #FCE8D5; border: none; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.15); transition: all 0.15s ease; outline: none;"></button>',
-        '          <button type="button" class="exp-color-opt" data-color="#FCD6CF" style="width: 28px; height: 28px; border-radius: 50%; background: #FCD6CF; border: none; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.15); transition: all 0.15s ease; outline: none;"></button>',
-        '          <button type="button" class="exp-color-opt" data-color="#DBCCE9" style="width: 28px; height: 28px; border-radius: 50%; background: #DBCCE9; border: none; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.15); transition: all 0.15s ease; outline: none;"></button>',
-        '          <button type="button" class="exp-color-opt" data-color="#FDF1CC" style="width: 28px; height: 28px; border-radius: 50%; background: #FDF1CC; border: none; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.15); transition: all 0.15s ease; outline: none;"></button>',
+        '        <div id="exp-color-dots-row" style="display: flex; gap: 12px; align-items: center;">',
+        '          <button type="button" class="exp-color-opt active" data-color="#D3E7F8" style="width: 32px; height: 32px; border-radius: 50%; background: #D3E7F8; border: none; cursor: pointer; box-shadow: 2px 4px 8px rgba(120, 90, 60, 0.28); transform: scale(1.12); transition: all 0.15s ease; outline: none; display: flex; align-items: center; justify-content: center; padding: 0;"><svg class="exp-check-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#3D2B1F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>',
+        '          <button type="button" class="exp-color-opt" data-color="#C8E2D2" style="width: 32px; height: 32px; border-radius: 50%; background: #C8E2D2; border: none; cursor: pointer; box-shadow: 1px 2px 4px rgba(120, 90, 60, 0.15); transition: all 0.15s ease; outline: none; display: flex; align-items: center; justify-content: center; padding: 0;"></button>',
+        '          <button type="button" class="exp-color-opt" data-color="#FCE8D5" style="width: 32px; height: 32px; border-radius: 50%; background: #FCE8D5; border: none; cursor: pointer; box-shadow: 1px 2px 4px rgba(120, 90, 60, 0.15); transition: all 0.15s ease; outline: none; display: flex; align-items: center; justify-content: center; padding: 0;"></button>',
+        '          <button type="button" class="exp-color-opt" data-color="#FCD6CF" style="width: 32px; height: 32px; border-radius: 50%; background: #FCD6CF; border: none; cursor: pointer; box-shadow: 1px 2px 4px rgba(120, 90, 60, 0.15); transition: all 0.15s ease; outline: none; display: flex; align-items: center; justify-content: center; padding: 0;"></button>',
+        '          <button type="button" class="exp-color-opt" data-color="#DBCCE9" style="width: 32px; height: 32px; border-radius: 50%; background: #DBCCE9; border: none; cursor: pointer; box-shadow: 1px 2px 4px rgba(120, 90, 60, 0.15); transition: all 0.15s ease; outline: none; display: flex; align-items: center; justify-content: center; padding: 0;"></button>',
+        '          <button type="button" class="exp-color-opt" data-color="#FDF1CC" style="width: 32px; height: 32px; border-radius: 50%; background: #FDF1CC; border: none; cursor: pointer; box-shadow: 1px 2px 4px rgba(120, 90, 60, 0.15); transition: all 0.15s ease; outline: none; display: flex; align-items: center; justify-content: center; padding: 0;"></button>',
         '        </div>',
         '      </div>',
         '    </div>',
-        '    <div style="display: flex; gap: 10px; justify-content: flex-end;">',
-        '      <button type="button" id="exp-modal-cancel" style="background: #FDF1CC; color: #5B481D; border: none; outline: none; border-radius: 14px; padding: 11px 20px; font-size: 13px; font-weight: 800; cursor: pointer; box-shadow: 2px 3px 6px rgba(160, 125, 85, 0.2); transition: all 0.15s ease;">Отмена</button>',
-        '      <button type="submit" id="exp-modal-submit" style="background: #C8E2D2; color: #1E3F30; border: none; outline: none; border-radius: 14px; padding: 11px 24px; font-size: 13px; font-weight: 900; cursor: pointer; box-shadow: 2px 3px 7px rgba(70, 130, 95, 0.25); transition: all 0.15s ease;">Сохранить</button>',
+        '    <div style="display: flex; gap: 12px; justify-content: stretch;">',
+        '      <button type="button" id="exp-modal-cancel" style="flex: 1; min-height: 44px; background: #FDF1CC; color: #5B481D; border: none; outline: none; border-radius: 14px; padding: 12px 16px; font-size: 14px; font-weight: 800; cursor: pointer; box-shadow: 2px 3px 6px rgba(160, 125, 85, 0.2); transition: all 0.15s ease; display: inline-flex; align-items: center; justify-content: center; text-align: center;">Отмена</button>',
+        '      <button type="submit" id="exp-modal-submit" style="flex: 1; min-height: 44px; background: #C8E2D2; color: #1E3F30; border: none; outline: none; border-radius: 14px; padding: 12px 16px; font-size: 14px; font-weight: 900; cursor: pointer; box-shadow: 2px 3px 7px rgba(70, 130, 95, 0.25); transition: all 0.15s ease; display: inline-flex; align-items: center; justify-content: center; text-align: center;">Сохранить</button>',
         '    </div>',
         '  </form>',
         '</div>'
@@ -508,17 +508,20 @@
       document.body.appendChild(expModal);
 
       var selectedExpenseColor = '#D3E7F8';
+      var checkSvg = '<svg class="exp-check-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#3D2B1F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
       var colorBtns = expModal.querySelectorAll('.exp-color-opt');
       for (var ci = 0; ci < colorBtns.length; ci++) {
         colorBtns[ci].addEventListener('click', function () {
           for (var cj = 0; cj < colorBtns.length; cj++) {
             colorBtns[cj].classList.remove('active');
-            colorBtns[cj].style.boxShadow = '0 2px 5px rgba(0,0,0,0.15)';
+            colorBtns[cj].innerHTML = '';
+            colorBtns[cj].style.boxShadow = '1px 2px 4px rgba(120, 90, 60, 0.15)';
             colorBtns[cj].style.transform = 'scale(1)';
           }
           this.classList.add('active');
-          this.style.boxShadow = '0 0 0 2px #FAF2E7, 0 0 0 4px #5B481D';
-          this.style.transform = 'scale(1.1)';
+          this.innerHTML = checkSvg;
+          this.style.boxShadow = '2px 4px 8px rgba(120, 90, 60, 0.28)';
+          this.style.transform = 'scale(1.12)';
           selectedExpenseColor = this.getAttribute('data-color');
         });
       }
@@ -586,7 +589,6 @@
           '    </div>',
           '  </div>',
           '  <div class="expense-item-right">',
-          '    <a href="' + escapeHtml(url || '#') + '" target="_blank" class="expense-shop-btn">В магазин ↗</a>',
           '    <button class="status-pill unpaid" onclick="window.toggleExpenseItemStatus(event, this)"><span class="status-dot"></span> Оплатить</button>',
           '  </div>',
           '</div>'

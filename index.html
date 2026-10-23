@@ -590,17 +590,8 @@
     .btn-plus-income:active { transform: translateY(1.5px); }
 
     .btn-plus-expense {
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      background: #FCE3DE;
-      border: none;
-      font-size: 18px;
-      font-weight: 900;
-      color: #6E2F26;
       cursor: pointer;
-      box-shadow: 2.5px 4px 10px rgba(140, 60, 50, 0.20), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.9);
-      display: flex;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
       transition: transform 0.15s ease, box-shadow 0.15s ease;
@@ -1757,15 +1748,18 @@
       align-items: center;
       gap: 6px;
       margin-top: 2px;
+      white-space: nowrap;
     }
     .expense-item-price {
       font-size: 12px;
       font-weight: 900;
+      white-space: nowrap;
     }
     .expense-item-date {
       font-size: 10px;
       font-weight: 700;
       opacity: 0.7;
+      white-space: nowrap;
     }
 
     .expense-item-right {
@@ -2046,14 +2040,16 @@
       background: #FDF1CC;
       color: #5B481D;
       border: none;
-      padding: 10px 18px;
+      min-height: 44px;
+      padding: 10px 22px;
       border-radius: 14px;
       font-size: 13px;
       font-weight: 800;
-      display: flex;
+      display: inline-flex;
       align-items: center;
       gap: 8px;
       cursor: pointer;
+      width: auto;
       box-shadow: 2.5px 4.5px 12px rgba(185, 160, 110, 0.28), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.95);
       transition: transform 0.1s ease;
       white-space: nowrap;
@@ -3534,7 +3530,7 @@
             <div class="desk-controls">
               <button class="desk-add-btn btn-plus-expense">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                Добавить расход
+                Добавить платеж
               </button>
             </div>
           </div>
@@ -3570,7 +3566,6 @@
                     </div>
                   </div>
                   <div class="expense-item-right">
-                    <a href="https://claude.ai" target="_blank" class="expense-shop-btn">В магазин ↗</a>
                     <button class="status-pill paid" onclick="window.toggleExpenseItemStatus(event, this)"><span class="status-dot"></span> Оплачено</button>
                   </div>
                 </div>
@@ -3590,7 +3585,6 @@
                     </div>
                   </div>
                   <div class="expense-item-right">
-                    <a href="https://gemini.google.com" target="_blank" class="expense-shop-btn">В магазин ↗</a>
                     <button class="status-pill unpaid" onclick="window.toggleExpenseItemStatus(event, this)"><span class="status-dot"></span> Оплатить</button>
                   </div>
                 </div>
@@ -3610,7 +3604,6 @@
                     </div>
                   </div>
                   <div class="expense-item-right">
-                    <a href="https://chatgpt.com" target="_blank" class="expense-shop-btn">В магазин ↗</a>
                     <button class="status-pill unpaid" onclick="window.toggleExpenseItemStatus(event, this)"><span class="status-dot"></span> Оплатить</button>
                   </div>
                 </div>
@@ -3647,7 +3640,6 @@
                     </div>
                   </div>
                   <div class="expense-item-right">
-                    <a href="https://megafon.ru" target="_blank" class="expense-shop-btn">В магазин ↗</a>
                     <button class="status-pill paid" onclick="window.toggleExpenseItemStatus(event, this)"><span class="status-dot"></span> Оплачено</button>
                   </div>
                 </div>
@@ -3667,7 +3659,6 @@
                     </div>
                   </div>
                   <div class="expense-item-right">
-                    <a href="https://tbank.ru" target="_blank" class="expense-shop-btn">В магазин ↗</a>
                     <button class="status-pill unpaid" onclick="window.toggleExpenseItemStatus(event, this)"><span class="status-dot"></span> Оплатить</button>
                   </div>
                 </div>
@@ -3704,7 +3695,6 @@
                     </div>
                   </div>
                   <div class="expense-item-right">
-                    <a href="https://vpngenerator.org" target="_blank" class="expense-shop-btn">В магазин ↗</a>
                     <button class="status-pill paid" onclick="window.toggleExpenseItemStatus(event, this)"><span class="status-dot"></span> Оплачено</button>
                   </div>
                 </div>
@@ -3724,7 +3714,6 @@
                     </div>
                   </div>
                   <div class="expense-item-right">
-                    <a href="https://vpngenerator.org" target="_blank" class="expense-shop-btn">В магазин ↗</a>
                     <button class="status-pill unpaid" onclick="window.toggleExpenseItemStatus(event, this)"><span class="status-dot"></span> Оплатить</button>
                   </div>
                 </div>
@@ -4285,7 +4274,6 @@
                     </div>
                   </div>
                   <div class="expense-item-right">
-                    <a href="https://claude.ai" target="_blank" class="expense-shop-btn">В магазин ↗</a>
                     <button class="status-pill paid" onclick="window.toggleExpenseItemStatus(event, this)"><span class="status-dot"></span> Оплачено</button>
                   </div>
                 </div>
@@ -4306,7 +4294,6 @@
                     </div>
                   </div>
                   <div class="expense-item-right">
-                    <a href="https://gemini.google.com" target="_blank" class="expense-shop-btn">В магазин ↗</a>
                     <button class="status-pill unpaid" onclick="window.toggleExpenseItemStatus(event, this)"><span class="status-dot"></span> Оплатить</button>
                   </div>
                 </div>
@@ -4327,7 +4314,6 @@
                     </div>
                   </div>
                   <div class="expense-item-right">
-                    <a href="https://chatgpt.com" target="_blank" class="expense-shop-btn">В магазин ↗</a>
                     <button class="status-pill unpaid" onclick="window.toggleExpenseItemStatus(event, this)"><span class="status-dot"></span> Оплатить</button>
                   </div>
                 </div>
@@ -4364,7 +4350,6 @@
                     </div>
                   </div>
                   <div class="expense-item-right">
-                    <a href="https://megafon.ru" target="_blank" class="expense-shop-btn">В магазин ↗</a>
                     <button class="status-pill paid" onclick="window.toggleExpenseItemStatus(event, this)"><span class="status-dot"></span> Оплачено</button>
                   </div>
                 </div>
@@ -4384,7 +4369,6 @@
                     </div>
                   </div>
                   <div class="expense-item-right">
-                    <a href="https://tbank.ru" target="_blank" class="expense-shop-btn">В магазин ↗</a>
                     <button class="status-pill unpaid" onclick="window.toggleExpenseItemStatus(event, this)"><span class="status-dot"></span> Оплатить</button>
                   </div>
                 </div>
@@ -4421,7 +4405,6 @@
                     </div>
                   </div>
                   <div class="expense-item-right">
-                    <a href="https://vpngenerator.org" target="_blank" class="expense-shop-btn">В магазин ↗</a>
                     <button class="status-pill paid" onclick="window.toggleExpenseItemStatus(event, this)"><span class="status-dot"></span> Оплачено</button>
                   </div>
                 </div>
@@ -4441,7 +4424,6 @@
                     </div>
                   </div>
                   <div class="expense-item-right">
-                    <a href="https://vpngenerator.org" target="_blank" class="expense-shop-btn">В магазин ↗</a>
                     <button class="status-pill unpaid" onclick="window.toggleExpenseItemStatus(event, this)"><span class="status-dot"></span> Оплатить</button>
                   </div>
                 </div>
