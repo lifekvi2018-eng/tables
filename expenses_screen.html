@@ -704,7 +704,7 @@
           </div>
 
           <!-- Кнопка «+ Добавить платеж» -->
-          <button class="add-payment-pill-btn">
+          <button class="add-payment-pill-btn btn-plus-expense">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
             Добавить платеж
           </button>
@@ -941,11 +941,15 @@
         
         <!-- ЛЕВАЯ НАВИГАЦИЯ (СТРОГО СЛЕВА 200px) -->
         <div class="desk-sidebar">
-          <div class="sidebar-user-chip">
-            <div class="sidebar-avatar">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <div class="sidebar-user-chip" style="display: flex; align-items: center; gap: 8px; padding: 8px 10px; margin-bottom: 8px; background: #F2E5D5; border-radius: 14px; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);">
+            <div class="sidebar-avatar" style="width: 28px; height: 28px; border-radius: 50%; background: #FAF2E7; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; color: #5A4E40;">К</div>
+            <div style="flex: 1; min-width: 0;">
+              <div class="sidebar-user-name" style="font-size: 12px; font-weight: 800; color: #2F261D; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Кристина</div>
+              <div style="font-size: 9px; color: #726453; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" class="mytables-user-email">lifekvi2018@gmail.com</div>
             </div>
-            <div class="sidebar-user-name">Мой мир ♡</div>
+            <button class="mytables-logout-btn" title="Выйти" style="background: none; border: none; cursor: pointer; color: #726453; padding: 2px; display: flex; align-items: center;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            </button>
           </div>
 
           <a href="main_screen.html" class="desk-nav-item">
@@ -964,15 +968,15 @@
           </a>
 
           <!-- Активная плашка Расходов (пудрово-розовая) -->
-          <button class="desk-nav-item active-pink">
+          <a href="expenses_screen.html" class="desk-nav-item active-pink">
             <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" x2="21" y1="6" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></span>
             Расходы
-          </button>
+          </a>
 
-          <button class="desk-nav-item">
+          <a href="clients_screen.html" class="desk-nav-item">
             <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
             Клиенты
-          </button>
+          </a>
 
           <button class="desk-nav-item">
             <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></span>
@@ -993,9 +997,9 @@
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8C784C" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                 <input type="text" class="search-input" placeholder="Поиск...">
               </div>
-              <button class="desk-add-btn">
+              <button class="desk-add-btn btn-plus-expense">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                Добавить платеж
+                Добавить расход
               </button>
             </div>
           </div>
@@ -1206,5 +1210,7 @@
 
   </div>
 
+  <script src="sync.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
