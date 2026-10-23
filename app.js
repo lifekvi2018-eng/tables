@@ -396,19 +396,58 @@
       event.stopPropagation();
     }
     if (!btn) return;
-    var isPaid = btn.classList.contains('paid');
-    if (isPaid) {
-      btn.classList.remove('paid');
-      btn.classList.add('unpaid');
-      btn.innerHTML = '<span class="status-dot"></span> Оплатить';
-    } else {
-      btn.classList.remove('unpaid');
-      btn.classList.add('paid');
-      btn.innerHTML = '<span class="status-dot"></span> Оплачено';
+
+    var slip = btn.closest ? btn.closest('.expense-paper-slip') : null;
+    var titleEl = slip ? slip.querySelector('.expense-item-name') : null;
+    var title = titleEl ? titleEl.textContent.trim() : '';
+    var willBePaid = !btn.classList.contains('paid');
+
+    // 1. Синхронизируем состояние кнопок (десктоп и мобильный)
+    var allSlips = document.querySelectorAll('.expense-paper-slip');
+    for (var s = 0; s < allSlips.length; s++) {
+      var sTitleEl = allSlips[s].querySelector('.expense-item-name');
+      if (sTitleEl && sTitleEl.textContent.trim().toLowerCase() === title.toLowerCase()) {
+        var pill = allSlips[s].querySelector('.status-pill');
+        if (pill) {
+          if (willBePaid) {
+            pill.classList.remove('unpaid');
+            pill.classList.add('paid');
+            pill.innerHTML = '<span class="status-dot"></span> Оплачено';
+          } else {
+            pill.classList.remove('paid');
+            pill.classList.add('unpaid');
+            pill.innerHTML = '<span class="status-dot"></span> Оплатить';
+          }
+        }
+      }
     }
-    // Реактивно обновляем сводку расходов на Главном экране
-    if (window.MyTablesCalendar && typeof window.MyTablesCalendar.updateSummaryCards === 'function') {
-      window.MyTablesCalendar.updateSummaryCards();
+
+    // 2. Обновляем paidMonths в calendar.js и реактивно пересчитываем сводку на Главном экране
+    if (window.MyTablesCalendar) {
+      var ym = (typeof window.MyTablesCalendar.getYearMonth === 'function')
+        ? window.MyTablesCalendar.getYearMonth()
+        : '2026-10';
+      var payments = (window.MyTablesCalendar.state && window.MyTablesCalendar.state.payments) || [];
+      for (var i = 0; i < payments.length; i++) {
+        var p = payments[i];
+        var pTitle = p.title || p['Название'] || p.name || '';
+        if (title && pTitle.toLowerCase() === title.toLowerCase()) {
+          if (!p.paidMonths) p.paidMonths = [];
+          var mIdx = p.paidMonths.indexOf(ym);
+          if (willBePaid && mIdx === -1) {
+            p.paidMonths.push(ym);
+          } else if (!willBePaid && mIdx !== -1) {
+            p.paidMonths.splice(mIdx, 1);
+          }
+          break;
+        }
+      }
+      if (typeof window.MyTablesCalendar.updateSummaryCards === 'function') {
+        window.MyTablesCalendar.updateSummaryCards();
+      }
+      if (typeof window.MyTablesCalendar.renderCalendar === 'function') {
+        window.MyTablesCalendar.renderCalendar();
+      }
     }
   };
 
@@ -575,8 +614,26 @@
           submitBtn.textContent = 'Сохранить';
           submitBtn.disabled = false;
           closeExpModal();
-          if (window.MyTablesCalendar && typeof window.MyTablesCalendar.updateSummaryCards === 'function') {
-            window.MyTablesCalendar.updateSummaryCards();
+          if (window.MyTablesCalendar && window.MyTablesCalendar.state) {
+            if (!window.MyTablesCalendar.state.payments) window.MyTablesCalendar.state.payments = [];
+            window.MyTablesCalendar.state.payments.push({
+              id: 'exp_' + Date.now(),
+              title: title,
+              dayOfMonth: day,
+              currentRate: amount,
+              amount: amount,
+              shopUrl: url || '#',
+              color: selectedExpenseColor,
+              category: cat,
+              paidMonths: [],
+              isArchived: false
+            });
+            if (typeof window.MyTablesCalendar.updateSummaryCards === 'function') {
+              window.MyTablesCalendar.updateSummaryCards();
+            }
+            if (typeof window.MyTablesCalendar.renderCalendar === 'function') {
+              window.MyTablesCalendar.renderCalendar();
+            }
           }
         }).catch(function (err) {
           submitBtn.textContent = 'Сохранить';

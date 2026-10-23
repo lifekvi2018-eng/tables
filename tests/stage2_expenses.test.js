@@ -86,7 +86,7 @@ async function runAllTests() {
   await runTest('test_toggle_expense_item_status: функция переключения статуса работает как toggle', () => {
     assert(appJs.includes('window.toggleExpenseItemStatus'), 'Должна быть экспортирована функция window.toggleExpenseItemStatus');
     assert(appJs.includes("btn.classList.contains('paid')"), 'Функция должна проверять наличие класса paid');
-    assert(appJs.includes("btn.innerHTML = '<span class=\"status-dot\"></span> Оплатить'"), 'При переключении с оплаченного текст меняется на «Оплатить»');
+    assert(appJs.includes("innerHTML = '<span class=\"status-dot\"></span> Оплатить'"), 'При переключении с оплаченного текст меняется на «Оплатить»');
   });
 
   // Тест 7: Реактивность с Главным экраном
