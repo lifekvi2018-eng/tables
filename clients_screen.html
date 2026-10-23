@@ -366,7 +366,7 @@
       flex-shrink: 0;
     }
 
-    /* Статусные бейджи — светлые плашечки */
+    /* Статусные бейджи — сочные, выразительные цвета с глубоким контрастным текстом */
     .client-status-badge {
       border-radius: 12px;
       padding: 5px 10px;
@@ -378,10 +378,26 @@
       white-space: nowrap;
       border: none;
     }
-    .mint .client-status-badge { background: #F0F8F3; color: #1E3F30; box-shadow: 1.5px 2.5px 6px rgba(30,55,40,0.14), inset 0 1px 0 rgba(255,255,255,0.95); }
-    .blue .client-status-badge { background: #F1F7FD; color: #16324F; box-shadow: 1.5px 2.5px 6px rgba(25,50,80,0.14), inset 0 1px 0 rgba(255,255,255,0.95); }
-    .apricot .client-status-badge { background: #FFF7EE; color: #4D3118; box-shadow: 1.5px 2.5px 6px rgba(70,45,20,0.14), inset 0 1px 0 rgba(255,255,255,0.95); }
-    .lavender .client-status-badge { background: #F8F2FD; color: #4A2E66; box-shadow: 1.5px 2.5px 6px rgba(70,40,90,0.14), inset 0 1px 0 rgba(255,255,255,0.95); }
+    .badge-work {
+      background: #A7DEBF !important;
+      color: #0B3820 !important;
+      box-shadow: 1.5px 2.5px 6px rgba(20, 60, 35, 0.20), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    }
+    .badge-discuss {
+      background: #B7DBFA !important;
+      color: #0C345C !important;
+      box-shadow: 1.5px 2.5px 6px rgba(20, 50, 90, 0.20), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    }
+    .badge-waiting {
+      background: #FCE188 !important;
+      color: #4A2E00 !important;
+      box-shadow: 1.5px 2.5px 6px rgba(90, 60, 10, 0.20), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    }
+    .badge-done {
+      background: #D3B7EC !important;
+      color: #331154 !important;
+      box-shadow: 1.5px 2.5px 6px rgba(60, 20, 90, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    }
 
     /* Круглая 3D-кнопочка со стрелочкой (светлее плашки!) */
     .paper-round-chevron {
@@ -857,7 +873,7 @@
                     </div>
                   </div>
                   <div class="client-item-right">
-                    <span class="client-status-badge">● В работе</span>
+                    <span class="client-status-badge badge-work">В работе</span>
                     <button class="paper-round-chevron">
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                     </button>
@@ -875,7 +891,7 @@
                     </div>
                   </div>
                   <div class="client-item-right">
-                    <span class="client-status-badge">● Обсуждение</span>
+                    <span class="client-status-badge badge-discuss">Обсуждение</span>
                     <button class="paper-round-chevron">
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                     </button>
@@ -893,7 +909,7 @@
                     </div>
                   </div>
                   <div class="client-item-right">
-                    <span class="client-status-badge">● Ожидает</span>
+                    <span class="client-status-badge badge-waiting">Ожидает</span>
                     <button class="paper-round-chevron">
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                     </button>
@@ -911,7 +927,7 @@
                     </div>
                   </div>
                   <div class="client-item-right">
-                    <span class="client-status-badge">● В работе</span>
+                    <span class="client-status-badge badge-work">В работе</span>
                     <button class="paper-round-chevron">
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                     </button>
@@ -929,7 +945,7 @@
                     </div>
                   </div>
                   <div class="client-item-right">
-                    <span class="client-status-badge">● Завершён</span>
+                    <span class="client-status-badge badge-done">Завершён</span>
                     <button class="paper-round-chevron">
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                     </button>
@@ -972,7 +988,7 @@
                     </div>
                   </div>
                   <div style="display:flex; align-items:center; gap:8px;">
-                    <span class="client-status-badge" style="background:#F0F8F3; color:#1E3F30;">● В работе</span>
+                    <span class="client-status-badge badge-work">В работе</span>
                     <button class="paper-action-btn" title="Редактировать">
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
                     </button>
@@ -1178,7 +1194,7 @@
               </div>
 
               <!-- 1. Анна (Мята, выбранная) -->
-              <div class="client-item-slip mint" style="border: 2px solid #5A8F70;">
+              <div class="client-item-slip mint">
                 <div class="client-item-left">
                   <div class="client-avatar-round" style="width: 38px; height: 38px;">АС</div>
                   <div>
@@ -1187,7 +1203,7 @@
                     <div class="client-phone-sub" style="font-size: 10px;">+7 900 123-45-67</div>
                   </div>
                 </div>
-                <span class="client-status-badge" style="font-size: 9px; padding: 4px 8px;">В работе</span>
+                <span class="client-status-badge badge-work" style="font-size: 9px; padding: 4px 8px;">В работе</span>
               </div>
 
               <!-- 2. Игорь (Небо) -->
@@ -1200,7 +1216,7 @@
                     <div class="client-phone-sub" style="font-size: 10px;">+7 911 234-56-78</div>
                   </div>
                 </div>
-                <span class="client-status-badge" style="font-size: 9px; padding: 4px 8px;">Обсуждение</span>
+                <span class="client-status-badge badge-discuss" style="font-size: 9px; padding: 4px 8px;">Обсуждение</span>
               </div>
 
               <!-- 3. Катя (Абрикос) -->
@@ -1213,7 +1229,7 @@
                     <div class="client-phone-sub" style="font-size: 10px;">+7 920 345-67-89</div>
                   </div>
                 </div>
-                <span class="client-status-badge" style="font-size: 9px; padding: 4px 8px;">Ожидает</span>
+                <span class="client-status-badge badge-waiting" style="font-size: 9px; padding: 4px 8px;">Ожидает</span>
               </div>
 
               <!-- 4. Ольга (Мята) -->
@@ -1226,7 +1242,7 @@
                     <div class="client-phone-sub" style="font-size: 10px;">+7 905 456-78-90</div>
                   </div>
                 </div>
-                <span class="client-status-badge" style="font-size: 9px; padding: 4px 8px;">В работе</span>
+                <span class="client-status-badge badge-work" style="font-size: 9px; padding: 4px 8px;">В работе</span>
               </div>
 
               <!-- 5. Максим (Лаванда) -->
@@ -1239,7 +1255,7 @@
                     <div class="client-phone-sub" style="font-size: 10px;">+7 930 567-89-01</div>
                   </div>
                 </div>
-                <span class="client-status-badge" style="font-size: 9px; padding: 4px 8px;">Завершён</span>
+                <span class="client-status-badge badge-done" style="font-size: 9px; padding: 4px 8px;">Завершён</span>
               </div>
             </div>
 
@@ -1256,9 +1272,7 @@
                   </div>
                 </div>
                 <div style="display: flex; align-items: center; gap: 10px;">
-                  <span class="client-status-badge" style="background:#F0F8F3; color:#1E3F30; font-size: 12px; padding: 6px 14px;">
-                    ● В работе
-                  </span>
+                  <span class="client-status-badge badge-work" style="font-size: 12px; padding: 6px 14px;">В работе</span>
                   <button class="paper-action-btn" style="width:36px; height:36px;" title="Редактировать анкету">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
                   </button>
