@@ -300,12 +300,63 @@
 
     /* БУМАЖНЫЙ ВКЛАДЫШ С ПЛАТЕЖАМИ */
     .payments-paper-slip {
-      background: #FFFFFF;
       border-radius: 16px;
       padding: 10px 12px;
-      box-shadow: 0 4px 14px rgba(60, 50, 40, 0.07), inset 0 1px 0 rgba(255, 255, 255, 0.95);
       border: none;
     }
+    /* ПЛАШКИ ПЛАТЕЖЕЙ И СУММ — В ЦВЕТ КАРТОЧКИ, ТОЛЬКО СВЕТЛЕЕ (НЕ БЕЛЫЕ!) */
+    .mint .payments-paper-slip,
+    .mint .desk-payments-slip {
+      background: #F0F8F3;
+      box-shadow: 0 4px 14px rgba(45, 88, 71, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    }
+    .mint .project-sum-pill,
+    .mint .desk-project-badge {
+      background: #E1F2E8;
+    }
+    .mint .desk-payment-item {
+      background: #E3F2E9;
+    }
+
+    .apricot .payments-paper-slip,
+    .apricot .desk-payments-slip {
+      background: #FFF7EE;
+      box-shadow: 0 4px 14px rgba(150, 110, 80, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    }
+    .apricot .project-sum-pill,
+    .apricot .desk-project-badge {
+      background: #FCEBDC;
+    }
+    .apricot .desk-payment-item {
+      background: #FDF0E2;
+    }
+
+    .pink .payments-paper-slip,
+    .pink .desk-payments-slip {
+      background: #FFF3F0;
+      box-shadow: 0 4px 14px rgba(130, 65, 55, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    }
+    .pink .project-sum-pill,
+    .pink .desk-project-badge {
+      background: #FCE4E0;
+    }
+    .pink .desk-payment-item {
+      background: #FDE8E4;
+    }
+
+    .blue .payments-paper-slip,
+    .blue .desk-payments-slip {
+      background: #F1F7FD;
+      box-shadow: 0 4px 14px rgba(60, 100, 140, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    }
+    .blue .project-sum-pill,
+    .blue .desk-project-badge {
+      background: #E3EFFB;
+    }
+    .blue .desk-payment-item {
+      background: #E5F0FA;
+    }
+
     .payments-slip-header {
       display: flex;
       justify-content: space-between;
@@ -330,7 +381,7 @@
       align-items: center;
       padding: 5px 0;
       font-size: 12px;
-      border-bottom: 1px dashed #EDE5DA;
+      border-bottom: 1px dashed rgba(60, 50, 40, 0.12);
     }
     .payment-row:last-child {
       border-bottom: none;
@@ -360,7 +411,7 @@
       cursor: pointer;
     }
     .payment-dots-btn:hover {
-      background: #F4ECE1;
+      background: rgba(0, 0, 0, 0.05);
       color: #383025;
     }
 
@@ -598,10 +649,8 @@
 
     /* ПРАВАЯ ЧАСТЬ ДЕСКТОПНОЙ КАРТОЧКИ: БУМАЖНЫЙ ВКЛАДЫШ С ПЛАТЕЖАМИ */
     .desk-payments-slip {
-      background: #FFFFFF;
       border-radius: 18px;
       padding: 12px 16px;
-      box-shadow: 0 4px 16px rgba(60, 50, 40, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.95);
       border: none;
     }
     .desk-slip-header {
@@ -610,7 +659,7 @@
       align-items: center;
       margin-bottom: 8px;
       padding-bottom: 6px;
-      border-bottom: 1px dashed #EDE5DA;
+      border-bottom: 1px dashed rgba(60, 50, 40, 0.12);
     }
     .desk-slip-title {
       font-size: 13px;
