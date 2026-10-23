@@ -1,0 +1,1412 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Экран 4: «Клиенты ♡» — Мои таблицы</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif !important;
+    }
+    body, button, input, select, textarea, span, div, p, h1, h2, h3 {
+      font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif !important;
+    }
+
+    body {
+      background: #FAF2E7;
+      color: #383025;
+      padding: 20px 14px;
+      line-height: 1.4;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+
+    /* ВЕРХНЕЕ МЕНЮ ПЕРЕКЛЮЧЕНИЯ ЭКРАНОВ */
+    .screen-switcher {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 22px;
+      flex-wrap: wrap;
+    }
+    .switcher-btn {
+      padding: 8px 16px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 800;
+      color: #726453;
+      background: #EADBCC;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .switcher-btn:hover {
+      background: #DFD0BE;
+      color: #2F261D;
+    }
+    .switcher-btn.active {
+      background: #5A4E40;
+      color: #FFFFFF;
+      box-shadow: 0 4px 12px rgba(90, 78, 64, 0.25);
+    }
+
+    /* ЗАГОЛОВОК СТРАНИЦЫ */
+    .top-header {
+      margin-bottom: 24px;
+      text-align: center;
+    }
+    .badge-status {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 14px;
+      border-radius: 8px;
+      background: #D3E7F8;
+      color: #16324F;
+      margin-bottom: 8px;
+      box-shadow: 0 2px 8px rgba(50, 90, 130, 0.12);
+    }
+    .screen-title {
+      font-size: 26px;
+      font-weight: 900;
+      color: #2F261D;
+      letter-spacing: -0.4px;
+    }
+    .screen-desc {
+      font-size: 14px;
+      color: #726453;
+      margin-top: 4px;
+    }
+
+    /* СЕТКА: ТЕЛЕФОН СЛЕВА, ДЕСКТОП СПРАВА */
+    .duo-grid {
+      display: grid;
+      grid-template-columns: 390px 1fr;
+      gap: 32px;
+      align-items: start;
+    }
+    @media (max-width: 1160px) {
+      .duo-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ======================================================== */
+    /* ---------------- ТЕЛЕФОН (IPHONE) ---------------------- */
+    /* ======================================================== */
+    .iphone-box {
+      background: #F2E8DC;
+      border-radius: 46px;
+      padding: 12px;
+      box-shadow: 14px 24px 50px -6px rgba(150, 125, 100, 0.32), 4px 8px 16px rgba(150, 125, 100, 0.15);
+      border: 4px solid #EADBCC;
+      max-width: 390px;
+      margin: 0 auto;
+    }
+    .iphone-screen {
+      background: #FAF2E7;
+      border-radius: 36px;
+      padding: 16px 14px 16px 14px;
+      min-height: 760px;
+      display: flex;
+      flex-direction: column;
+    }
+    .iphone-island {
+      width: 90px;
+      height: 22px;
+      background: #2B241E;
+      border-radius: 12px;
+      margin: 0 auto 10px auto;
+    }
+    .iphone-status {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 800;
+      color: #5A4E40;
+      margin-bottom: 12px;
+      padding: 0 6px;
+    }
+
+    /* ПЕРЕКЛЮЧАТЕЛЬ ВИДОВ НА ТЕЛЕФОНЕ (СПИСОК / АНКЕТА) */
+    .mobile-view-tabs {
+      background: #EADBCC;
+      border-radius: 14px;
+      padding: 4px;
+      display: flex;
+      gap: 4px;
+      margin-bottom: 14px;
+    }
+    .mobile-tab-toggle {
+      flex: 1;
+      padding: 7px 10px;
+      border-radius: 10px;
+      border: none;
+      font-size: 11px;
+      font-weight: 800;
+      color: #5A4E40;
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+    .mobile-tab-toggle.active {
+      background: #FAF2E7;
+      color: #2F261D;
+      box-shadow: 0 2px 8px rgba(60, 45, 30, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+
+    /* ШАПКА ТЕЛЕФОНА */
+    .phone-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      padding: 0 4px;
+    }
+    .phone-title {
+      font-size: 24px;
+      font-weight: 900;
+      color: #2F261D;
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .phone-heart {
+      color: #D97368;
+      font-size: 20px;
+    }
+    .user-avatar-circle {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #FCEFD9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #5A4E40;
+      box-shadow: 2.5px 4px 10px rgba(160, 135, 110, 0.25), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    }
+
+    /* КНОПКА ДОБАВИТЬ КЛИЕНТА */
+    .add-client-pill-btn {
+      width: 100%;
+      background: #FDF1CC;
+      color: #5B481D;
+      border: none;
+      border-radius: 18px;
+      padding: 12px 18px;
+      font-size: 14px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      margin-bottom: 14px;
+      box-shadow: 2.5px 4.5px 12px rgba(185, 160, 110, 0.28), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+      transition: transform 0.12s ease;
+    }
+    .add-client-pill-btn:active {
+      transform: translateY(1.5px);
+    }
+
+    /* ПОИСК + ФИЛЬТР */
+    .search-filter-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .search-box {
+      flex: 1;
+      background: #FFFDF9;
+      border-radius: 16px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 2px 4px 10px rgba(150, 125, 100, 0.08), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+    .search-input {
+      border: none;
+      background: transparent;
+      outline: none;
+      font-size: 13px;
+      color: #2F261D;
+      width: 100%;
+      font-weight: 600;
+    }
+    .search-input::placeholder { color: #A39686; }
+
+    .filter-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 16px;
+      background: #FFFDF9;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #5A4E40;
+      cursor: pointer;
+      box-shadow: 2px 4px 10px rgba(150, 125, 100, 0.08), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      flex-shrink: 0;
+    }
+
+    /* СКРОЛЛ-КОНТЕЙНЕРЫ ТЕЛЕФОНА (БЕЗ СЕРОГО ПОЛЗУНКА) */
+    .phone-view-container {
+      flex: 1;
+      overflow-y: auto;
+      max-height: 520px;
+      padding: 2px;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .phone-view-container::-webkit-scrollbar {
+      display: none;
+      width: 0;
+      height: 0;
+    }
+
+    /* СПИСОК КАРТОЧЕК КЛИЕНТОВ (3D-БУМАЖЕЧКИ) */
+    .client-slips-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .client-item-slip {
+      background: #FFFFFF;
+      border-radius: 18px;
+      padding: 12px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: none;
+      cursor: pointer;
+      box-shadow: 3px 5px 12px rgba(35, 30, 20, 0.12), 1px 2px 4px rgba(35, 30, 20, 0.08), inset 0 1.5px 0 rgba(255, 255, 255, 0.95);
+      transition: transform 0.12s ease;
+    }
+    .client-item-slip:hover {
+      transform: translateY(-1.5px);
+    }
+    .client-item-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+    .client-avatar-round {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: #E5F2FD;
+      color: #16324F;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 800;
+      flex-shrink: 0;
+      box-shadow: 2px 3.5px 8px rgba(35, 30, 20, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    }
+    .client-details {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .client-name-title {
+      font-size: 14px;
+      font-weight: 800;
+      line-height: 1.2;
+      color: #2F261D;
+    }
+    .client-project-sub {
+      font-size: 11px;
+      font-weight: 700;
+      color: #8C784C;
+      margin-top: 2px;
+    }
+    .client-phone-sub {
+      font-size: 10px;
+      color: #9C8F80;
+      font-weight: 600;
+      margin-top: 1px;
+    }
+
+    .client-item-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    /* СТАТУСНЫЕ БЕЙДЖИ КЛИЕНТОВ */
+    .client-status-badge {
+      border-radius: 12px;
+      padding: 5px 10px;
+      font-size: 10px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+    }
+    .client-status-badge.work { background: #C8E2D2; color: #1E3F30; box-shadow: 1.5px 2.5px 6px rgba(45, 88, 71, 0.18); }
+    .client-status-badge.discuss { background: #D3E7F8; color: #16324F; box-shadow: 1.5px 2.5px 6px rgba(50, 90, 130, 0.18); }
+    .client-status-badge.waiting { background: #FCE8D5; color: #4D3118; box-shadow: 1.5px 2.5px 6px rgba(150, 110, 80, 0.18); }
+    .client-status-badge.done { background: #E5D5F5; color: #4A2E66; box-shadow: 1.5px 2.5px 6px rgba(110, 70, 140, 0.18); }
+
+    .client-arrow-chevron {
+      color: #A39686;
+      display: flex;
+      align-items: center;
+    }
+
+    /* АНКЕТА КЛИЕНТА (ПОДРОБНЫЙ ВИД) */
+    .dossier-card {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* ПЛАШКА ПРОФИЛЯ В АНКЕТЕ */
+    .dossier-profile-card {
+      background: #FFFFFF;
+      border-radius: 20px;
+      padding: 14px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 3px 5px 12px rgba(35, 30, 20, 0.12), inset 0 1.5px 0 rgba(255, 255, 255, 0.95);
+    }
+    .dossier-profile-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .dossier-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #E5F2FD;
+      color: #16324F;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 800;
+      box-shadow: 2px 4px 10px rgba(35, 30, 20, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    }
+    .dossier-name {
+      font-size: 16px;
+      font-weight: 900;
+      color: #2F261D;
+    }
+    .dossier-project {
+      font-size: 12px;
+      color: #8C784C;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+
+    /* БЛОКИ ДОСЬЕ (КОНТАКТЫ, ОПИСАНИЕ, ССЫЛКИ, ДОСТУПЫ, ЗАМЕТКИ) */
+    .dossier-section-slip {
+      background: #FFFFFF;
+      border-radius: 18px;
+      padding: 14px 16px;
+      box-shadow: 3px 5px 12px rgba(35, 30, 20, 0.12), 1px 2px 4px rgba(35, 30, 20, 0.08), inset 0 1.5px 0 rgba(255, 255, 255, 0.95);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .section-slip-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 800;
+      color: #5A4E40;
+    }
+    .section-header-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-icon-badge {
+      width: 24px;
+      height: 24px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+    }
+    .section-icon-badge.blue { background: #EDF6FD; color: #16324F; }
+    .section-icon-badge.pink { background: #FFF2EF; color: #4D201A; }
+    .section-icon-badge.green { background: #E8F6EE; color: #1E3F30; }
+    .section-icon-badge.yellow { background: #FFF9E5; color: #5B481D; }
+    .section-icon-badge.sand { background: #F5ECE0; color: #5A4E40; }
+
+    .dossier-data-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #2F261D;
+      padding: 4px 0;
+      border-bottom: 1px dashed #EDE5DA;
+    }
+    .dossier-data-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+    .dossier-link-chevron {
+      margin-left: auto;
+      color: #A39686;
+    }
+    .dossier-text-block {
+      font-size: 12px;
+      line-height: 1.45;
+      color: #4A3E31;
+      font-weight: 600;
+      background: #FAF7F2;
+      padding: 10px 12px;
+      border-radius: 12px;
+    }
+
+    /* ТАБ-БАР МОБИЛКИ ВНИЗУ */
+    .tabbar-box {
+      background: #F5ECE0;
+      border-radius: 26px;
+      padding: 6px 8px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      box-shadow: 6px 10px 24px -4px rgba(140, 120, 100, 0.22), -2px -2px 6px rgba(255, 255, 255, 0.8);
+      margin-top: 14px;
+      border: none;
+    }
+    .tab-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #7A6C5B;
+      text-decoration: none;
+    }
+    .tab-btn.active {
+      background: #D3E7F8;
+      color: #16324F;
+      box-shadow: 2px 3px 6px rgba(80, 120, 160, 0.25);
+    }
+
+    /* ======================================================== */
+    /* ---------------- ДЕСКТОП (КОМПЬЮТЕР) ------------------- */
+    /* ======================================================== */
+    .desktop-window {
+      background: #F8EFE4;
+      border-radius: 28px;
+      padding: 24px;
+      box-shadow: 14px 22px 48px -6px rgba(160, 135, 110, 0.30), 4px 6px 14px rgba(160, 135, 110, 0.14), -4px -4px 14px rgba(255, 255, 255, 0.9);
+      border: none;
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 24px;
+      min-height: 760px;
+    }
+    @media (max-width: 960px) {
+      .desktop-window { grid-template-columns: 1fr; }
+    }
+
+    /* БОКОВОЕ МЕНЮ */
+    .desk-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .sidebar-user-chip {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      margin-bottom: 12px;
+      background: #F2E5D5;
+      border-radius: 16px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+    .sidebar-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #FAF2E7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 800;
+      color: #5A4E40;
+    }
+    .sidebar-user-name {
+      font-size: 13px;
+      font-weight: 800;
+      color: #2F261D;
+    }
+
+    .desk-nav-item {
+      min-height: 42px;
+      border-radius: 14px;
+      padding: 0 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+      font-weight: 800;
+      color: #5A4E40;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      text-align: left;
+      text-decoration: none;
+      transition: all 0.12s ease;
+    }
+    .desk-nav-item:hover {
+      background: #EFE4D6;
+      color: #2F261D;
+    }
+    .desk-nav-item.active-blue {
+      color: #16324F;
+      background: #D3E7F8;
+      box-shadow: 4px 6px 14px -2px rgba(80, 120, 160, 0.28), -2px -2px 6px rgba(255, 255, 255, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+    .nav-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+    }
+
+    /* ОСНОВНОЙ КОНТЕНТ ДЕСКТОПА */
+    .desk-main-content {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    /* ВЕРХНЯЯ СТРОКА ДЕСКТОПА */
+    .desk-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .desk-page-title {
+      font-size: 26px;
+      font-weight: 900;
+      color: #2F261D;
+      letter-spacing: -0.4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .desk-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+      justify-content: flex-end;
+    }
+
+    /* MASTER-DETAIL СЕТКА ДЕСКТОПА: КОЛОНКА СПИСКА + БОЛЬШАЯ АНКЕТА */
+    .desk-master-detail-grid {
+      display: grid;
+      grid-template-columns: 290px 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+    @media (max-width: 900px) {
+      .desk-master-detail-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ЛЕВАЯ КОЛОНКА ДЕСКТОПА: СПИСОК */
+    .desk-client-list-column {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .desk-client-item-card {
+      background: #FFFFFF;
+      border-radius: 18px;
+      padding: 12px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 3px 5px 12px rgba(35, 30, 20, 0.10), 1px 2px 4px rgba(35, 30, 20, 0.06), inset 0 1.5px 0 rgba(255, 255, 255, 0.95);
+      transition: all 0.12s ease;
+      border: 2px solid transparent;
+    }
+    .desk-client-item-card:hover {
+      transform: translateY(-1.5px);
+    }
+    .desk-client-item-card.selected {
+      border: 2px solid #A5C8E8;
+      background: #F4F9FD;
+      box-shadow: 4px 6px 14px rgba(70, 110, 150, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    }
+
+    /* ПРАВАЯ ОБЛАСТЬ ДЕСКТОПА: ПОЛНАЯ АНКЕТА КЛИЕНТА */
+    .desk-dossier-panel {
+      background: #FAF5EE;
+      border-radius: 24px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      box-shadow: 4px 8px 20px rgba(150, 125, 100, 0.15), inset 0 1.5px 0 rgba(255, 255, 255, 0.9);
+    }
+
+    .desk-dossier-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 12px;
+      border-bottom: 1px dashed #E2D3BE;
+    }
+    .desk-dossier-tabs {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+      flex-wrap: wrap;
+    }
+    .dossier-tab-pill {
+      padding: 5px 12px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #726453;
+      background: #EADBCC;
+      cursor: pointer;
+      border: none;
+    }
+    .dossier-tab-pill.active {
+      background: #5A4E40;
+      color: #FFFFFF;
+    }
+
+    .desk-dossier-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    @media (max-width: 800px) {
+      .desk-dossier-grid { grid-template-columns: 1fr; }
+    }
+
+    .grid-full-width {
+      grid-column: 1 / -1;
+    }
+
+    /* ПОДВАЛ */
+    .info-footer {
+      margin-top: 28px;
+      text-align: center;
+      font-size: 13px;
+      color: #8C784C;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- ПЕРЕКЛЮЧАТЕЛЬ ЭКРАНОВ ВВЕРХУ -->
+    <div class="screen-switcher">
+      <a href="main_screen.html" class="switcher-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        1. Главный экран (Мой мир ♡)
+      </a>
+      <a href="income_screen.html" class="switcher-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+        2. Экран «Доходы»
+      </a>
+      <a href="expenses_screen.html" class="switcher-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" x2="21" y1="6" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        3. Экран «Расходы ♡»
+      </a>
+      <a href="clients_screen.html" class="switcher-btn active">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        4. Экран «Клиенты ♡»
+      </a>
+      <a href="макеты.html" class="switcher-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/></svg>
+        Каталог всех макетов
+      </a>
+    </div>
+
+    <!-- ЗАГОЛОВОК -->
+    <div class="top-header">
+      <span class="badge-status">ЭКРАН 4 • ТАКТИЛЬНЫЙ МАКЕТ «3D-БУМАЖЕЧКИ»</span>
+      <h1 class="screen-title">Раздел «Клиенты ♡»</h1>
+      <p class="screen-desc">Список клиентов, карточка проекта с контактами, ссылками на Google Таблицы/Диск и единым светом.</p>
+    </div>
+
+    <!-- ОСНОВНАЯ СЕТКА: ТЕЛЕФОН + КОМПЬЮТЕР -->
+    <div class="duo-grid">
+      
+      <!-- ======================================================== -->
+      <!-- ================= 1. ТЕЛЕФОН (IPHONE) ================== -->
+      <!-- ======================================================== -->
+      <div class="iphone-box">
+        <div class="iphone-screen">
+          <div class="iphone-island"></div>
+          
+          <div class="iphone-status">
+            <span>9:41</span>
+            <div style="display:flex; gap:5px; align-items:center;">
+              <svg width="13" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L12 22l7.03-4.39C20.26 16.07 21 14.12 21 12c0-4.97-4.03-9-9-9z"/></svg>
+              <svg width="13" height="11" viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="6" width="18" height="12" rx="3"/><path d="M22 10v4"/></svg>
+            </div>
+          </div>
+
+          <!-- Переключатель видов мобилки: Список / Анкета Анны -->
+          <div class="mobile-view-tabs">
+            <button class="mobile-tab-toggle active" id="btn-tab-list" onclick="showMobileView('list')">
+              📋 Список клиентов
+            </button>
+            <button class="mobile-tab-toggle" id="btn-tab-dossier" onclick="showMobileView('dossier')">
+              👤 Анкета: Анна
+            </button>
+          </div>
+
+          <!-- ВИД 1: СПИСОК КЛИЕНТОВ -->
+          <div id="mobile-list-view" style="display: flex; flex-direction: column; flex: 1;">
+            
+            <div class="phone-header-row">
+              <div class="phone-title">
+                Клиенты <span class="phone-heart">♡</span>
+              </div>
+              <div class="user-avatar-circle">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              </div>
+            </div>
+
+            <button class="add-client-pill-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              Добавить клиента
+            </button>
+
+            <div class="search-filter-row">
+              <div class="search-box">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8C784C" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" class="search-input" placeholder="Поиск...">
+              </div>
+              <button class="filter-btn" title="Фильтры">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+              </button>
+            </div>
+
+            <!-- Список клиентов на 3D-бумажечках -->
+            <div class="phone-view-container">
+              <div class="client-slips-list">
+
+                <!-- 1. Анна -->
+                <div class="client-item-slip" onclick="showMobileView('dossier')" title="Нажмите, чтобы открыть анкету">
+                  <div class="client-item-left">
+                    <div class="client-avatar-round" style="background: #E8F6EE; color: #1E3F30;">АС</div>
+                    <div class="client-details">
+                      <span class="client-name-title">Анна</span>
+                      <span class="client-project-sub">Проект Сайт</span>
+                      <span class="client-phone-sub">+7 900 123-45-67</span>
+                    </div>
+                  </div>
+                  <div class="client-item-right">
+                    <span class="client-status-badge work">● В работе</span>
+                    <span class="client-arrow-chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
+                  </div>
+                </div>
+
+                <!-- 2. Игорь -->
+                <div class="client-item-slip">
+                  <div class="client-item-left">
+                    <div class="client-avatar-round" style="background: #EDF6FD; color: #16324F;">ИС</div>
+                    <div class="client-details">
+                      <span class="client-name-title">Игорь</span>
+                      <span class="client-project-sub">CRM-система</span>
+                      <span class="client-phone-sub">+7 911 234-56-78</span>
+                    </div>
+                  </div>
+                  <div class="client-item-right">
+                    <span class="client-status-badge discuss">● Обсуждение</span>
+                    <span class="client-arrow-chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
+                  </div>
+                </div>
+
+                <!-- 3. Катя -->
+                <div class="client-item-slip">
+                  <div class="client-item-left">
+                    <div class="client-avatar-round" style="background: #FFF5EB; color: #4D3118;">КГ</div>
+                    <div class="client-details">
+                      <span class="client-name-title">Катя</span>
+                      <span class="client-project-sub">Google Таблицы</span>
+                      <span class="client-phone-sub">+7 920 345-67-89</span>
+                    </div>
+                  </div>
+                  <div class="client-item-right">
+                    <span class="client-status-badge waiting">● Ожидает</span>
+                    <span class="client-arrow-chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
+                  </div>
+                </div>
+
+                <!-- 4. Ольга -->
+                <div class="client-item-slip">
+                  <div class="client-item-left">
+                    <div class="client-avatar-round" style="background: #E8F6EE; color: #1E3F30;">ОП</div>
+                    <div class="client-details">
+                      <span class="client-name-title">Ольга</span>
+                      <span class="client-project-sub">Приложение</span>
+                      <span class="client-phone-sub">+7 905 456-78-90</span>
+                    </div>
+                  </div>
+                  <div class="client-item-right">
+                    <span class="client-status-badge work">● В работе</span>
+                    <span class="client-arrow-chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
+                  </div>
+                </div>
+
+                <!-- 5. Максим -->
+                <div class="client-item-slip">
+                  <div class="client-item-left">
+                    <div class="client-avatar-round" style="background: #F3EBFB; color: #4A2E66;">МЮ</div>
+                    <div class="client-details">
+                      <span class="client-name-title">Максим</span>
+                      <span class="client-project-sub">Юридические док.</span>
+                      <span class="client-phone-sub">+7 930 567-89-01</span>
+                    </div>
+                  </div>
+                  <div class="client-item-right">
+                    <span class="client-status-badge done">● Завершён</span>
+                    <span class="client-arrow-chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
+                  </div>
+                </div>
+
+                <!-- 6. Елена -->
+                <div class="client-item-slip">
+                  <div class="client-item-left">
+                    <div class="client-avatar-round" style="background: #EDF6FD; color: #16324F;">ЕС</div>
+                    <div class="client-details">
+                      <span class="client-name-title">Елена</span>
+                      <span class="client-project-sub">CRM-система</span>
+                      <span class="client-phone-sub">+7 915 678-90-12</span>
+                    </div>
+                  </div>
+                  <div class="client-item-right">
+                    <span class="client-status-badge discuss">● Обсуждение</span>
+                    <span class="client-arrow-chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+
+          <!-- ВИД 2: АНКЕТА КЛИЕНТА (АННА) -->
+          <div id="mobile-dossier-view" style="display: none; flex-direction: column; flex: 1;">
+            
+            <div class="phone-header-row">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <button onclick="showMobileView('list')" style="background: transparent; border: none; cursor: pointer; color: #5A4E40; display: flex; align-items: center;">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                </button>
+                <div class="phone-title" style="font-size: 20px;">
+                  Клиент <span class="phone-heart">♡</span>
+                </div>
+              </div>
+              <div class="user-avatar-circle">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              </div>
+            </div>
+
+            <div class="phone-view-container">
+              <div class="dossier-card">
+                
+                <!-- Шапка анкеты -->
+                <div class="dossier-profile-card">
+                  <div class="dossier-profile-left">
+                    <div class="dossier-avatar" style="background:#E8F6EE; color:#1E3F30;">АС</div>
+                    <div>
+                      <div class="dossier-name">Анна</div>
+                      <div class="dossier-project">Проект Сайт</div>
+                    </div>
+                  </div>
+                  <span class="client-status-badge work">● В работе</span>
+                </div>
+
+                <!-- 1. Контакты -->
+                <div class="dossier-section-slip">
+                  <div class="section-slip-header">
+                    <div class="section-header-title">
+                      <span class="section-icon-badge blue">📞</span>
+                      <span>Контакты</span>
+                    </div>
+                  </div>
+                  <div class="dossier-data-row">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                    <span>+7 900 123-45-67</span>
+                  </div>
+                  <div class="dossier-data-row">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                    <span>anna@mail.ru</span>
+                  </div>
+                  <div class="dossier-data-row">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                    <span>@anna_site</span>
+                  </div>
+                </div>
+
+                <!-- 2. Проект -->
+                <div class="dossier-section-slip">
+                  <div class="section-slip-header">
+                    <div class="section-header-title">
+                      <span class="section-icon-badge pink">🖥️</span>
+                      <span>Проект</span>
+                    </div>
+                  </div>
+                  <div class="dossier-data-row">
+                    <span>Сайт (лендинг)</span>
+                    <span class="dossier-link-chevron"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
+                  </div>
+                </div>
+
+                <!-- 3. Описание -->
+                <div class="dossier-section-slip">
+                  <div class="section-slip-header">
+                    <div class="section-header-title">
+                      <span class="section-icon-badge green">📝</span>
+                      <span>Описание</span>
+                    </div>
+                  </div>
+                  <div class="dossier-text-block">
+                    Создание лендинга для курса. Нужен современный дизайн, адаптивная версия. Срок: конец марта.
+                  </div>
+                </div>
+
+                <!-- 4. Ссылки -->
+                <div class="dossier-section-slip">
+                  <div class="section-slip-header">
+                    <div class="section-header-title">
+                      <span class="section-icon-badge blue">🔗</span>
+                      <span>Ссылки</span>
+                    </div>
+                  </div>
+                  <div class="dossier-data-row">
+                    <span>🌐 Сайт: https://example.ru</span>
+                    <span class="dossier-link-chevron"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
+                  </div>
+                  <div class="dossier-data-row">
+                    <span>📊 Google Таблицы</span>
+                    <span class="dossier-link-chevron"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
+                  </div>
+                  <div class="dossier-data-row">
+                    <span>📁 Google Диск</span>
+                    <span class="dossier-link-chevron"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
+                  </div>
+                  <div class="dossier-data-row">
+                    <span>✈️ Telegram-бот</span>
+                    <span class="dossier-link-chevron"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
+                  </div>
+                </div>
+
+                <!-- 5. Доступы -->
+                <div class="dossier-section-slip">
+                  <div class="section-slip-header">
+                    <div class="section-header-title">
+                      <span class="section-icon-badge yellow">🔑</span>
+                      <span>Доступы</span>
+                    </div>
+                  </div>
+                  <div class="dossier-data-row">
+                    <span>Ссылка на пароль в менеджере</span>
+                    <span class="dossier-link-chevron"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
+                  </div>
+                </div>
+
+                <!-- 6. Заметки -->
+                <div class="dossier-section-slip">
+                  <div class="section-slip-header">
+                    <div class="section-header-title">
+                      <span class="section-icon-badge sand">📌</span>
+                      <span>Заметки</span>
+                    </div>
+                  </div>
+                  <div class="dossier-text-block">
+                    Уточнить тексты. Показать примеры дизайна. Следующая встреча 15 марта.
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Нижний таб-бар телефона -->
+          <div class="tabbar-box">
+            <a href="main_screen.html" class="tab-btn" title="Главная">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </a>
+            <div class="tab-btn" title="Календарь">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x1="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+            </div>
+            <a href="income_screen.html" class="tab-btn" title="Доходы">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+            </a>
+            <a href="expenses_screen.html" class="tab-btn" title="Расходы">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" x2="21" y1="6" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            </a>
+            <div class="tab-btn active" title="Клиенты">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ======================================================== -->
+      <!-- ================= 2. ДЕСКТОП (КОМПЬЮТЕР) =============== -->
+      <!-- ======================================================== -->
+      <div class="desktop-window">
+        
+        <!-- ЛЕВОЕ МЕНЮ (СТРОГО СЛЕВА 200px) -->
+        <div class="desk-sidebar">
+          <div class="sidebar-user-chip">
+            <div class="sidebar-avatar">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <div class="sidebar-user-name">Мой мир ♡</div>
+          </div>
+
+          <a href="main_screen.html" class="desk-nav-item">
+            <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
+            Главная
+          </a>
+
+          <button class="desk-nav-item">
+            <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg></span>
+            Календарь
+          </button>
+
+          <a href="income_screen.html" class="desk-nav-item">
+            <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg></span>
+            Доходы
+          </a>
+
+          <a href="expenses_screen.html" class="desk-nav-item">
+            <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" x2="21" y1="6" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></span>
+            Расходы
+          </a>
+
+          <!-- Активная плашка Клиентов (небесно-голубая) -->
+          <button class="desk-nav-item active-blue">
+            <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+            Клиенты
+          </button>
+
+          <button class="desk-nav-item">
+            <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></span>
+            Настройки
+          </button>
+        </div>
+
+        <!-- ОСНОВНОЙ КОНТЕНТ ДЕСКТОПА (СПРАВА) -->
+        <div class="desk-main-content">
+          
+          <div class="desk-top-bar">
+            <div class="desk-page-title">
+              Клиенты <span class="phone-heart" style="font-size:22px;">♡</span>
+            </div>
+            <div class="desk-controls">
+              <div class="search-box" style="width: 240px; margin-bottom: 0;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8C784C" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" class="search-input" placeholder="Поиск...">
+              </div>
+              <div class="user-avatar-circle" style="width: 38px; height: 38px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- MASTER-DETAIL СЕТКА ДЕСКТОПА: СПИСОК СЛЕВА, АНКЕТА СПРАВА -->
+          <div class="desk-master-detail-grid">
+            
+            <!-- ЛЕВАЯ КОЛОНКА: СПИСОК КЛИЕНТОВ -->
+            <div class="desk-client-list-column">
+              <button class="add-client-pill-btn" style="margin-bottom: 8px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                Добавить клиента
+              </button>
+
+              <div class="search-filter-row" style="margin-bottom: 8px;">
+                <div class="search-box">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8C784C" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                  <input type="text" class="search-input" placeholder="Поиск клиента...">
+                </div>
+                <button class="filter-btn" title="Фильтры">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+                </button>
+              </div>
+
+              <!-- Карточки клиентов в списке десктопа -->
+              <div class="desk-client-item-card selected">
+                <div class="client-item-left">
+                  <div class="client-avatar-round" style="background: #E8F6EE; color: #1E3F30; width: 38px; height: 38px;">АС</div>
+                  <div>
+                    <div class="client-name-title" style="font-size: 13px;">Анна</div>
+                    <div class="client-project-sub" style="font-size: 11px;">Проект Сайт</div>
+                    <div class="client-phone-sub" style="font-size: 10px;">+7 900 123-45-67</div>
+                  </div>
+                </div>
+                <span class="client-status-badge work" style="font-size: 9px; padding: 4px 8px;">В работе</span>
+              </div>
+
+              <div class="desk-client-item-card">
+                <div class="client-item-left">
+                  <div class="client-avatar-round" style="background: #EDF6FD; color: #16324F; width: 38px; height: 38px;">ИС</div>
+                  <div>
+                    <div class="client-name-title" style="font-size: 13px;">Игорь</div>
+                    <div class="client-project-sub" style="font-size: 11px;">CRM-система</div>
+                    <div class="client-phone-sub" style="font-size: 10px;">+7 911 234-56-78</div>
+                  </div>
+                </div>
+                <span class="client-status-badge discuss" style="font-size: 9px; padding: 4px 8px;">Обсуждение</span>
+              </div>
+
+              <div class="desk-client-item-card">
+                <div class="client-item-left">
+                  <div class="client-avatar-round" style="background: #FFF5EB; color: #4D3118; width: 38px; height: 38px;">КГ</div>
+                  <div>
+                    <div class="client-name-title" style="font-size: 13px;">Катя</div>
+                    <div class="client-project-sub" style="font-size: 11px;">Google Таблицы</div>
+                    <div class="client-phone-sub" style="font-size: 10px;">+7 920 345-67-89</div>
+                  </div>
+                </div>
+                <span class="client-status-badge waiting" style="font-size: 9px; padding: 4px 8px;">Ожидает</span>
+              </div>
+
+              <div class="desk-client-item-card">
+                <div class="client-item-left">
+                  <div class="client-avatar-round" style="background: #E8F6EE; color: #1E3F30; width: 38px; height: 38px;">ОП</div>
+                  <div>
+                    <div class="client-name-title" style="font-size: 13px;">Ольга</div>
+                    <div class="client-project-sub" style="font-size: 11px;">Приложение</div>
+                    <div class="client-phone-sub" style="font-size: 10px;">+7 905 456-78-90</div>
+                  </div>
+                </div>
+                <span class="client-status-badge work" style="font-size: 9px; padding: 4px 8px;">В работе</span>
+              </div>
+
+              <div class="desk-client-item-card">
+                <div class="client-item-left">
+                  <div class="client-avatar-round" style="background: #F3EBFB; color: #4A2E66; width: 38px; height: 38px;">МЮ</div>
+                  <div>
+                    <div class="client-name-title" style="font-size: 13px;">Максим</div>
+                    <div class="client-project-sub" style="font-size: 11px;">Юридические док.</div>
+                    <div class="client-phone-sub" style="font-size: 10px;">+7 930 567-89-01</div>
+                  </div>
+                </div>
+                <span class="client-status-badge done" style="font-size: 9px; padding: 4px 8px;">Завершён</span>
+              </div>
+            </div>
+
+            <!-- ПРАВАЯ ОБЛАСТЬ: ПОЛНАЯ АНКЕТА АННЫ -->
+            <div class="desk-dossier-panel">
+              
+              <!-- Шапка анкеты десктопа -->
+              <div class="desk-dossier-top">
+                <div style="display: flex; align-items: center; gap: 14px;">
+                  <div class="dossier-avatar" style="background:#E8F6EE; color:#1E3F30; width: 54px; height: 54px; font-size: 18px;">АС</div>
+                  <div>
+                    <div style="font-size: 18px; font-weight: 900; color: #2F261D;">Анна</div>
+                    <div style="font-size: 13px; font-weight: 700; color: #8C784C;">Проект Сайт</div>
+                  </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <span class="client-status-badge work" style="font-size: 12px; padding: 6px 12px; cursor: pointer;">
+                    ● В работе ▾
+                  </span>
+                  <button style="background:#FFFFFF; border:none; width:34px; height:34px; border-radius:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow: 1px 2px 6px rgba(0,0,0,0.08);" title="Редактировать">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Табы анкеты -->
+              <div class="desk-dossier-tabs">
+                <button class="dossier-tab-pill active">Основное</button>
+                <button class="dossier-tab-pill">Ссылки</button>
+                <button class="dossier-tab-pill">Доступы</button>
+                <button class="dossier-tab-pill">Заметки</button>
+                <button class="dossier-tab-pill">Файлы</button>
+              </div>
+
+              <!-- Сетка бумажечек досье -->
+              <div class="desk-dossier-grid">
+                
+                <!-- Контакты -->
+                <div class="dossier-section-slip">
+                  <div class="section-slip-header">
+                    <div class="section-header-title">
+                      <span class="section-icon-badge blue">📞</span>
+                      <span>Контакты</span>
+                    </div>
+                  </div>
+                  <div class="dossier-data-row">
+                    <span>+7 900 123-45-67</span>
+                  </div>
+                  <div class="dossier-data-row">
+                    <span>anna@mail.ru</span>
+                  </div>
+                  <div class="dossier-data-row">
+                    <span>@anna_site</span>
+                  </div>
+                </div>
+
+                <!-- Статус и сроки -->
+                <div class="dossier-section-slip">
+                  <div class="section-slip-header">
+                    <div class="section-header-title">
+                      <span class="section-icon-badge pink">📅</span>
+                      <span>Статус и проект</span>
+                    </div>
+                  </div>
+                  <div class="dossier-data-row">
+                    <span style="color:#8A7B6D;">Тип проекта:</span>
+                    <span style="margin-left:auto;">Сайт (лендинг)</span>
+                  </div>
+                  <div class="dossier-data-row">
+                    <span style="color:#8A7B6D;">Дата начала:</span>
+                    <span style="margin-left:auto;">5 марта 2025</span>
+                  </div>
+                  <div class="dossier-data-row">
+                    <span style="color:#8A7B6D;">Дедлайн:</span>
+                    <span style="margin-left:auto; font-weight:900; color:#B3473B;">31 марта 2025</span>
+                  </div>
+                </div>
+
+                <!-- Описание -->
+                <div class="dossier-section-slip grid-full-width">
+                  <div class="section-slip-header">
+                    <div class="section-header-title">
+                      <span class="section-icon-badge green">📝</span>
+                      <span>Описание задачи</span>
+                    </div>
+                  </div>
+                  <div class="dossier-text-block">
+                    Создание лендинга для курса. Нужен современный дизайн, адаптивная мобильная версия. Срок: конец марта.
+                  </div>
+                </div>
+
+                <!-- Ссылки -->
+                <div class="dossier-section-slip">
+                  <div class="section-slip-header">
+                    <div class="section-header-title">
+                      <span class="section-icon-badge blue">🔗</span>
+                      <span>Ссылки</span>
+                    </div>
+                    <button style="background:transparent; border:none; cursor:pointer; color:#8C784C; font-weight:800; font-size:16px;">+</button>
+                  </div>
+                  <div class="dossier-data-row">
+                    <span>🌐 Сайт: https://example.ru</span>
+                    <span class="dossier-link-chevron"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
+                  </div>
+                  <div class="dossier-data-row">
+                    <span>📊 Google Таблицы</span>
+                    <span class="dossier-link-chevron"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
+                  </div>
+                  <div class="dossier-data-row">
+                    <span>📁 Google Диск</span>
+                    <span class="dossier-link-chevron"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
+                  </div>
+                </div>
+
+                <!-- Доступы и заметки -->
+                <div class="dossier-section-slip">
+                  <div class="section-slip-header">
+                    <div class="section-header-title">
+                      <span class="section-icon-badge yellow">🔑</span>
+                      <span>Доступы и пароли</span>
+                    </div>
+                    <button style="background:transparent; border:none; cursor:pointer; color:#8C784C; font-weight:800; font-size:16px;">+</button>
+                  </div>
+                  <div class="dossier-data-row">
+                    <span>Ссылка на пароль в менеджере</span>
+                    <span class="dossier-link-chevron"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
+                  </div>
+                  <div class="dossier-text-block" style="margin-top: 6px;">
+                    📌 <strong>Заметка:</strong> Уточнить тексты. Показать примеры дизайна. Встреча 15 марта.
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="info-footer">
+      «Мои таблицы» • Экран «Клиенты ♡» • Тактильный дизайн «3D-Бумажечки» • Шрифт Manrope
+    </div>
+
+  </div>
+
+  <script>
+    // Интерактивное переключение на телефоне между списком и анкетой
+    function showMobileView(view) {
+      const listView = document.getElementById('mobile-list-view');
+      const dossierView = document.getElementById('mobile-dossier-view');
+      const btnList = document.getElementById('btn-tab-list');
+      const btnDossier = document.getElementById('btn-tab-dossier');
+
+      if (view === 'dossier') {
+        listView.style.display = 'none';
+        dossierView.style.display = 'flex';
+        btnList.classList.remove('active');
+        btnDossier.classList.add('active');
+      } else {
+        listView.style.display = 'flex';
+        dossierView.style.display = 'none';
+        btnList.classList.add('active');
+        btnDossier.classList.remove('active');
+      }
+    }
+  </script>
+
+</body>
+</html>
