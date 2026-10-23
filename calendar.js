@@ -123,12 +123,19 @@
       }
     }
 
-    var color = item.color || '#D3E7F8';
+    var color = item.color;
     var cat = (item.category || item['Категория'] || '').toLowerCase();
-    if (cat.indexOf('vpn') !== -1) color = '#D3E7F8';
-    else if (cat.indexOf('интернет') !== -1 || cat.indexOf('net') !== -1) color = '#FCE8D5';
-    else if (cat.indexOf('ии') !== -1 || cat.indexOf('ai') !== -1 || cat.indexOf('gpt') !== -1) color = '#DBCCE9';
-    else if (cat.indexOf('подписк') !== -1) color = '#FCD6CF';
+    var tLow = title.toLowerCase();
+
+    if (!color) {
+      if (cat.indexOf('vpn') !== -1 || tLow.indexOf('vpn') !== -1) color = '#D3E7F8';
+      else if (cat.indexOf('интернет') !== -1 || tLow.indexOf('интернет') !== -1 || cat.indexOf('net') !== -1) color = '#FCE8D5';
+      else if (cat.indexOf('ии') !== -1 || cat.indexOf('ai') !== -1 || cat.indexOf('gpt') !== -1 || tLow.indexOf('chatgpt') !== -1) color = '#DBCCE9';
+      else if (cat.indexOf('подписк') !== -1) color = '#FCD6CF';
+      else if (tLow.indexOf('яблок') !== -1 || tLow.indexOf('красот') !== -1 || cat.indexOf('красот') !== -1) color = '#FDF1CC';
+      else if (tLow.indexOf('заправ') !== -1 || tLow.indexOf('бензин') !== -1 || cat.indexOf('авто') !== -1) color = '#FCE8D5';
+      else color = '#FDF1CC';
+    }
 
     return {
       id: item.ID || item.id || ('exp_' + idx),
@@ -428,18 +435,19 @@
       var isNeedPay = !item.isPaid;
       var btnClass = isNeedPay ? 'btn-pay-toggle need-pay' : 'btn-pay-toggle';
       var payBtnStyle = isNeedPay
-        ? 'padding:8px 14px;border-radius:12px;border:none;font-size:11px;font-weight:900;cursor:pointer;background:#FCD6CF;color:#58241B;box-shadow:1px 2px 5px rgba(180,90,90,0.2);'
-        : 'padding:8px 14px;border-radius:12px;border:none;font-size:11px;font-weight:900;cursor:pointer;background:#C8E2D2;color:#1E3F30;box-shadow:1px 2px 5px rgba(60,120,90,0.2);';
+        ? 'padding:9px 16px;border-radius:12px;border:none;font-size:12px;font-weight:900;cursor:pointer;background:#C8E2D2;color:#1E3F30;box-shadow:2px 3px 7px rgba(70,130,95,0.25),-1px -1px 2px rgba(255,255,255,0.8);'
+        : 'padding:9px 16px;border-radius:12px;border:none;font-size:12px;font-weight:900;cursor:pointer;background:#FCE8D5;color:#6D3E14;box-shadow:inset 1px 1px 3px rgba(150,110,70,0.2);';
 
+      // Плашка строго в стиле «3D-Бумажечки»: нежные сливки из палитры (#FDF1CC), никаких рамок/подводок, мягкая тень
       return [
-        '<div class="popover-item" style="background: #FAF4EB; border-radius: 16px; padding: 12px 14px; margin-bottom: 10px; border: 1.5px solid #F0E3D3; box-shadow: 1px 2px 4px rgba(170,145,120,0.12), inset 0 1px 0 rgba(255,255,255,0.9);">',
-        '  <div class="popover-item-title" style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:800;color:#2F261D;">',
-        '    <span style="width:10px;height:10px;border-radius:50%;background:' + item.color + ';display:inline-block;box-shadow:0 1px 2px rgba(100,80,60,0.2);"></span>',
+        '<div class="popover-item" style="background:#FDF1CC;border:none;border-radius:18px;padding:14px;margin-bottom:10px;box-shadow:3px 5px 14px rgba(150,125,95,0.18),-2px -2px 6px rgba(255,255,255,0.85);">',
+        '  <div class="popover-item-title" style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:800;color:#5B481D;">',
+        '    <span style="width:10px;height:10px;border-radius:50%;background:' + item.color + ';display:inline-block;box-shadow:0 1px 2px rgba(100,80,60,0.25);"></span>',
         '    <span>' + escapeHtml(item.title) + '</span>',
         '  </div>',
-        '  <div class="popover-item-sum" style="font-size:16px;font-weight:900;color:#4A3E25;margin:6px 0 10px 0;">' + item.amount.toLocaleString('ru-RU') + ' ₽</div>',
+        '  <div class="popover-item-sum" style="font-size:18px;font-weight:900;color:#4A3E25;margin:6px 0 12px 0;">' + item.amount.toLocaleString('ru-RU') + ' ₽</div>',
         '  <div class="popover-actions" style="display:flex;gap:8px;">',
-        '    <a href="' + escapeHtml(item.shopUrl) + '" target="_blank" rel="noopener noreferrer" class="btn-shop-link" style="flex:1;padding:8px 12px;border-radius:12px;background:#FAF2E7;border:1.5px solid #E2D3C0;color:#4A3E25;text-decoration:none;font-size:11px;font-weight:800;text-align:center;display:inline-flex;align-items:center;justify-content:center;gap:4px;box-shadow:1px 2px 4px rgba(160,135,110,0.15);">В магазин ↗</a>',
+        '    <a href="' + escapeHtml(item.shopUrl) + '" target="_blank" rel="noopener noreferrer" class="btn-shop-link" style="flex:1;padding:9px 12px;border-radius:12px;background:#FAF2E7;border:none;color:#4A3E25;text-decoration:none;font-size:12px;font-weight:800;text-align:center;display:inline-flex;align-items:center;justify-content:center;gap:4px;box-shadow:2px 3px 6px rgba(150,125,100,0.18),-1px -1px 2px rgba(255,255,255,0.9);">В магазин ↗</a>',
         '    <button class="' + btnClass + '" data-id="' + item.id + '" onclick="window.MyTablesCalendar.onPayToggleClick(event, \'' + item.id + '\', ' + day + ')" style="' + payBtnStyle + '">' + item.buttonText + '</button>',
         '  </div>',
         '</div>'
@@ -464,14 +472,14 @@
       overlay.onclick = hidePopover;
       document.body.appendChild(overlay);
 
-      popover.style.cssText = 'position:fixed;bottom:16px;left:16px;right:16px;max-width:380px;margin:0 auto;z-index:1000;background:#FAF2E7;border-radius:24px;padding:16px;box-shadow:0 14px 40px rgba(120,95,75,0.4);border:3px solid #EADBCC;animation:slideUp 0.2s ease;';
+      popover.style.cssText = 'position:fixed;bottom:16px;left:16px;right:16px;max-width:380px;margin:0 auto;z-index:1000;background:#FAF2E7;border-radius:24px;padding:18px;box-shadow:6px 14px 35px rgba(130,105,80,0.32);border:none;animation:slideUp 0.2s ease;';
       document.body.appendChild(popover);
     } else {
-      // Десктопное всплывающее окно
+      // Десктопное всплывающее окно: чистый бумажный стиль БЕЗ рамок и подводок
       var calCard = document.querySelector('.desk-calendar-card');
       if (calCard) {
         calCard.style.position = 'relative';
-        popover.style.cssText = 'position:absolute;top:70px;right:20px;width:300px;background:#FAF2E7;border-radius:24px;padding:16px;box-shadow:0 14px 40px rgba(120,95,75,0.35);border:3px solid #EADBCC;z-index:100;';
+        popover.style.cssText = 'position:absolute;top:70px;right:20px;width:310px;background:#FAF2E7;border-radius:24px;padding:18px;box-shadow:6px 14px 35px rgba(130,105,80,0.28), -3px -3px 10px rgba(255,255,255,0.9);border:none;z-index:100;';
         calCard.appendChild(popover);
       } else {
         document.body.appendChild(popover);
@@ -517,21 +525,21 @@
     // Реактивно обновляем плашку расходов
     updateSummaryCards();
 
-    // Обновляем состояние кнопки в поповере
+    // Обновляем состояние кнопки в поповере (без рамок)
     var btn = event.currentTarget || event.target;
     if (btn) {
       if (res.isPaid) {
         btn.classList.remove('need-pay');
         btn.innerText = '✓ Оплачено';
-        btn.style.background = '#C8E2D2';
-        btn.style.color = '#1E3F30';
-        btn.style.boxShadow = '1px 2px 5px rgba(60,120,90,0.2)';
+        btn.style.background = '#FCE8D5';
+        btn.style.color = '#6D3E14';
+        btn.style.boxShadow = 'inset 1px 1px 3px rgba(150,110,70,0.2)';
       } else {
         btn.classList.add('need-pay');
         btn.innerText = 'Оплатить';
-        btn.style.background = '#FCD6CF';
-        btn.style.color = '#58241B';
-        btn.style.boxShadow = '1px 2px 5px rgba(180,90,90,0.2)';
+        btn.style.background = '#C8E2D2';
+        btn.style.color = '#1E3F30';
+        btn.style.boxShadow = '2px 3px 7px rgba(70,130,95,0.25), -1px -1px 2px rgba(255,255,255,0.8)';
       }
     }
   }
