@@ -66,6 +66,8 @@ async function runAllTests() {
     // Одинаковая ширина кнопок (flex: 1)
     assert(appJs.includes('id="exp-modal-cancel" style="flex: 1'), 'Кнопка Отмена должна иметь flex: 1 для равной ширины');
     assert(appJs.includes('id="exp-modal-submit" style="flex: 1'), 'Кнопка Сохранить должна иметь flex: 1 для равной ширины');
+    assert(appJs.includes('id="exp-modal-archive" style="display: none; flex: 1'), 'Кнопка Удалить должна иметь flex: 1 для равной ширины');
+    assert(appJs.includes('>Удалить</button>'), 'Кнопка должна называться «Удалить» (никакого слова архив)');
 
     // Полный запрет коричневых и черных искусственных обводок
     assert(!appJs.includes('0 0 0 4px'), 'Запрещены искусственные ободки 0 0 0 4px');
@@ -109,12 +111,20 @@ async function runAllTests() {
     assert(appJs.includes('window.MyTablesCalendar.updateSummaryCards()'), 'Должен вызываться реактивный пересчет плашки расходов');
   });
 
-  // Тест 8: Редактирование суммы/тарифа платежа по клику на саму плашку и архивация
-  await runTest('test_edit_and_archive_expense: клик по плашке платежа открывает модалку редактирования суммы и кнопку архивации', () => {
+  // Тест 8: Редактирование суммы/тарифа платежа по клику на саму плашку и удаление
+  await runTest('test_edit_and_delete_expense: клик по плашке платежа открывает модалку редактирования суммы и кнопку «Удалить»', () => {
     assert(indexHtml.includes('.expense-paper-slip {\n      border-radius: 16px;\n      padding: 10px 12px;\n      display: flex;\n      justify-content: space-between;\n      align-items: center;\n      border: none;\n      cursor: pointer;') || indexHtml.includes('cursor: pointer'), 'Плашка должна иметь cursor: pointer для интуитивного клика');
     assert(appJs.includes('window.openEditExpenseModal'), 'Должна быть функция openEditExpenseModal');
-    assert(appJs.includes('id="exp-modal-archive"'), 'В модалке должна быть кнопка «В архив» для отмены подписки');
+    assert(appJs.includes('id="exp-modal-archive"'), 'В модалке должна быть кнопка для удаления платежа');
     assert(appJs.includes("modalTitle.textContent = '✎ Изменить платеж'"), 'Заголовок модалки должен меняться на «✎ Изменить платеж»');
+  });
+
+  // Тест 9: Светлые бумажные значки на Главном экране и Расходах (Вариант 2 Ани)
+  await runTest('test_light_paper_badges_unified: значки на Главной приведены к светлым бумажным с правильным светом слева-сверху', () => {
+    assert(indexHtml.includes('background: #E8F6EE; color: #1E3F30'), 'Доходы должны иметь светлый бумажный значок #E8F6EE');
+    assert(indexHtml.includes('background: #FFF2EF; color: #58241B'), 'Расходы должны иметь светлый бумажный значок #FFF2EF');
+    assert(indexHtml.includes('background: #EDF6FD; color: #163B59'), 'Клиенты должны иметь светлый бумажный значок #EDF6FD');
+    assert(indexHtml.includes('-1.5px -1.5px'), 'Свет должен падать слева-сверху (отрицательные координаты блика)');
   });
 
   console.log('\n======================================================');

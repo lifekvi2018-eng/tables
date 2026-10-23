@@ -511,9 +511,9 @@
         '      </div>',
         '    </div>',
         '    <div style="display: flex; gap: 10px; align-items: center; justify-content: stretch;">',
-        '      <button type="button" id="exp-modal-archive" style="display: none; background: #FCD6CF; color: #58241B; border: none; outline: none; border-radius: 14px; padding: 12px 14px; font-size: 13px; font-weight: 800; cursor: pointer; box-shadow: 2px 3px 6px rgba(180, 100, 90, 0.2); transition: all 0.15s ease; white-space: nowrap;">В архив</button>',
-        '      <button type="button" id="exp-modal-cancel" style="flex: 1; min-height: 44px; background: #FDF1CC; color: #5B481D; border: none; outline: none; border-radius: 14px; padding: 12px 16px; font-size: 14px; font-weight: 800; cursor: pointer; box-shadow: 2px 3px 6px rgba(160, 125, 85, 0.2); transition: all 0.15s ease; display: inline-flex; align-items: center; justify-content: center; text-align: center;">Отмена</button>',
-        '      <button type="submit" id="exp-modal-submit" style="flex: 1; min-height: 44px; background: #C8E2D2; color: #1E3F30; border: none; outline: none; border-radius: 14px; padding: 12px 16px; font-size: 14px; font-weight: 900; cursor: pointer; box-shadow: 2px 3px 7px rgba(70, 130, 95, 0.25); transition: all 0.15s ease; display: inline-flex; align-items: center; justify-content: center; text-align: center;">Сохранить</button>',
+        '      <button type="button" id="exp-modal-archive" style="display: none; flex: 1; min-height: 44px; background: #FCD6CF; color: #58241B; border: none; outline: none; border-radius: 14px; padding: 12px 10px; font-size: 13px; font-weight: 800; cursor: pointer; box-shadow: 2.5px 4px 10px rgba(180, 100, 90, 0.22), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95); transition: all 0.15s ease; white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; text-align: center;">Удалить</button>',
+        '      <button type="button" id="exp-modal-cancel" style="flex: 1; min-height: 44px; background: #FDF1CC; color: #5B481D; border: none; outline: none; border-radius: 14px; padding: 12px 10px; font-size: 13px; font-weight: 800; cursor: pointer; box-shadow: 2.5px 4px 10px rgba(160, 125, 85, 0.22), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95); transition: all 0.15s ease; display: inline-flex; align-items: center; justify-content: center; text-align: center;">Отмена</button>',
+        '      <button type="submit" id="exp-modal-submit" style="flex: 1; min-height: 44px; background: #C8E2D2; color: #1E3F30; border: none; outline: none; border-radius: 14px; padding: 12px 10px; font-size: 13px; font-weight: 900; cursor: pointer; box-shadow: 2.5px 4px 10px rgba(70, 130, 95, 0.25), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95); transition: all 0.15s ease; display: inline-flex; align-items: center; justify-content: center; text-align: center;">Сохранить</button>',
         '    </div>',
         '  </form>',
         '</div>'
@@ -531,12 +531,12 @@
           if (btnColor && btnColor.toLowerCase() === selectedExpenseColor.toLowerCase()) {
             colorBtns[i].classList.add('active');
             colorBtns[i].innerHTML = checkSvg;
-            colorBtns[i].style.boxShadow = '2px 4px 8px rgba(120, 90, 60, 0.28)';
+            colorBtns[i].style.boxShadow = '2px 3.5px 7px rgba(120, 90, 60, 0.22), -1.5px -1.5px 3.5px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.9)';
             colorBtns[i].style.transform = 'scale(1.12)';
           } else {
             colorBtns[i].classList.remove('active');
             colorBtns[i].innerHTML = '';
-            colorBtns[i].style.boxShadow = '1px 2px 4px rgba(120, 90, 60, 0.15)';
+            colorBtns[i].style.boxShadow = '1.5px 2.5px 5px rgba(120, 90, 60, 0.14), -1px -1px 2.5px rgba(255, 255, 255, 0.9)';
             colorBtns[i].style.transform = 'scale(1)';
           }
         }
@@ -624,12 +624,12 @@
         if (e.target === expModal) closeExpModal();
       });
 
-      // Кнопка «В архив»
+      // Кнопка «Удалить»
       var archBtn = document.getElementById('exp-modal-archive');
       if (archBtn) {
         archBtn.addEventListener('click', function () {
           var titleToArchive = (document.getElementById('exp-in-title').value || '').trim();
-          if (!confirm('Отправить платёж «' + titleToArchive + '» в архив? Все прошлые оплаты сохранятся в истории Google Таблиц.')) {
+          if (!confirm('Точно удалить платёж «' + titleToArchive + '»?')) {
             return;
           }
           var oldTitle = currentEditingPayment ? currentEditingPayment.title : titleToArchive;
