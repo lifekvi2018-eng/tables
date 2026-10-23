@@ -52,6 +52,7 @@ const server = http.createServer((req, res) => {
   });
 });
 
-server.listen(PORT, '127.0.0.1', () => {
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`Сервер запущен: http://localhost:${PORT}`);
+  console.log(`Для телефона в домашней сети: http://192.168.1.51:${PORT}`);
 });

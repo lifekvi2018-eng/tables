@@ -66,18 +66,13 @@
 
   // Обновление специфичных элементов текущего экрана
   function updateCurrentScreen(data) {
-    var page = detectCurrentPage();
-
-    if (page === 'main') {
-      updateMainScreen(data);
-    } else if (page === 'income') {
-      updateIncomeScreen(data);
-    } else if (page === 'expenses') {
-      updateExpensesScreen(data);
-    } else if (page === 'clients') {
-      updateClientsScreen(data);
-    }
+    updateMainScreen(data);
+    updateIncomeScreen(data);
+    updateExpensesScreen(data);
+    updateClientsScreen(data);
   }
+  window.updateCurrentScreen = updateCurrentScreen;
+  window.updateScreenData = updateCurrentScreen;
 
   function detectCurrentPage() {
     var path = window.location.pathname.toLowerCase();
