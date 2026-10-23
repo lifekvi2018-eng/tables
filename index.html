@@ -2943,6 +2943,123 @@
       color: #16324F !important;
       box-shadow: 2px 3px 6px rgba(110, 150, 190, 0.25) !important;
     }
+
+    /* ========================================================= */
+    /* ВСПЛЫВАЮЩИЙ ПОПОВЕР ПЛАТЕЖЕЙ В КАЛЕНДАРЕ                   */
+    /* ========================================================= */
+    .tactile-popover {
+      position: absolute;
+      background: #FAF2E7;
+      border-radius: 24px;
+      padding: 16px;
+      box-shadow: 0 14px 40px rgba(120, 95, 75, 0.35), 0 2px 8px rgba(120, 95, 75, 0.15);
+      border: 3px solid #EADBCC;
+      z-index: 100;
+      animation: popoverFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes popoverFadeIn {
+      from { opacity: 0; transform: translateY(-6px) scale(0.97); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .popover-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .popover-date-title {
+      font-size: 14px;
+      font-weight: 900;
+      color: #2F261D;
+    }
+    .popover-close-btn {
+      background: none;
+      border: none;
+      font-size: 16px;
+      font-weight: 900;
+      color: #726453;
+      cursor: pointer;
+      padding: 4px;
+      line-height: 1;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s ease;
+    }
+    .popover-close-btn:hover {
+      background: #EADBCC;
+    }
+    .popover-item {
+      background: #F4E8D9;
+      border-radius: 16px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+    .popover-item:last-child {
+      margin-bottom: 0;
+    }
+    .popover-item-title {
+      font-size: 12px;
+      font-weight: 800;
+      color: #2F261D;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .popover-item-sum {
+      font-size: 14px;
+      font-weight: 900;
+      color: #4A3E25;
+      margin: 4px 0 8px 0;
+    }
+    .popover-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .btn-shop-link {
+      flex: 1;
+      padding: 6px 10px;
+      border-radius: 10px;
+      background: #E8DAC8;
+      color: #4A3E25;
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 800;
+      text-align: center;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      box-shadow: 1px 2px 4px rgba(160, 135, 110, 0.2);
+      transition: background 0.15s ease;
+    }
+    .btn-shop-link:hover {
+      background: #DFCFBB;
+    }
+    .btn-pay-toggle {
+      padding: 6px 12px;
+      border-radius: 10px;
+      border: none;
+      background: #C8E2D2;
+      color: #1E3F30;
+      font-size: 11px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 1px 2px 4px rgba(100, 150, 120, 0.25);
+      transition: all 0.15s ease;
+    }
+    .btn-pay-toggle.need-pay {
+      background: #FCD6CF;
+      color: #58241B;
+      box-shadow: 1px 2px 4px rgba(180, 100, 90, 0.25);
+    }
+    .btn-pay-toggle:active {
+      transform: scale(0.96);
+    }
   </style>
 </head>
 <body>
@@ -3023,39 +3140,20 @@
                   <button class="cal-nav-btn" title="Предыдущий месяц">
                     <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8L10 13" stroke="#5B481D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                   </button>
-                  <span style="font-size: 17px; font-weight: 900; color: #3A2F1D; letter-spacing: -0.2px;">Март 2025</span>
+                  <span id="desk-cal-title" style="font-size: 17px; font-weight: 900; color: #3A2F1D; letter-spacing: -0.2px;">Октябрь 2026</span>
                   <button class="cal-nav-btn" title="Следующий месяц">
                     <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="#5B481D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                   </button>
                 </div>
-                <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; font-size: 11px;">
-                  <div style="color: #8C784C; font-weight: 700; padding-bottom: 4px;">Пн</div><div style="color: #8C784C; font-weight: 700;">Вт</div><div style="color: #8C784C; font-weight: 700;">Ср</div><div style="color: #8C784C; font-weight: 700;">Чт</div><div style="color: #8C784C; font-weight: 700;">Пт</div><div style="color: #8C784C; font-weight: 700;">Сб</div><div style="color: #8C784C; font-weight: 700;">Вс</div>
-
-                  <div style="color: #C2B088; padding: 4px 0;">24</div><div style="color: #C2B088;">25</div><div style="color: #C2B088;">26</div><div style="color: #C2B088;">27</div><div style="color: #C2B088;">28</div><div style="font-weight: 700; color: #4A3E25;">1</div><div style="font-weight: 700; color: #4A3E25;">2</div>
-                  <div style="font-weight: 700; color: #4A3E25; padding: 4px 0;">3</div>
-                  <div style="background: #D3E7F8; color: #1B4567; font-weight: 900; border-radius: 50%; width: 24px; height: 24px; margin: 0 auto; display: flex; align-items: center; justify-content: center; box-shadow: 2px 3.5px 7px rgba(80,120,160,0.28), -1px -1px 3px rgba(255,255,255,0.9), inset 0 1px 0 rgba(255,255,255,0.9); width: 26px; height: 26px;">4</div>
-                  <div style="font-weight: 700; color: #4A3E25;">5</div><div style="font-weight: 700; color: #4A3E25;">6</div>
-                  <div style="background: #FCD6CF; color: #6E2F26; font-weight: 900; border-radius: 50%; width: 24px; height: 24px; margin: 0 auto; display: flex; align-items: center; justify-content: center; box-shadow: 2px 3.5px 7px rgba(180,90,90,0.28), -1px -1px 3px rgba(255,255,255,0.9), inset 0 1px 0 rgba(255,255,255,0.9); width: 26px; height: 26px;">7</div>
-                  <div style="font-weight: 700; color: #4A3E25;">8</div><div style="font-weight: 700; color: #4A3E25;">9</div>
-                  <div style="font-weight: 700; color: #4A3E25; padding: 4px 0;">10</div><div style="font-weight: 700; color: #4A3E25;">11</div>
-                  <div style="background: #F7E4A8; color: #5B481D; font-weight: 900; border-radius: 50%; width: 24px; height: 24px; margin: 0 auto; display: flex; align-items: center; justify-content: center; box-shadow: 1px 2px 4px rgba(190,170,110,0.3);">12</div>
-                  <div style="font-weight: 700; color: #4A3E25;">13</div><div style="font-weight: 700; color: #4A3E25;">14</div>
-                  <div style="background: #FCE8D5; color: #6D3E14; font-weight: 900; border-radius: 50%; width: 24px; height: 24px; margin: 0 auto; display: flex; align-items: center; justify-content: center; box-shadow: 1px 2px 4px rgba(200,150,110,0.3);">15</div>
-                  <div style="font-weight: 700; color: #4A3E25;">16</div>
-                  <div style="font-weight: 700; color: #4A3E25; padding: 4px 0;">17</div><div style="font-weight: 700; color: #4A3E25;">18</div><div style="font-weight: 700; color: #4A3E25;">19</div><div style="font-weight: 700; color: #4A3E25;">20</div>
-                  <div style="background: #FCD6CF; color: #6E2F26; font-weight: 900; border-radius: 50%; width: 24px; height: 24px; margin: 0 auto; display: flex; align-items: center; justify-content: center; box-shadow: 2px 3.5px 7px rgba(180,90,90,0.28), -1px -1px 3px rgba(255,255,255,0.9), inset 0 1px 0 rgba(255,255,255,0.9); width: 26px; height: 26px;">21</div>
-                  <div style="font-weight: 700; color: #4A3E25;">22</div><div style="font-weight: 700; color: #4A3E25;">23</div>
-                  <div style="font-weight: 700; color: #4A3E25; padding: 4px 0;">24</div><div style="font-weight: 700; color: #4A3E25;">25</div><div style="font-weight: 700; color: #4A3E25;">26</div><div style="font-weight: 700; color: #4A3E25;">27</div>
-                  <div style="background: #DBCCE9; color: #442B5B; font-weight: 900; border-radius: 50%; width: 24px; height: 24px; margin: 0 auto; display: flex; align-items: center; justify-content: center; box-shadow: 2px 3.5px 7px rgba(130,100,150,0.28), -1px -1px 3px rgba(255,255,255,0.9), inset 0 1px 0 rgba(255,255,255,0.9); width: 26px; height: 26px;">28</div>
-                  <div style="font-weight: 700; color: #4A3E25;">29</div><div style="font-weight: 700; color: #4A3E25;">30</div><div style="font-weight: 700; color: #4A3E25;">31</div>
+                <div id="desk-cal-table" class="cal-table" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; font-size: 11px;">
+                  <!-- Динамически заполняется MyTablesCalendar.renderCalendar() -->
                 </div>
               </div>
 
               <!-- 2. МОИ ПЛАТЕЖИ: ШИРИНА 1 КОЛОНКА (КАК КЛИЕНТЫ), АБРИКОСОВЫЙ КРЕМ #FCE8D5 -->
               <div class="desk-payments-card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                  <span style="font-family: 'Manrope', sans-serif; font-weight: 900; font-size: 15px; font-weight: 900; color: #5A3515;">Мои платежи</span>
-                  <button class="btn-plus-desk" style="display:flex;align-items:center;justify-content:center;"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 3V13M3 8H13" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg></button>
+                  <span style="font-family: 'Manrope', sans-serif; font-weight: 900; font-size: 15px; color: #5A3515;">Мои платежи</span>
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 7px;">
                   <div class="sub-item-payments">
@@ -3089,7 +3187,7 @@
             <div class="bento-bottom-grid">
 
               <!-- 1. ДОХОДЫ: ЗЕЛЁНАЯ ПЛАШКА (#C8E2D2), ИКОНКА КОШЕЛЬКА КАК НА МОБИЛКЕ -->
-              <div class="desk-income-card">
+              <div class="desk-income-card" onclick="switchAppTab('income')" style="cursor: pointer;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                   <div style="display: flex; align-items: center; gap: 10px;">
                     <div class="card-icon-box" style="background: #5B8374; width: 38px; height: 38px;">
@@ -3099,33 +3197,32 @@
                         <circle cx="18" cy="12.5" r="1.3" fill="#2D5847"/>
                       </svg>
                     </div>
-                    <span style="font-size: 16px; font-weight: 900; color: #1E3F30; font-family: 'Manrope', sans-serif; font-weight: 900;">Доходы</span>
+                    <span style="font-size: 16px; font-weight: 900; color: #1E3F30; font-family: 'Manrope', sans-serif;">Доходы</span>
                   </div>
-                  <button class="btn-plus-income" title="Добавить"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 3V13M3 8H13" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg></button>
                 </div>
 
                 <!-- Внутренние строки: СВЕТЛО-ЗЕЛЁНЫЕ (НЕ БЕЛЫЕ!) -->
                 <div id="desk-income-items" style="display: flex; flex-direction: column; gap: 8px;">
-                  <div class="sub-item-income">
+                  <div class="sub-item-income" onclick="switchAppTab('income')">
                     <div style="display: flex; align-items: center; gap: 8px;">
                       <div style="width: 10px; height: 10px; border-radius: 50%; background: #5B8374;"></div>
                       <div>
-                        <div style="font-weight: 800; color: #1E3F30;">Проект Сайт</div>
-                        <div style="font-size: 10px; color: #4A6E5A;">12 мар</div>
+                        <div style="font-weight: 800; color: #1E3F30;">Анна Смирнова</div>
+                        <div style="font-size: 10px; color: #4A6E5A;">Лендинг</div>
                       </div>
                     </div>
                     <div style="display: flex; align-items: center; gap: 4px;">
-                      <span style="font-weight: 900; color: #1E3F30;">+ 45 000 ₽</span>
+                      <span style="font-weight: 900; color: #1E3F30;">+ 15 000 ₽</span>
                       <span class="sub-arrow-income"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
                     </div>
                   </div>
 
-                  <div class="sub-item-income">
+                  <div class="sub-item-income" onclick="switchAppTab('income')">
                     <div style="display: flex; align-items: center; gap: 8px;">
                       <div style="width: 10px; height: 10px; border-radius: 50%; background: #FCD6CF;"></div>
                       <div>
-                        <div style="font-weight: 800; color: #1E3F30;">Проект Дизайн</div>
-                        <div style="font-size: 10px; color: #4A6E5A;">4 мар</div>
+                        <div style="font-weight: 800; color: #1E3F30;">Игорь</div>
+                        <div style="font-size: 10px; color: #4A6E5A;">Дизайн лого</div>
                       </div>
                     </div>
                     <div style="display: flex; align-items: center; gap: 4px;">
@@ -3133,25 +3230,11 @@
                       <span class="sub-arrow-income"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
                     </div>
                   </div>
-
-                  <div class="sub-item-income">
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                      <div style="width: 10px; height: 10px; border-radius: 50%; background: #FDF1CC;"></div>
-                      <div>
-                        <div style="font-weight: 800; color: #1E3F30;">Консультация</div>
-                        <div style="font-size: 10px; color: #4A6E5A;">1 мар</div>
-                      </div>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 4px;">
-                      <span style="font-weight: 900; color: #1E3F30;">+ 10 000 ₽</span>
-                      <span class="sub-arrow-income"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-                    </div>
-                  </div>
                 </div>
               </div>
 
               <!-- 2. РАСХОДЫ: РОЗОВАЯ ПЛАШКА (#FCD6CF), ДИАГРАММА КАК НА МОБИЛКЕ -->
-              <div class="desk-expense-card">
+              <div class="desk-expense-card" onclick="switchAppTab('expenses')" style="cursor: pointer;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                   <div style="display: flex; align-items: center; gap: 10px;">
                     <div class="card-icon-box" style="background: #B86B60; border-radius: 50%; width: 38px; height: 38px;">
@@ -3161,47 +3244,18 @@
                         <path d="M12 12L22 12A10 10 0 0 1 12 22Z" fill="#D4867A"/>
                       </svg>
                     </div>
-                    <span style="font-size: 16px; font-weight: 900; color: #58241B; font-family: 'Manrope', sans-serif; font-weight: 900;">Расходы</span>
+                    <span style="font-size: 16px; font-weight: 900; color: #58241B; font-family: 'Manrope', sans-serif;">Расходы</span>
                   </div>
-                  <button class="btn-plus-expense" title="Добавить"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 3V13M3 8H13" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg></button>
+                  <span id="desk-expenses-rem" style="font-size: 15px; font-weight: 900; color: #58241B;">3 900 ₽</span>
                 </div>
 
                 <!-- Внутренние строки: СВЕТЛО-РОЗОВЫЕ (НЕ БЕЛЫЕ!) -->
                 <div id="desk-expense-items" style="display: flex; flex-direction: column; gap: 8px;">
-                  <div class="sub-item-expense">
+                  <div class="sub-item-expense" onclick="switchAppTab('expenses')">
                     <div style="display: flex; align-items: center; gap: 8px;">
                       <div style="width: 10px; height: 10px; border-radius: 50%; background: #D3E7F8;"></div>
                       <div>
-                        <div style="font-weight: 800; color: #58241B;">VPN</div>
-                        <div style="font-size: 10px; color: #8A4C42;">15 мар</div>
-                      </div>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 4px;">
-                      <span style="font-weight: 900; color: #6E2F26;">850 ₽</span>
-                      <span class="sub-arrow-expense"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-                    </div>
-                  </div>
-
-                  <div class="sub-item-expense">
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                      <div style="width: 10px; height: 10px; border-radius: 50%; background: #C8E2D2;"></div>
-                      <div>
-                        <div style="font-weight: 800; color: #58241B;">Интернет</div>
-                        <div style="font-size: 10px; color: #8A4C42;">10 мар</div>
-                      </div>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 4px;">
-                      <span style="font-weight: 900; color: #6E2F26;">1 200 ₽</span>
-                      <span class="sub-arrow-expense"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-                    </div>
-                  </div>
-
-                  <div class="sub-item-expense">
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                      <div style="width: 10px; height: 10px; border-radius: 50%; background: #FCD6CF;"></div>
-                      <div>
-                        <div style="font-weight: 800; color: #58241B;">ИИ сервисы</div>
-                        <div style="font-size: 10px; color: #8A4C42;">21 мар</div>
+                        <div style="font-weight: 800; color: #58241B;">15 окт • VPN + Интернет</div>
                       </div>
                     </div>
                     <div style="display: flex; align-items: center; gap: 4px;">
@@ -3210,16 +3264,15 @@
                     </div>
                   </div>
 
-                  <div class="sub-item-expense">
+                  <div class="sub-item-expense" onclick="switchAppTab('expenses')">
                     <div style="display: flex; align-items: center; gap: 8px;">
-                      <div style="width: 10px; height: 10px; border-radius: 50%; background: #FCE8D5;"></div>
+                      <div style="width: 10px; height: 10px; border-radius: 50%; background: #DBCCE9;"></div>
                       <div>
-                        <div style="font-weight: 800; color: #58241B;">Подписка</div>
-                        <div style="font-size: 10px; color: #8A4C42;">28 мар</div>
+                        <div style="font-weight: 800; color: #58241B;">22 окт • ChatGPT Plus</div>
                       </div>
                     </div>
                     <div style="display: flex; align-items: center; gap: 4px;">
-                      <span style="font-weight: 900; color: #6E2F26;">599 ₽</span>
+                      <span style="font-weight: 900; color: #6E2F26;">1 900 ₽</span>
                       <span class="sub-arrow-expense"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
                     </div>
                   </div>
@@ -3227,7 +3280,7 @@
               </div>
 
               <!-- 3. КЛИЕНТЫ: ГОЛУБАЯ ПЛАШКА (#D3E7F8), ЛЮДИ КАК НА МОБИЛКЕ -->
-              <div class="desk-clients-card">
+              <div class="desk-clients-card" onclick="switchAppTab('clients')" style="cursor: pointer;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                   <div style="display: flex; align-items: center; gap: 10px;">
                     <div class="card-icon-box" style="background: #5587B3; width: 38px; height: 38px;">
@@ -3238,41 +3291,30 @@
                         <path d="M15 18C15.4 16.2 16.8 15 18.6 15C20.4 15 21.8 16.2 22.2 18" fill="#A8CEEF"/>
                       </svg>
                     </div>
-                    <span style="font-size: 16px; font-weight: 900; color: #163B59; font-family: 'Manrope', sans-serif; font-weight: 900;">Клиенты</span>
+                    <span style="font-size: 16px; font-weight: 900; color: #163B59; font-family: 'Manrope', sans-serif;">Клиенты</span>
                   </div>
-                  <button class="btn-plus-clients" title="Добавить"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 3V13M3 8H13" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg></button>
+                  <span id="desk-clients-count" style="font-size: 13px; font-weight: 800; color: #163B59;">3 в работе</span>
                 </div>
 
                 <!-- Внутренние строки: СВЕТЛО-ГОЛУБЫЕ (НЕ БЕЛЫЕ!) -->
                 <div id="desk-clients-items" style="display: flex; flex-direction: column; gap: 8px;">
-                  <div class="sub-item-clients">
+                  <div class="sub-item-clients" onclick="switchAppTab('clients')">
                     <div style="display: flex; align-items: center; gap: 10px;">
                       <div style="width: 30px; height: 30px; border-radius: 50%; background: #FCD6CF; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #6E2F26; font-size: 12px;">А</div>
                       <div>
-                        <div style="font-weight: 800; color: #163B59;">Анна</div>
-                        <div style="font-size: 10px; color: #3A6488;">Проект Сайт</div>
+                        <div style="font-weight: 800; color: #163B59;">Анна Смирнова</div>
+                        <div style="font-size: 10px; color: #3A6488;">В работе</div>
                       </div>
                     </div>
                     <span class="sub-arrow-clients"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
                   </div>
 
-                  <div class="sub-item-clients">
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                      <div style="width: 30px; height: 30px; border-radius: 50%; background: #C8E2D2; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #1E3F30; font-size: 12px;">И</div>
-                      <div>
-                        <div style="font-weight: 800; color: #163B59;">Игорь</div>
-                        <div style="font-size: 10px; color: #3A6488;">Проект Дизайн</div>
-                      </div>
-                    </div>
-                    <span class="sub-arrow-clients"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-                  </div>
-
-                  <div class="sub-item-clients">
+                  <div class="sub-item-clients" onclick="switchAppTab('clients')">
                     <div style="display: flex; align-items: center; gap: 10px;">
                       <div style="width: 30px; height: 30px; border-radius: 50%; background: #FDF1CC; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #5B481D; font-size: 12px;">К</div>
                       <div>
                         <div style="font-weight: 800; color: #163B59;">Катя</div>
-                        <div style="font-size: 10px; color: #3A6488;">Консультации</div>
+                        <div style="font-size: 10px; color: #3A6488;">Консультации • В работе</div>
                       </div>
                     </div>
                     <span class="sub-arrow-clients"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
@@ -3923,22 +3965,16 @@
             <!-- Календарь на телефоне: СЛИВОЧНЫЙ #FDF1CC -->
             <div class="cal-box-mobile">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding: 0 4px;">
-                <button class="cal-nav-btn" style="width: 28px; height: 28px;" title="Предыдущий месяц">
+                <button class="cal-nav-btn" style="min-width: 44px; min-height: 44px; width: 44px; height: 44px;" title="Предыдущий месяц">
                   <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8L10 13" stroke="#5B481D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </button>
-                <span style="font-size: 15px; font-weight: 900; color: #3A2F1D;">Март 2025</span>
-                <button class="cal-nav-btn" style="width: 28px; height: 28px;" title="Следующий месяц">
+                <span id="mob-cal-title" style="font-size: 15px; font-weight: 900; color: #3A2F1D;">Октябрь 2026</span>
+                <button class="cal-nav-btn" style="min-width: 44px; min-height: 44px; width: 44px; height: 44px;" title="Следующий месяц">
                   <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="#5B481D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </button>
               </div>
-              <div class="cal-table">
-                <div class="cal-th">Пн</div><div class="cal-th">Вт</div><div class="cal-th">Ср</div><div class="cal-th">Чт</div><div class="cal-th">Пт</div><div class="cal-th">Сб</div><div class="cal-th">Вс</div>
-
-                <div class="cal-td muted">24</div><div class="cal-td muted">25</div><div class="cal-td muted">26</div><div class="cal-td muted">27</div><div class="cal-td muted">28</div><div class="cal-td">1</div><div class="cal-td">2</div>
-                <div class="cal-td">3</div><div class="cal-td dot-blue">4</div><div class="cal-td">5</div><div class="cal-td">6</div><div class="cal-td dot-pink">7</div><div class="cal-td">8</div><div class="cal-td">9</div>
-                <div class="cal-td">10</div><div class="cal-td">11</div><div class="cal-td dot-yellow">12</div><div class="cal-td">13</div><div class="cal-td">14</div><div class="cal-td dot-orange">15</div><div class="cal-td">16</div>
-                <div class="cal-td">17</div><div class="cal-td">18</div><div class="cal-td">19</div><div class="cal-td">20</div><div class="cal-td dot-pink">21</div><div class="cal-td">22</div><div class="cal-td">23</div>
-                <div class="cal-td">24</div><div class="cal-td">25</div><div class="cal-td">26</div><div class="cal-td">27</div><div class="cal-td dot-purple">28</div><div class="cal-td">29</div><div class="cal-td">30</div><div class="cal-td">31</div>
+              <div id="mob-cal-table" class="cal-table">
+                <!-- Динамически заполняется MyTablesCalendar.renderCalendar() -->
               </div>
             </div>
 
@@ -3946,7 +3982,7 @@
             <div class="action-cards">
               
               <!-- Доходы -->
-              <div class="phone-card card-income">
+              <div class="phone-card card-income" onclick="switchAppTab('income')" style="cursor: pointer;">
                 <div style="display: flex; align-items: center; gap: 12px;">
                   <div class="card-icon-box" style="background: #5B8374;">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
@@ -3957,14 +3993,14 @@
                   </div>
                   <div>
                     <div style="font-size: 14px; font-weight: 800;">Доходы</div>
-                    <div id="mob-income-sum" style="font-size: 11px; font-weight: 700; opacity: 0.85; margin-top: 2px;">125 500 ₽</div>
+                    <div id="mob-income-sum" style="font-size: 11px; font-weight: 700; opacity: 0.85; margin-top: 2px;">45 000 ₽</div>
                   </div>
                 </div>
-                <button class="arrow-btn" onclick="switchAppTab('income')">›</button>
+                <button class="arrow-btn">›</button>
               </div>
 
               <!-- Расходы -->
-              <div class="phone-card card-expense">
+              <div class="phone-card card-expense" onclick="switchAppTab('expenses')" style="cursor: pointer;">
                 <div style="display: flex; align-items: center; gap: 12px;">
                   <div class="card-icon-box" style="background: #B86B60; border-radius: 50%;">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -3975,14 +4011,14 @@
                   </div>
                   <div>
                     <div style="font-size: 14px; font-weight: 800;">Расходы</div>
-                    <div id="mob-expense-sum" style="font-size: 11px; font-weight: 700; opacity: 0.85; margin-top: 2px;">28 400 ₽</div>
+                    <div id="mob-expense-sum" style="font-size: 11px; font-weight: 700; opacity: 0.85; margin-top: 2px;">3 900 ₽</div>
                   </div>
                 </div>
-                <button class="arrow-btn" onclick="switchAppTab('expenses')">›</button>
+                <button class="arrow-btn">›</button>
               </div>
 
               <!-- Клиенты -->
-              <div class="phone-card card-clients">
+              <div class="phone-card card-clients" onclick="switchAppTab('clients')" style="cursor: pointer;">
                 <div style="display: flex; align-items: center; gap: 12px;">
                   <div class="card-icon-box" style="background: #5587B3;">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -3994,10 +4030,10 @@
                   </div>
                   <div>
                     <div style="font-size: 14px; font-weight: 800;">Клиенты</div>
-                    <div id="mob-clients-count" style="font-size: 11px; font-weight: 700; opacity: 0.85; margin-top: 2px;">12 активных</div>
+                    <div id="mob-clients-count" style="font-size: 11px; font-weight: 700; opacity: 0.85; margin-top: 2px;">3 в работе</div>
                   </div>
                 </div>
-                <button class="arrow-btn" onclick="switchAppTab('clients')">›</button>
+                <button class="arrow-btn">›</button>
               </div>
 
             </div></div>
@@ -4699,6 +4735,7 @@
   </div>
 
   <script src="sync.js"></script>
+  <script src="calendar.js"></script>
   <script src="app.js"></script>
 
   <script>

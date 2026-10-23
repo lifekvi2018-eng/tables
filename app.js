@@ -84,6 +84,10 @@
 
   // --- ОБНОВЛЕНИЕ ГЛАВНОГО ЭКРАНА ---
   function updateMainScreen(data) {
+    if (window.MyTablesCalendar && window.MyTablesCalendar.setCalendarData) {
+      window.MyTablesCalendar.setCalendarData(data);
+    }
+
     var incomeList = data.income || [];
     var expensesList = data.expenses || [];
     var clientsList = data.clients || [];
@@ -107,7 +111,7 @@
     var mobClientsCount = document.getElementById('mob-clients-count');
     if (mobClientsCount) mobClientsCount.textContent = clientsList.length + ' активных';
 
-    // Десктопные плашки (последние записи)
+    // Десктопные плашки (последние записи) — чистый вид без крестиков корзин
     var deskIncomeContainer = document.getElementById('desk-income-items');
     if (deskIncomeContainer && incomeList.length > 0) {
       var recentIncome = incomeList.slice(-4).reverse();
@@ -118,7 +122,7 @@
         var id = item.ID || item.id || ('inc_' + idx);
         var dotColor = PALETTE_COLORS[idx % PALETTE_COLORS.length];
         return [
-          '<div class="sub-item-income" data-id="' + id + '" data-sheet="Доходы">',
+          '<div class="sub-item-income" data-id="' + id + '" onclick="switchAppTab(\'income\')" style="cursor: pointer;">',
           '  <div style="display: flex; align-items: center; gap: 8px;">',
           '    <div style="width: 10px; height: 10px; border-radius: 50%; background: ' + dotColor + ';"></div>',
           '    <div>',
@@ -128,7 +132,7 @@
           '  </div>',
           '  <div style="display: flex; align-items: center; gap: 4px;">',
           '    <span style="font-weight: 900; color: #1E3F30;">+ ' + sum + '</span>',
-          '    <button class="item-del-btn" title="Удалить" onclick="window.handleDeleteRow(event, \'Доходы\', \'' + id + '\', \'' + escapeHtml(title) + '\')"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>',
+          '    <span class="sub-arrow-income"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></span>',
           '  </div>',
           '</div>'
         ].join('');
@@ -145,7 +149,7 @@
         var id = item.ID || item.id || ('exp_' + idx);
         var dotColor = PALETTE_COLORS[(idx + 2) % PALETTE_COLORS.length];
         return [
-          '<div class="sub-item-expense" data-id="' + id + '" data-sheet="Расходы">',
+          '<div class="sub-item-expense" data-id="' + id + '" onclick="switchAppTab(\'expenses\')" style="cursor: pointer;">',
           '  <div style="display: flex; align-items: center; gap: 8px;">',
           '    <div style="width: 10px; height: 10px; border-radius: 50%; background: ' + dotColor + ';"></div>',
           '    <div>',
@@ -155,7 +159,7 @@
           '  </div>',
           '  <div style="display: flex; align-items: center; gap: 4px;">',
           '    <span style="font-weight: 900; color: #6E2F26;">' + sum + '</span>',
-          '    <button class="item-del-btn" title="Удалить" onclick="window.handleDeleteRow(event, \'Расходы\', \'' + id + '\', \'' + escapeHtml(title) + '\')"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>',
+          '    <span class="sub-arrow-expense"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></span>',
           '  </div>',
           '</div>'
         ].join('');
@@ -172,7 +176,7 @@
         var initials = getInitials(name);
         var bg = PALETTE_COLORS[(idx + 1) % PALETTE_COLORS.length];
         return [
-          '<div class="sub-item-clients" data-id="' + id + '" data-sheet="Клиенты">',
+          '<div class="sub-item-clients" data-id="' + id + '" onclick="switchAppTab(\'clients\')" style="cursor: pointer;">',
           '  <div style="display: flex; align-items: center; gap: 10px;">',
           '    <div style="width: 30px; height: 30px; border-radius: 50%; background: ' + bg + '; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #2F261D; font-size: 11px;">' + initials + '</div>',
           '    <div>',
@@ -180,7 +184,7 @@
           '      <div style="font-size: 10px; color: #3A6488;">' + escapeHtml(project) + '</div>',
           '    </div>',
           '  </div>',
-          '  <button class="item-del-btn" title="Удалить" onclick="window.handleDeleteRow(event, \'Клиенты\', \'' + id + '\', \'' + escapeHtml(name) + '\')"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>',
+          '  <span class="sub-arrow-clients"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></span>',
           '</div>'
         ].join('');
       }).join('');

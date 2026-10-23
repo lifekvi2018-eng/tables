@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Макет Стейджа 1: Главный экран • Мои таблицы ♡</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    body {
+      background: #FAF2E7;
+      color: #383025;
+      padding: 24px 16px 60px 16px;
+      line-height: 1.4;
+      font-family: 'Manrope', sans-serif;
+    }
+
+    /* ШАПКА МАКЕТА */
+    .mockup-header {
+      max-width: 1400px;
+      margin: 0 auto 28px auto;
+      text-align: center;
+      background: #F3E6D7;
+      padding: 18px 24px;
+      border-radius: 24px;
+      box-shadow: 0 4px 16px rgba(160, 135, 110, 0.15);
+    }
+    .mockup-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 12px;
+      background: #FDF1CC;
+      color: #5B481D;
+      margin-bottom: 8px;
+      box-shadow: 2px 3px 6px rgba(190, 170, 110, 0.25);
+    }
+    .mockup-title {
+      font-size: 26px;
+      font-weight: 900;
+      color: #2F261D;
+      letter-spacing: -0.3px;
+    }
+    .mockup-desc {
+      font-size: 14px;
+      color: #6B5B49;
+      margin-top: 6px;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* ОСНОВНАЯ СЕТКА: ТЕЛЕФОН СЛЕВА, ДЕСКТОП СПРАВА */
+    .exhibition-grid {
+      max-width: 1440px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 390px 1fr;
+      gap: 36px;
+      align-items: start;
+    }
+    @media (max-width: 1180px) {
+      .exhibition-grid {
+        grid-template-columns: 1fr;
+        justify-items: center;
+      }
+    }
+
+    /* ========================================================= */
+    /* 1. ТЕЛЕФОН (IPHONE 390×844)                               */
+    /* ========================================================= */
+    .phone-container {
+      width: 390px;
+      background: #F0E4D5;
+      border-radius: 52px;
+      padding: 12px;
+      box-shadow: 16px 28px 60px -8px rgba(150, 125, 100, 0.35), 4px 8px 20px rgba(150, 125, 100, 0.15);
+      border: 4px solid #E6D6C4;
+    }
+    .phone-screen {
+      width: 100%;
+      min-height: 780px;
+      background: #FAF2E7;
+      border-radius: 42px;
+      padding: 16px 14px 20px 14px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+    .phone-island {
+      width: 90px;
+      height: 22px;
+      background: #2B241E;
+      border-radius: 12px;
+      margin: 0 auto 12px auto;
+    }
+    .phone-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      padding: 0 4px;
+    }
+    .phone-user-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #F4E8D9;
+      padding: 6px 12px 6px 6px;
+      border-radius: 20px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), 2px 4px 10px rgba(160, 135, 110, 0.15);
+    }
+    .user-avatar-round {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #FAF2E7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 900;
+      color: #5B481D;
+    }
+    .phone-user-name {
+      font-size: 13px;
+      font-weight: 800;
+      color: #2F261D;
+    }
+
+    /* Календарь на телефоне */
+    .cal-card {
+      background: #FDF1CC;
+      border-radius: 22px;
+      padding: 14px 12px;
+      margin-bottom: 16px;
+      box-shadow: 6px 10px 24px -4px rgba(175, 150, 110, 0.28), -3px -3px 10px rgba(255, 255, 255, 0.8), inset 1px 1px 1.5px rgba(255, 255, 255, 0.9);
+      position: relative;
+    }
+    .cal-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      padding: 0 4px;
+    }
+    .cal-month-title {
+      font-size: 15px;
+      font-weight: 900;
+      color: #4A3E25;
+      letter-spacing: -0.2px;
+    }
+    .cal-nav-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      border: none;
+      background: #F5E5B8;
+      color: #5B481D;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-weight: 900;
+      box-shadow: 2px 3px 6px rgba(190, 170, 110, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+      transition: all 0.15s ease;
+    }
+    .cal-nav-btn:hover {
+      background: #EED79D;
+    }
+
+    .cal-grid-table {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      text-align: center;
+    }
+    .cal-weekday {
+      font-size: 11px;
+      font-weight: 800;
+      color: #8C784C;
+      padding-bottom: 6px;
+    }
+    .cal-cell {
+      height: 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 800;
+      color: #4A3E25;
+      border-radius: 10px;
+      position: relative;
+      cursor: pointer;
+    }
+    .cal-cell.muted {
+      color: #C2B088;
+      opacity: 0.6;
+    }
+    .cal-cell.today {
+      background: #F5E5B8;
+      box-shadow: 1px 2px 5px rgba(190, 170, 110, 0.35);
+    }
+    .dots-container {
+      display: flex;
+      gap: 3px;
+      margin-top: 2px;
+    }
+    .mini-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+    .mini-dot.blue { background: #4D8BBE; }
+    .mini-dot.orange { background: #D96B27; }
+    .mini-dot.purple { background: #8E54C4; }
+
+    /* Плашки сводки (Доходы, Расходы, Клиенты) */
+    .summary-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      flex: 1;
+    }
+    .bento-pill-card {
+      border-radius: 22px;
+      padding: 14px 16px;
+      box-shadow: 6px 10px 24px -4px rgba(160, 135, 110, 0.22), -3px -3px 10px rgba(255, 255, 255, 0.8), inset 1px 1px 1.5px rgba(255, 255, 255, 0.9);
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+    .bento-pill-card:hover {
+      transform: translateY(-2px);
+    }
+    .bento-pill-card.mint { background: #C8E2D2; color: #1E3F30; }
+    .bento-pill-card.peach { background: #FCD6CF; color: #58241B; }
+    .bento-pill-card.sky { background: #D3E7F8; color: #16324F; }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .card-title-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 15px;
+      font-weight: 900;
+    }
+    .card-metric-val {
+      font-size: 16px;
+      font-weight: 900;
+    }
+    .card-sub-items {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-top: 8px;
+    }
+    .clean-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.55);
+      padding: 6px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 800;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+
+    /* Мобильный таб-бар */
+    .mobile-tabbar {
+      margin-top: 14px;
+      background: #F4E8D9;
+      padding: 8px 14px;
+      border-radius: 24px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      box-shadow: 0 4px 14px rgba(160, 135, 110, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+    .mob-tab-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 16px;
+      border: none;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #726453;
+      cursor: pointer;
+    }
+    .mob-tab-btn.active {
+      background: #FDF1CC;
+      color: #5B481D;
+      box-shadow: 2px 3px 6px rgba(190, 170, 110, 0.3);
+    }
+
+    /* ========================================================= */
+    /* 2. ДЕСКТОПНАЯ ВЕРСИЯ (1360px)                             */
+    /* ========================================================= */
+    .desktop-container {
+      background: #FAF2E7;
+      border-radius: 36px;
+      padding: 24px;
+      box-shadow: 14px 24px 50px -8px rgba(150, 125, 100, 0.25), 4px 8px 20px rgba(150, 125, 100, 0.1);
+      border: 3px solid #EADBCC;
+      display: grid;
+      grid-template-columns: 210px 1fr;
+      gap: 28px;
+      min-height: 780px;
+    }
+
+    /* Сайдбар */
+    .desk-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .desk-user-chip {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      margin-bottom: 14px;
+      background: #F2E5D5;
+      border-radius: 18px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 2px 4px 10px rgba(160, 135, 110, 0.12);
+    }
+    .desk-nav-btn {
+      min-height: 44px;
+      border-radius: 14px;
+      padding: 0 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+      font-weight: 800;
+      color: #726453;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      text-align: left;
+      transition: all 0.15s ease;
+    }
+    .desk-nav-btn:hover {
+      background: #EFE4D6;
+      color: #2F261D;
+    }
+    .desk-nav-btn.active.main-tab {
+      background: #FDF1CC;
+      color: #5B481D;
+      box-shadow: 2px 3px 6px rgba(190, 170, 110, 0.3);
+    }
+
+    /* Рабочая область десктопа */
+    .desk-content {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .desk-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .desk-title {
+      font-size: 26px;
+      font-weight: 900;
+      color: #2F261D;
+      letter-spacing: -0.4px;
+    }
+    .sync-badge {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 5px 12px;
+      border-radius: 12px;
+      background: #C8E2D2;
+      color: #1E3F30;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Сетка десктопа: слева большой календарь, справа 3 плашки */
+    .desk-dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 24px;
+      align-items: start;
+    }
+    @media (max-width: 900px) {
+      .desk-dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Большой календарь десктопа */
+    .desk-cal-box {
+      background: #FDF1CC;
+      border-radius: 28px;
+      padding: 22px;
+      box-shadow: 6px 12px 28px -4px rgba(175, 150, 110, 0.28), -3px -3px 12px rgba(255, 255, 255, 0.8), inset 1px 1px 2px rgba(255, 255, 255, 0.9);
+      position: relative;
+    }
+    .desk-cal-table {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+      margin-top: 14px;
+    }
+    .desk-cal-cell {
+      height: 64px;
+      background: rgba(255, 255, 255, 0.45);
+      border-radius: 16px;
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      position: relative;
+    }
+    .desk-cal-cell:hover {
+      background: rgba(255, 255, 255, 0.75);
+      transform: translateY(-2px);
+    }
+    .desk-cal-cell.today {
+      background: #F7E4A8;
+      box-shadow: 2px 4px 10px rgba(190, 170, 110, 0.4);
+    }
+    .desk-cal-date {
+      font-size: 13px;
+      font-weight: 800;
+      color: #4A3E25;
+    }
+    .desk-dots-row {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .desk-pill-tag {
+      font-size: 9px;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+    .desk-pill-tag.blue { background: #D3E7F8; color: #16324F; }
+    .desk-pill-tag.orange { background: #FCE8D5; color: #6D3E14; }
+    .desk-pill-tag.purple { background: #DBCCE9; color: #442B5B; }
+
+    /* ========================================================= */
+    /* ВСПЛЫВАЮЩИЙ ПОПОВЕР ПЛАТЕЖЕЙ В КАЛЕНДАРЕ                   */
+    /* ========================================================= */
+    .tactile-popover {
+      position: absolute;
+      top: 180px;
+      left: 140px;
+      width: 320px;
+      background: #FAF2E7;
+      border-radius: 24px;
+      padding: 16px;
+      box-shadow: 0 14px 40px rgba(120, 95, 75, 0.35), 0 2px 8px rgba(120, 95, 75, 0.15);
+      border: 3px solid #EADBCC;
+      z-index: 100;
+    }
+    .popover-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .popover-date-title {
+      font-size: 14px;
+      font-weight: 900;
+      color: #2F261D;
+    }
+    .popover-close-btn {
+      background: none;
+      border: none;
+      font-size: 16px;
+      font-weight: 900;
+      color: #726453;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .popover-item {
+      background: #F4E8D9;
+      border-radius: 16px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+    .popover-item:last-child {
+      margin-bottom: 0;
+    }
+    .popover-item-title {
+      font-size: 12px;
+      font-weight: 800;
+      color: #2F261D;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .popover-item-sum {
+      font-size: 14px;
+      font-weight: 900;
+      color: #4A3E25;
+      margin: 4px 0 8px 0;
+    }
+    .popover-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .btn-shop-link {
+      flex: 1;
+      padding: 6px 10px;
+      border-radius: 10px;
+      background: #E8DAC8;
+      color: #4A3E25;
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 800;
+      text-align: center;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      box-shadow: 1px 2px 4px rgba(160, 135, 110, 0.2);
+    }
+    .btn-pay-toggle {
+      padding: 6px 12px;
+      border-radius: 10px;
+      border: none;
+      background: #C8E2D2;
+      color: #1E3F30;
+      font-size: 11px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 1px 2px 4px rgba(100, 150, 120, 0.25);
+    }
+    .btn-pay-toggle.need-pay {
+      background: #FCD6CF;
+      color: #58241B;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ШАПКА МАКЕТА -->
+  <div class="mockup-header">
+    <div class="mockup-badge">Стейдж 1 • Автономный макет для утверждения</div>
+    <h1 class="mockup-title">Главный экран «Мои таблицы ♡»</h1>
+    <p class="mockup-desc">
+      Интерактивный календарь со стрелочками переключения месяцев, цветные точки оплат (двойные при совпадении дат), всплывающий поповер со ссылкой в магазин и кнопкой «Оплачено», и 3 чистые бумажные плашки сводки.
+    </p>
+  </div>
+
+  <!-- ДЕМОНСТРАЦИОННАЯ СЕТКА -->
+  <div class="exhibition-grid">
+
+    <!-- ========================================================= -->
+    <!-- 1. МОБИЛЬНАЯ ВЕРСИЯ (IPHONE)                              -->
+    <!-- ========================================================= -->
+    <div class="phone-container">
+      <div class="phone-screen">
+        <div class="phone-island"></div>
+
+        <!-- Шапка телефона -->
+        <div class="phone-top-bar">
+          <div class="phone-user-chip">
+            <div class="user-avatar-round">А</div>
+            <span class="phone-user-name">Аня</span>
+          </div>
+          <div class="sync-badge">Google ✓</div>
+        </div>
+
+        <!-- Календарь телефона со стрелочками -->
+        <div class="cal-card">
+          <div class="cal-header-row">
+            <button class="cal-nav-btn" onclick="prevMonthDemo()">&lt;</button>
+            <div class="cal-month-title" id="mob-cal-title">Октябрь 2026</div>
+            <button class="cal-nav-btn" onclick="nextMonthDemo()">&gt;</button>
+          </div>
+          <div class="cal-grid-table">
+            <div class="cal-weekday">Пн</div>
+            <div class="cal-weekday">Вт</div>
+            <div class="cal-weekday">Ср</div>
+            <div class="cal-weekday">Чт</div>
+            <div class="cal-weekday">Пт</div>
+            <div class="cal-weekday">Сб</div>
+            <div class="cal-weekday">Вс</div>
+
+            <div class="cal-cell muted">28</div>
+            <div class="cal-cell muted">29</div>
+            <div class="cal-cell muted">30</div>
+            <div class="cal-cell">1</div>
+            <div class="cal-cell">2</div>
+            <div class="cal-cell">3</div>
+            <div class="cal-cell">4</div>
+
+            <div class="cal-cell">5</div>
+            <div class="cal-cell">6</div>
+            <div class="cal-cell">
+              7
+              <div class="dots-container"><span class="mini-dot blue" title="VPN"></span></div>
+            </div>
+            <div class="cal-cell">8</div>
+            <div class="cal-cell">9</div>
+            <div class="cal-cell">10</div>
+            <div class="cal-cell">11</div>
+
+            <div class="cal-cell">12</div>
+            <div class="cal-cell">13</div>
+            <div class="cal-cell">14</div>
+            <!-- День 15: ДВЕ ТОЧКИ РЯДОМ (VPN + Интернет) -->
+            <div class="cal-cell today" style="border: 2px solid #5B481D;">
+              15
+              <div class="dots-container">
+                <span class="mini-dot blue" title="VPN"></span>
+                <span class="mini-dot orange" title="Интернет"></span>
+              </div>
+            </div>
+            <div class="cal-cell">16</div>
+            <div class="cal-cell">17</div>
+            <div class="cal-cell">18</div>
+
+            <div class="cal-cell">19</div>
+            <div class="cal-cell">20</div>
+            <div class="cal-cell">21</div>
+            <div class="cal-cell">
+              22
+              <div class="dots-container"><span class="mini-dot purple" title="ChatGPT"></span></div>
+            </div>
+            <div class="cal-cell">23</div>
+            <div class="cal-cell">24</div>
+            <div class="cal-cell">25</div>
+
+            <div class="cal-cell">26</div>
+            <div class="cal-cell">27</div>
+            <div class="cal-cell">28</div>
+            <div class="cal-cell">29</div>
+            <div class="cal-cell">30</div>
+            <div class="cal-cell">31</div>
+            <div class="cal-cell muted">1</div>
+          </div>
+        </div>
+
+        <!-- 3 Тактильные плашки сводки на телефоне -->
+        <div class="summary-stack">
+          <!-- Доходы -->
+          <div class="bento-pill-card mint" onclick="alert('Переход на экран «Доходы»')">
+            <div class="card-top">
+              <div class="card-title-group">
+                <span>Доходы</span>
+              </div>
+              <span class="card-metric-val">45 000 ₽</span>
+            </div>
+            <div class="card-sub-items">
+              <div class="clean-row">
+                <span>Анна Смирнова • Лендинг</span>
+                <span>+ 15 000 ₽</span>
+              </div>
+              <div class="clean-row">
+                <span>Игорь • Дизайн лого</span>
+                <span>+ 30 000 ₽</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Расходы -->
+          <div class="bento-pill-card peach" onclick="alert('Переход на экран «Расходы»')">
+            <div class="card-top">
+              <div class="card-title-group">
+                <span>Расходы</span>
+              </div>
+              <span class="card-metric-val" id="mob-expenses-rem">3 900 ₽</span>
+            </div>
+            <div class="card-sub-items">
+              <div class="clean-row">
+                <span>15 окт • VPN + Интернет</span>
+                <span>2 000 ₽</span>
+              </div>
+              <div class="clean-row">
+                <span>22 окт • ChatGPT Plus</span>
+                <span>1 900 ₽</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Клиенты -->
+          <div class="bento-pill-card sky" onclick="alert('Переход на экран «Клиенты»')">
+            <div class="card-top">
+              <div class="card-title-group">
+                <span>Клиенты</span>
+              </div>
+              <span class="card-metric-val">3 в работе</span>
+            </div>
+            <div class="card-sub-items">
+              <div class="clean-row">
+                <span>Анна Смирнова</span>
+                <span style="color: #1E3F30;">В работе</span>
+              </div>
+              <div class="clean-row">
+                <span>Катя • Консультации</span>
+                <span style="color: #1E3F30;">В работе</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Нижний таб-бар телефона -->
+        <div class="mobile-tabbar">
+          <button class="mob-tab-btn active" title="Главная">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </button>
+          <button class="mob-tab-btn" title="Доходы" onclick="alert('Переход в Доходы')">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+          </button>
+          <button class="mob-tab-btn" title="Расходы" onclick="alert('Переход в Расходы')">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
+          </button>
+          <button class="mob-tab-btn" title="Клиенты" onclick="alert('Переход в Клиенты')">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- 2. ДЕСКТОПНАЯ ВЕРСИЯ                                      -->
+    <!-- ========================================================= -->
+    <div class="desktop-container">
+      
+      <!-- Сайдбар -->
+      <div class="desk-sidebar">
+        <div class="desk-user-chip">
+          <div class="user-avatar-round">А</div>
+          <div style="flex: 1; min-width: 0;">
+            <div style="font-size: 13px; font-weight: 800; color: #2F261D;">Аня</div>
+            <div style="font-size: 10px; color: #726453; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">lifekvi2018@gmail.com</div>
+          </div>
+        </div>
+
+        <button class="desk-nav-btn active main-tab">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          <span>Главная</span>
+        </button>
+        <button class="desk-nav-btn" onclick="alert('Переход на экран «Доходы»')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+          <span>Доходы</span>
+        </button>
+        <button class="desk-nav-btn" onclick="alert('Переход на экран «Расходы»')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
+          <span>Расходы</span>
+        </button>
+        <button class="desk-nav-btn" onclick="alert('Переход на экран «Клиенты»')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span>Клиенты</span>
+        </button>
+      </div>
+
+      <!-- Рабочая область -->
+      <div class="desk-content">
+        <div class="desk-top-bar">
+          <h2 class="desk-title">Главная</h2>
+          <div class="sync-badge">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            Синхронизировано с Google
+          </div>
+        </div>
+
+        <div class="desk-dashboard-grid">
+          
+          <!-- Большой десктопный календарь -->
+          <div class="desk-cal-box">
+            <div class="cal-header-row">
+              <button class="cal-nav-btn" onclick="prevMonthDemo()">&lt;</button>
+              <div class="cal-month-title" id="desk-cal-title" style="font-size: 18px;">Октябрь 2026</div>
+              <button class="cal-nav-btn" onclick="nextMonthDemo()">&gt;</button>
+            </div>
+
+            <div class="desk-cal-table">
+              <div class="cal-weekday">Понедельник</div>
+              <div class="cal-weekday">Вторник</div>
+              <div class="cal-weekday">Среда</div>
+              <div class="cal-weekday">Четверг</div>
+              <div class="cal-weekday">Пятница</div>
+              <div class="cal-weekday">Суббота</div>
+              <div class="cal-weekday">Воскресенье</div>
+
+              <!-- Дни -->
+              <div class="desk-cal-cell" style="opacity: 0.5;"><span class="desk-cal-date">28</span></div>
+              <div class="desk-cal-cell" style="opacity: 0.5;"><span class="desk-cal-date">29</span></div>
+              <div class="desk-cal-cell" style="opacity: 0.5;"><span class="desk-cal-date">30</span></div>
+              <div class="desk-cal-cell"><span class="desk-cal-date">1</span></div>
+              <div class="desk-cal-cell"><span class="desk-cal-date">2</span></div>
+              <div class="desk-cal-cell"><span class="desk-cal-date">3</span></div>
+              <div class="desk-cal-cell"><span class="desk-cal-date">4</span></div>
+
+              <div class="desk-cal-cell"><span class="desk-cal-date">5</span></div>
+              <div class="desk-cal-cell"><span class="desk-cal-date">6</span></div>
+              <div class="desk-cal-cell">
+                <span class="desk-cal-date">7</span>
+                <div class="desk-dots-row">
+                  <span class="desk-pill-tag blue">VPN 1 200 ₽</span>
+                </div>
+              </div>
+              <div class="desk-cal-cell"><span class="desk-cal-date">8</span></div>
+              <div class="desk-cal-cell"><span class="desk-cal-date">9</span></div>
+              <div class="desk-cal-cell"><span class="desk-cal-date">10</span></div>
+              <div class="desk-cal-cell"><span class="desk-cal-date">11</span></div>
+
+              <div class="desk-cal-cell"><span class="desk-cal-date">12</span></div>
+              <div class="desk-cal-cell"><span class="desk-cal-date">13</span></div>
+              <div class="desk-cal-cell"><span class="desk-cal-date">14</span></div>
+              
+              <!-- 15 ОКТЯБРЯ: ДВА ПЛАТЕЖА (VPN + ИНТЕРНЕТ) С ОТКРЫТЫМ ПОПОВЕРОМ -->
+              <div class="desk-cal-cell today" style="border: 2px solid #5B481D; z-index: 10;">
+                <span class="desk-cal-date">15</span>
+                <div class="desk-dots-row">
+                  <span class="desk-pill-tag blue">VPN</span>
+                  <span class="desk-pill-tag orange">Интернет</span>
+                </div>
+              </div>
+
+              <div class="desk-cal-cell"><span class="desk-cal-date">16</span></div>
+              <div class="desk-cal-cell"><span class="desk-cal-date">17</span></div>
+              <div class="desk-cal-cell"><span class="desk-cal-date">18</span></div>
+
+              <div class="desk-cal-cell"><span class="desk-cal-date">19</span></div>
+              <div class="desk-cal-cell"><span class="desk-cal-date">20</span></div>
+              <div class="desk-cal-cell"><span class="desk-cal-date">21</span></div>
+              <div class="desk-cal-cell">
+                <span class="desk-cal-date">22</span>
+                <div class="desk-dots-row">
+                  <span class="desk-pill-tag purple">ChatGPT 1 900 ₽</span>
+                </div>
+              </div>
+              <div class="desk-cal-cell"><span class="desk-cal-date">23</span></div>
+              <div class="desk-cal-cell"><span class="desk-cal-date">24</span></div>
+              <div class="desk-cal-cell"><span class="desk-cal-date">25</span></div>
+
+              <div class="desk-cal-cell"><span class="desk-cal-date">26</span></div>
+              <div class="desk-cal-cell"><span class="desk-cal-date">27</span></div>
+              <div class="desk-cal-cell"><span class="desk-cal-date">28</span></div>
+              <div class="desk-cal-cell"><span class="desk-cal-date">29</span></div>
+              <div class="desk-cal-cell"><span class="desk-cal-date">30</span></div>
+              <div class="desk-cal-cell"><span class="desk-cal-date">31</span></div>
+              <div class="desk-cal-cell" style="opacity: 0.5;"><span class="desk-cal-date">1</span></div>
+            </div>
+
+            <!-- ВСПЛЫВАЮЩИЙ ПОПОВЕР (ДЕМОНСТРАЦИЯ НА 15 ЧИСЛЕ) -->
+            <div class="tactile-popover" id="popover-demo">
+              <div class="popover-header">
+                <span class="popover-date-title">Платежи на 15 октября</span>
+                <button class="popover-close-btn" onclick="document.getElementById('popover-demo').style.display='none'">✕</button>
+              </div>
+
+              <!-- Платёж 1: VPN -->
+              <div class="popover-item">
+                <div class="popover-item-title">
+                  <span class="mini-dot blue"></span>
+                  VPN (телефон)
+                </div>
+                <div class="popover-item-sum">1 200 ₽</div>
+                <div class="popover-actions">
+                  <a href="https://example.com" target="_blank" class="btn-shop-link">В магазин ↗</a>
+                  <button class="btn-pay-toggle" id="btn-pay-1" onclick="togglePayDemo('btn-pay-1', 1200)">✓ Оплачено</button>
+                </div>
+              </div>
+
+              <!-- Платёж 2: Интернет -->
+              <div class="popover-item">
+                <div class="popover-item-title">
+                  <span class="mini-dot orange"></span>
+                  Домашний интернет
+                </div>
+                <div class="popover-item-sum">800 ₽</div>
+                <div class="popover-actions">
+                  <a href="https://example.com" target="_blank" class="btn-shop-link">В магазин ↗</a>
+                  <button class="btn-pay-toggle need-pay" id="btn-pay-2" onclick="togglePayDemo('btn-pay-2', 800)">Оплатить</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Сводка справа -->
+          <div class="summary-stack">
+            
+            <div class="bento-pill-card mint" onclick="alert('Переход на экран «Доходы»')">
+              <div class="card-top">
+                <div class="card-title-group">
+                  <span>Доходы</span>
+                </div>
+                <span class="card-metric-val">45 000 ₽</span>
+              </div>
+              <div style="font-size: 11px; opacity: 0.8; margin-bottom: 6px;">Поступления за месяц</div>
+              <div class="card-sub-items">
+                <div class="clean-row">
+                  <span>Анна Смирнова • Лендинг</span>
+                  <span>+ 15 000 ₽</span>
+                </div>
+                <div class="clean-row">
+                  <span>Игорь • Фирменный стиль</span>
+                  <span>+ 30 000 ₽</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="bento-pill-card peach" onclick="alert('Переход на экран «Расходы»')">
+              <div class="card-top">
+                <div class="card-title-group">
+                  <span>Расходы</span>
+                </div>
+                <span class="card-metric-val" id="desk-expenses-rem">3 900 ₽</span>
+              </div>
+              <div style="font-size: 11px; opacity: 0.8; margin-bottom: 6px;">Осталось оплатить в этом месяце</div>
+              <div class="card-sub-items">
+                <div class="clean-row">
+                  <span>15 окт • VPN + Интернет</span>
+                  <span>2 000 ₽</span>
+                </div>
+                <div class="clean-row">
+                  <span>22 окт • ChatGPT Plus</span>
+                  <span>1 900 ₽</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="bento-pill-card sky" onclick="alert('Переход на экран «Клиенты»')">
+              <div class="card-top">
+                <div class="card-title-group">
+                  <span>Клиенты</span>
+                </div>
+                <span class="card-metric-val">3 в работе</span>
+              </div>
+              <div style="font-size: 11px; opacity: 0.8; margin-bottom: 6px;">Текущие активные проекты</div>
+              <div class="card-sub-items">
+                <div class="clean-row">
+                  <span>Анна Смирнова</span>
+                  <span style="color: #1E3F30; font-weight: 800;">В работе</span>
+                </div>
+                <div class="clean-row">
+                  <span>Катя • Консультации</span>
+                  <span style="color: #1E3F30; font-weight: 800;">В работе</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    var months = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
+    var currentMonthIdx = 9; // Октябрь
+    var currentYear = 2026;
+    var remainingExp = 3900;
+
+    function updateMonthDisplay() {
+      var text = months[currentMonthIdx] + " " + currentYear;
+      document.getElementById('mob-cal-title').innerText = text;
+      document.getElementById('desk-cal-title').innerText = text;
+    }
+
+    function prevMonthDemo() {
+      currentMonthIdx--;
+      if (currentMonthIdx < 0) { currentMonthIdx = 11; currentYear--; }
+      updateMonthDisplay();
+    }
+
+    function nextMonthDemo() {
+      currentMonthIdx++;
+      if (currentMonthIdx > 11) { currentMonthIdx = 0; currentYear++; }
+      updateMonthDisplay();
+    }
+
+    function togglePayDemo(btnId, sum) {
+      var btn = document.getElementById(btnId);
+      var deskRem = document.getElementById('desk-expenses-rem');
+      var mobRem = document.getElementById('mob-expenses-rem');
+
+      if (btn.classList.contains('need-pay')) {
+        btn.classList.remove('need-pay');
+        btn.innerText = "✓ Оплачено";
+        remainingExp -= sum;
+      } else {
+        btn.classList.add('need-pay');
+        btn.innerText = "Оплатить";
+        remainingExp += sum;
+      }
+      deskRem.innerText = remainingExp.toLocaleString('ru-RU') + " ₽";
+      mobRem.innerText = remainingExp.toLocaleString('ru-RU') + " ₽";
+    }
+  </script>
+
+</body>
+</html>
