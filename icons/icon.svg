@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="paperShadow" x="-10%" y="-10%" width="125%" height="125%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#8C7355" flood-opacity="0.18"/>
+    </filter>
+    <linearGradient id="blueCardGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#E8F4FE"/>
+      <stop offset="100%" stop-color="#DCEEFE"/>
+    </linearGradient>
+    <linearGradient id="mintHeartGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#D8EFE0"/>
+      <stop offset="100%" stop-color="#C8E2D2"/>
+    </linearGradient>
+  </defs>
+  <!-- Теплый бумажный фон со скруглением -->
+  <rect x="16" y="16" width="480" height="480" rx="110" fill="#FAF2E7" filter="url(#paperShadow)"/>
+  <!-- Голубая внутренняя карточка -->
+  <rect x="76" y="76" width="360" height="360" rx="180" fill="url(#blueCardGrad)"/>
+  <!-- Фирменное сердечко ♡ в нежной мяте -->
+  <path d="M256 385 C230 360 145 285 145 208 C145 158 185 125 232 125 C244 125 252 130 256 136 C260 130 268 125 280 125 C327 125 367 158 367 208 C367 285 282 360 256 385 Z"
+        fill="url(#mintHeartGrad)" stroke="#1E3F30" stroke-width="14" stroke-linejoin="round"/>
+</svg>

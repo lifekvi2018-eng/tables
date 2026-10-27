@@ -1,0 +1,30 @@
+{
+  "name": "Мои таблицы ♡",
+  "short_name": "Таблицы ♡",
+  "description": "Личные простые таблицы с фокусом на удобство на телефоне и компьютере",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#FAF2E7",
+  "theme_color": "#FAF2E7",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "./icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

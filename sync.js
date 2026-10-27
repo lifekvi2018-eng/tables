@@ -10,12 +10,12 @@
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) {
     // Node.js окружение
-    module.exports = factory();
+    module.exports = factory(root);
   } else {
     // Браузерное окружение
-    root.MyTablesSync = factory();
+    root.MyTablesSync = factory(root);
   }
-})(typeof self !== 'undefined' ? self : this, function () {
+})(typeof self !== 'undefined' ? self : this, function (root) {
   'use strict';
 
   // --- КОНФИГУРАЦИЯ ---
@@ -39,14 +39,60 @@
     cachedData: null
   };
 
-  // --- УТИЛИТЫ ХРАНИЛИЩА ---
+  // --- УТИЛИТЫ ХРАНИЛИЩА И АДАПТЕР СЕССИЙ (DEF-5.2, DEF-5.3) ---
+  var _memStore = {};
+  var memoryStorageAdapter = {
+    getItem: function (k) { return Object.prototype.hasOwnProperty.call(_memStore, k) ? _memStore[k] : null; },
+    setItem: function (k, v) { _memStore[k] = String(v); },
+    removeItem: function (k) { delete _memStore[k]; },
+    clear: function () { _memStore = {}; }
+  };
+
+  function getAuthStorage() {
+    if (typeof window === 'undefined') {
+      // Node.js окружение
+      if (typeof localStorage !== 'undefined') {
+        try { return localStorage; } catch (e) {}
+      }
+      if (typeof sessionStorage !== 'undefined') {
+        try { return sessionStorage; } catch (e) {}
+      }
+      return memoryStorageAdapter;
+    }
+
+    // Браузерное окружение
+    var isStandalone = false;
+    try {
+      isStandalone = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
+                     (window.navigator && window.navigator.standalone === true);
+    } catch (e) {}
+
+    var isDesktop = typeof window.innerWidth === 'number' && window.innerWidth > 768;
+    var usePersistentStorage = isDesktop || isStandalone;
+
+    if (usePersistentStorage) {
+      try {
+        if (window.localStorage) return window.localStorage;
+      } catch (e) {
+        console.warn('localStorage недоступен, откат на sessionStorage:', e);
+      }
+    }
+
+    try {
+      if (window.sessionStorage) return window.sessionStorage;
+    } catch (e) {
+      console.warn('sessionStorage недоступен:', e);
+    }
+
+    return memoryStorageAdapter;
+  }
+
   var storage = {
     get: function (key) {
       try {
-        if (typeof sessionStorage !== 'undefined') {
-          var val = sessionStorage.getItem(key);
-          return val ? JSON.parse(val) : null;
-        }
+        var adapter = getAuthStorage();
+        var val = adapter.getItem(key);
+        if (val) return JSON.parse(val);
       } catch (e) {
         console.warn('Storage read error:', e);
       }
@@ -54,17 +100,21 @@
     },
     set: function (key, value) {
       try {
-        if (typeof sessionStorage !== 'undefined') {
-          sessionStorage.setItem(key, JSON.stringify(value));
-        }
+        var adapter = getAuthStorage();
+        adapter.setItem(key, JSON.stringify(value));
       } catch (e) {
         console.warn('Storage write error:', e);
       }
     },
     remove: function (key) {
       try {
+        var adapter = getAuthStorage();
+        adapter.removeItem(key);
+        if (typeof localStorage !== 'undefined') {
+          try { localStorage.removeItem(key); } catch (e) {}
+        }
         if (typeof sessionStorage !== 'undefined') {
-          sessionStorage.removeItem(key);
+          try { sessionStorage.removeItem(key); } catch (e) {}
         }
       } catch (e) {
         console.warn('Storage remove error:', e);
@@ -125,13 +175,39 @@
     notifyListeners();
   }
 
+  function getState() {
+    return {
+      status: state.status,
+      text: state.statusText,
+      errorMessage: state.errorMessage,
+      lastSync: state.lastSync
+    };
+  }
+
   // ==========================================================================
-  // АВТОРИЗАЦИЯ (GOOGLE GATE)
+  // АВТОРИЗАЦИЯ (GOOGLE GATE) — 30 ДНЕЙ И СТРОГО lifekvi2018@gmail.com
   // ==========================================================================
 
+  var SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 дней в миллисекундах
+
   function isAuthenticated() {
-    var user = storage.get(CONFIG.AUTH_STORAGE_KEY);
-    return !!(user && user.authorized && user.email && user.email.toLowerCase() === CONFIG.AUTHORIZED_EMAIL.toLowerCase());
+    var adapter = getAuthStorage();
+    var raw = adapter.getItem(CONFIG.AUTH_STORAGE_KEY);
+    if (!raw) return false;
+    try {
+      var user = JSON.parse(raw);
+      if (!user || !user.authorized || !user.email || user.email.toLowerCase() !== CONFIG.AUTHORIZED_EMAIL.toLowerCase()) {
+        return false;
+      }
+      // Автоинвалидация сессии при истечении 30 дней (DEF-5.3)
+      if (user.expiresAt && Date.now() > user.expiresAt) {
+        logout();
+        return false;
+      }
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   function getCurrentUser() {
@@ -142,15 +218,20 @@
   function login(email) {
     var cleanEmail = (email || '').trim().toLowerCase();
     if (cleanEmail === CONFIG.AUTHORIZED_EMAIL.toLowerCase()) {
+      var now = Date.now();
       var user = {
         authorized: true,
         email: cleanEmail,
         name: 'Аня',
         avatar: 'А',
-        loginTime: new Date().toISOString()
+        loginTime: now,
+        expiresAt: now + SESSION_TTL_MS
       };
-      storage.set(CONFIG.AUTH_STORAGE_KEY, user);
+      var adapter = getAuthStorage();
+      adapter.setItem(CONFIG.AUTH_STORAGE_KEY, JSON.stringify(user));
       hideAuthModal();
+      notifyListeners();
+      updateUserChips();
       return { success: true, user: user };
     } else {
       var err = 'Доступ ограничен. Это личное приложение только для ' + CONFIG.AUTHORIZED_EMAIL;
@@ -159,7 +240,17 @@
   }
 
   function logout() {
-    storage.remove(CONFIG.AUTH_STORAGE_KEY);
+    var adapter = getAuthStorage();
+    adapter.removeItem(CONFIG.AUTH_STORAGE_KEY);
+    if (typeof localStorage !== 'undefined') {
+      try { localStorage.removeItem(CONFIG.AUTH_STORAGE_KEY); } catch (e) {}
+    }
+    if (typeof sessionStorage !== 'undefined') {
+      try { sessionStorage.removeItem(CONFIG.AUTH_STORAGE_KEY); } catch (e) {}
+    }
+    _memStore = {};
+    notifyListeners();
+    updateUserChips();
     showAuthModal();
   }
 
@@ -621,7 +712,7 @@
     if (typeof document === 'undefined') return;
     var gate = document.getElementById('mytables-auth-gate');
     if (gate) {
-      gate.style.display = 'flex';
+      gate.style.setProperty('display', 'flex', 'important');
       var emailInput = document.getElementById('mytables-auth-email');
       if (emailInput && !emailInput.value) {
         emailInput.value = CONFIG.AUTHORIZED_EMAIL;
@@ -654,7 +745,7 @@
 
     if (iconEl) {
       if (state.status === 'saving') {
-        iconEl.innerHTML = '<span class="sync-spinner"></span>';
+        iconEl.innerHTML = '<span class="sync-spinner"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-6.22-8.56"/></svg></span>';
       } else if (state.status === 'saved') {
         iconEl.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
       } else if (state.status === 'error') {
@@ -680,6 +771,18 @@
     for (var k = 0; k < avatarHolders.length; k++) {
       avatarHolders[k].textContent = user && user.avatar ? user.avatar : 'А';
     }
+
+    // Слушатели кнопок «Выйти» (SER-1)
+    var logoutBtns = document.querySelectorAll('.mytables-logout-btn');
+    for (var l = 0; l < logoutBtns.length; l++) {
+      if (!logoutBtns[l]._hasLogoutListener) {
+        logoutBtns[l]._hasLogoutListener = true;
+        logoutBtns[l].addEventListener('click', function (e) {
+          if (e && e.preventDefault) e.preventDefault();
+          logout();
+        });
+      }
+    }
   }
 
   // --- ИНИЦИАЛИЗАЦИЯ СТИЛЕЙ И РАЗМЕТКИ В БРАУЗЕРЕ ---
@@ -691,7 +794,7 @@
       var style = document.createElement('style');
       style.id = 'mytables-sync-styles';
       style.textContent = [
-        '/* --- СТИЛИ СИНХРОНИЗАЦИИ И БЕЗОПАСНОСТИ «МОИ ТАБЛИЦЫ» --- */',
+        '/* --- СТИЛИ СИНХРОНИЗАЦИИ И БЕЗОПАСНОСТИ «МОИ ТАБЛИЦЫ» (ЗОЛОТОЙ СТАНДАРТ АНИ) --- */',
         '.mytables-sync-badge {',
         '  position: fixed;',
         '  bottom: 20px;',
@@ -705,36 +808,38 @@
         '  font-family: "Manrope", sans-serif;',
         '  font-size: 12px;',
         '  font-weight: 800;',
+        '  border: none;',
         '  cursor: pointer;',
         '  user-select: none;',
         '  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);',
-        '  box-shadow: 0 10px 25px -4px rgba(110, 85, 60, 0.22), 0 4px 8px -2px rgba(110, 85, 60, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9);',
         '}',
         '.mytables-sync-badge:hover {',
         '  transform: translateY(-2px);',
-        '  box-shadow: 0 14px 28px -4px rgba(110, 85, 60, 0.28), 0 6px 12px -2px rgba(110, 85, 60, 0.16);',
         '}',
         '.mytables-sync-badge:active { transform: translateY(1px); }',
         '.mytables-sync-badge.status-idle {',
-        '  background: #FDF1CC; color: #5B481D; border: 1.5px solid #EBD9A0;',
+        '  background: #FDF1CC; color: #5B481D; border: none;',
+        '  box-shadow: 0 4px 14px rgba(110, 85, 60, 0.14), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95);',
         '}',
         '.mytables-sync-badge.status-saving {',
-        '  background: #FCE8D5; color: #6D3E14; border: 1.5px solid #F5CBA7;',
+        '  background: #DCEEFE; color: #113F6B; border: none;',
+        '  box-shadow: 0 4px 14px rgba(80, 120, 160, 0.18), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95);',
         '}',
         '.mytables-sync-badge.status-saved {',
-        '  background: #EAF5EE; color: #1E3F30; border: 1.5px solid #C8E2D2;',
+        '  background: #C8E2D2; color: #1E3F30; border: none;',
+        '  box-shadow: 0 4px 14px rgba(35, 70, 50, 0.18), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95);',
         '}',
         '.mytables-sync-badge.status-error {',
-        '  background: #FFF2EE; color: #6E2F26; border: 1.5px solid #FCD6CF;',
+        '  background: #FDF1C2; color: #5A3A00; border: none;',
+        '  box-shadow: 0 4px 14px rgba(185, 160, 100, 0.2), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95);',
         '}',
         '.sync-spinner {',
-        '  width: 12px; height: 12px; border: 2px solid currentColor;',
-        '  border-right-color: transparent; border-radius: 50%;',
-        '  animation: sync-spin 0.8s linear infinite; display: inline-block;',
+        '  width: 14px; height: 14px; border: none;',
+        '  animation: sync-spin 0.8s linear infinite; display: inline-flex; align-items: center; justify-content: center;',
         '}',
         '@keyframes sync-spin { to { transform: rotate(360deg); } }',
         '',
-        '/* МОДАЛЬНОЕ ОКНО УДАЛЕНИЯ */',
+        '/* МОДАЛЬНОЕ ОКНО УДАЛЕНИЯ (БЕЗ РАМОК, ЗОЛОТОЙ СТАНДАРТ) */',
         '.mytables-modal-backdrop {',
         '  position: fixed; inset: 0; background: rgba(43, 34, 25, 0.45);',
         '  backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);',
@@ -751,77 +856,92 @@
         '}',
         '@keyframes paper-pop { from { transform: scale(0.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }',
         '.modal-icon-circle {',
-        '  width: 48px; height: 48px; border-radius: 50%; background: #FCD6CF;',
-        '  color: #6E2F26; display: flex; align-items: center; justify-content: center;',
+        '  width: 48px; height: 48px; border-radius: 50%; background: #FDF1CC; border: none;',
+        '  color: #5B481D; display: flex; align-items: center; justify-content: center;',
         '  margin: 0 auto 14px auto;',
-        '  box-shadow: 2px 4px 10px rgba(180, 90, 90, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.9);',
+        '  box-shadow: 2px 4px 10px rgba(185, 160, 110, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.9);',
         '}',
         '.modal-title { font-size: 18px; font-weight: 900; color: #2F261D; margin-bottom: 6px; }',
         '.modal-text { font-size: 13px; color: #726453; line-height: 1.45; margin-bottom: 20px; }',
         '.modal-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }',
         '.modal-btn {',
         '  padding: 12px 16px; border-radius: 14px; font-size: 13px; font-weight: 800;',
-        '  border: none; cursor: pointer; transition: all 0.15s ease;',
+        '  border: none; cursor: pointer; transition: all 0.15s ease; min-height: 44px;',
         '  font-family: "Manrope", sans-serif;',
         '}',
         '.modal-btn-cancel {',
-        '  background: #FDF1CC; color: #5B481D;',
+        '  background: #FDF1CC; color: #5B481D; border: none;',
         '  box-shadow: 2px 3px 8px rgba(190, 170, 110, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.9);',
         '}',
         '.modal-btn-cancel:hover { background: #FCE8B8; }',
         '.modal-btn-danger {',
-        '  background: #FCD6CF; color: #6E2F26;',
-        '  box-shadow: 2px 4px 12px rgba(180, 90, 90, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.9);',
+        '  background: #EADBCC; color: #58241B; border: none;',
+        '  box-shadow: 2px 4px 12px rgba(180, 90, 90, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.9);',
         '}',
-        '.modal-btn-danger:hover { background: #F8C3BA; }',
+        '.modal-btn-danger:hover { background: #DFD0BE; }',
         '',
-        '/* ЭКРАН ВХОДА (GOOGLE GATE) */',
+        '/* ЭКРАН ВХОДА GOOGLE GATE (СТРОГО 3 ЦВЕТА АНИ: ГОЛУБОЙ, ЖЁЛТЫЙ, ЗЕЛЁНЫЙ) */',
         '.mytables-auth-gate-overlay {',
         '  position: fixed; inset: 0; background: #FAF2E7; z-index: 20000;',
         '  display: flex; align-items: center; justify-content: center; padding: 20px;',
         '  font-family: "Manrope", sans-serif;',
         '}',
         '.mytables-auth-card {',
-        '  background: #FAF2E7; border: 3px solid #EADBCC; border-radius: 32px;',
-        '  padding: 32px 28px; max-width: 420px; width: 100%; text-align: center;',
-        '  box-shadow: 0 28px 70px -10px rgba(140, 110, 80, 0.35), 0 10px 24px rgba(140, 110, 80, 0.18), inset 0 1px 2px rgba(255, 255, 255, 0.95);',
+        '  background: #FAF2E7; border: none; border-radius: 28px;',
+        '  padding: 28px 24px; max-width: 420px; width: 100%; text-align: center;',
+        '  box-shadow: -2px -2px 6px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95), 4px 8px 24px rgba(140, 115, 85, 0.22);',
         '}',
         '.auth-heart {',
-        '  width: 56px; height: 56px; border-radius: 20px; background: #FCD6CF;',
-        '  color: #6E2F26; display: flex; align-items: center; justify-content: center;',
-        '  margin: 0 auto 16px auto; font-size: 24px;',
-        '  box-shadow: 3px 6px 14px rgba(180, 90, 90, 0.28), -2px -2px 6px rgba(255, 255, 255, 0.9);',
+        '  width: 52px; height: 52px; border-radius: 18px; background: #DCEEFE; border: none;',
+        '  color: #113F6B; display: flex; align-items: center; justify-content: center;',
+        '  margin: 0 auto 14px auto; font-size: 24px; font-weight: 900;',
+        '  box-shadow: 2px 4px 10px rgba(80, 120, 160, 0.22), -1.5px -1.5px 5px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95);',
         '}',
         '.auth-app-title { font-size: 24px; font-weight: 900; color: #2F261D; margin-bottom: 4px; }',
-        '.auth-app-subtitle { font-size: 13px; font-weight: 600; color: #726453; margin-bottom: 22px; }',
+        '.auth-app-subtitle { font-size: 13px; font-weight: 600; color: #726453; margin-bottom: 18px; }',
         '.auth-guard-box {',
-        '  background: #FDF1CC; border-radius: 16px; padding: 12px 14px;',
-        '  margin-bottom: 20px; font-size: 12px; font-weight: 700; color: #5B481D;',
-        '  box-shadow: inset 1px 1px 2px rgba(255, 255, 255, 0.8), 2px 3px 8px rgba(185, 160, 110, 0.2);',
+        '  background: #FDF1C2; border-radius: 16px; padding: 12px 14px; border: none;',
+        '  margin-bottom: 16px; font-size: 12px; font-weight: 700; color: #5A3A00;',
+        '  box-shadow: 2px 3.5px 8px rgba(185, 160, 100, 0.2), -1px -1px 3px rgba(255, 255, 255, 0.9);',
         '}',
+        '.auth-profile-card {',
+        '  background: #DCEEFE; border-radius: 18px; padding: 12px 14px; border: none;',
+        '  margin-bottom: 16px; display: flex; align-items: center; gap: 12px; text-align: left;',
+        '  box-shadow: 2px 4px 10px rgba(80, 120, 160, 0.2), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95);',
+        '}',
+        '.auth-profile-avatar {',
+        '  width: 40px; height: 40px; border-radius: 50%; background: #C8E2D2; border: none;',
+        '  color: #1E3F30; display: flex; align-items: center; justify-content: center;',
+        '  font-size: 17px; font-weight: 900; box-shadow: 1.5px 2.5px 6px rgba(30, 63, 48, 0.18); flex-shrink: 0;',
+        '}',
+        '.auth-profile-info { min-width: 0; flex: 1; }',
+        '.auth-profile-name { font-size: 13.5px; font-weight: 900; color: #113F6B; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',
+        '.auth-profile-email { font-size: 11.5px; font-weight: 700; color: #1F548A; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',
+        '.auth-profile-tag { font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 10px; background: #C8E2D2; color: #1E3F30; border: none; white-space: nowrap; }',
         '.auth-email-input {',
-        '  width: 100%; padding: 13px 16px; border-radius: 16px;',
-        '  border: 2px solid #EADBCC; background: #FAF4EB;',
+        '  width: 100%; padding: 13px 16px; border-radius: 14px;',
+        '  border: none; background: #FAF2E7;',
         '  font-family: "Manrope", sans-serif; font-size: 13px; font-weight: 700;',
-        '  color: #2F261D; margin-bottom: 14px; outline: none;',
-        '  transition: border-color 0.15s ease;',
-        '  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.04);',
+        '  color: #2D251E; margin-bottom: 14px; outline: none;',
+        '  box-shadow: inset 1px 1.5px 3px rgba(140, 115, 90, 0.15), -1px -1px 3px rgba(255, 255, 255, 0.95);',
         '}',
-        '.auth-email-input:focus { border-color: #5A4E40; }',
+        '.auth-email-input:focus { box-shadow: inset 1px 1.5px 4px rgba(110, 85, 60, 0.22), -1px -1px 3px rgba(255, 255, 255, 0.95); }',
         '.auth-login-btn {',
-        '  width: 100%; padding: 14px 20px; border-radius: 16px;',
-        '  background: #5A4E40; color: #FFFFFF; font-size: 14px; font-weight: 800;',
+        '  width: 100%; padding: 14px 20px; border-radius: 14px;',
+        '  background: #C8E2D2; color: #1E3F30; font-size: 14px; font-weight: 800;',
         '  border: none; cursor: pointer; display: flex; align-items: center;',
         '  justify-content: center; gap: 10px; font-family: "Manrope", sans-serif;',
-        '  box-shadow: 0 8px 18px rgba(90, 78, 64, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.25);',
+        '  min-height: 44px;',
+        '  box-shadow: 2px 4.5px 12px rgba(35, 70, 50, 0.22), -2px -2px 6px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95);',
         '  transition: all 0.15s ease;',
         '}',
-        '.auth-login-btn:hover { background: #4A3E31; transform: translateY(-1px); }',
+        '.auth-login-btn:hover { background: #BDE0C9; transform: translateY(-1px); }',
         '.auth-login-btn:active { transform: translateY(1px); }',
         '.auth-error-box {',
         '  margin-top: 14px; padding: 10px 12px; border-radius: 12px;',
-        '  background: #FFF2EE; border: 1.5px solid #FCD6CF;',
-        '  color: #6E2F26; font-size: 12px; font-weight: 700; display: none;',
+        '  background: #FDF1C2; border: none;',
+        '  color: #5A3A00; font-size: 12px; font-weight: 700; display: none;',
+        '  box-shadow: 2px 3px 8px rgba(185, 160, 100, 0.2);',
         '}'
       ].join('\n');
       document.head.appendChild(style);
@@ -864,18 +984,24 @@
 
       document.body.appendChild(modal);
 
-      document.getElementById('mytables-del-cancel').addEventListener('click', function () {
-        closeDeleteModal(false);
-      });
-      document.getElementById('mytables-del-confirm').addEventListener('click', function () {
-        closeDeleteModal(true);
-      });
+      var delCancel = document.getElementById('mytables-del-cancel');
+      if (delCancel) {
+        delCancel.addEventListener('click', function () {
+          closeDeleteModal(false);
+        });
+      }
+      var delConfirm = document.getElementById('mytables-del-confirm');
+      if (delConfirm) {
+        delConfirm.addEventListener('click', function () {
+          closeDeleteModal(true);
+        });
+      }
       modal.addEventListener('click', function (e) {
         if (e.target === modal) closeDeleteModal(false);
       });
     }
 
-    // Экран авторизации (Google Gate)
+    // Экран авторизации (Google Gate) — строго 3 цвета Ани (Голубой, Жёлтый, Мята)
     if (!document.getElementById('mytables-auth-gate')) {
       var gate = document.createElement('div');
       gate.id = 'mytables-auth-gate';
@@ -889,11 +1015,19 @@
         '  <div class="auth-guard-box">',
         '    🔒 Личное защищенное пространство.<br>Вход доступен исключительно для владелицы.',
         '  </div>',
+        '  <div class="auth-profile-card">',
+        '    <div class="auth-profile-avatar">А</div>',
+        '    <div class="auth-profile-info">',
+        '      <div class="auth-profile-name">Аня (Владелица)</div>',
+        '      <div class="auth-profile-email">lifekvi2018@gmail.com</div>',
+        '    </div>',
+        '    <div class="auth-profile-tag">Доступ открыт</div>',
+        '  </div>',
         '  <form id="mytables-auth-form">',
         '    <input type="email" id="mytables-auth-email" class="auth-email-input" placeholder="lifekvi2018@gmail.com" value="' + CONFIG.AUTHORIZED_EMAIL + '" required>',
         '    <button type="submit" id="mytables-auth-submit" class="auth-login-btn">',
-        '      <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.4 9 5 12 5z"/><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.7-.2-2.3H12v4.6h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.9z"/><path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3 0-.8.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 12.3 0 15s.7 5.3 1.9 7.7l3.7-2.9c-.2-.7-.4-1.5-.4-2.3z"/><path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2-6.4-4.8L1.9 16.4C3.7 20.4 7.5 23 12 23z"/></svg>',
-        '      Войти через Google',
+        '      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>',
+        '      Войти как Аня',
         '    </button>',
         '  </form>',
         '  <div id="mytables-auth-error" class="auth-error-box"></div>',
@@ -914,8 +1048,8 @@
         if (res.success) {
           if (authError) authError.style.display = 'none';
           hideAuthModal();
-          if (typeof root.onAuthSuccess === 'function') {
-            root.onAuthSuccess();
+          if (typeof root !== 'undefined' && root && typeof root.onAuthSuccess === 'function') {
+            root.onAuthSuccess(res.user);
           }
         } else {
           if (authError) {
@@ -934,26 +1068,30 @@
     }
 
     // Слушатели сети
-    window.addEventListener('online', function () {
-      setStatus('saving', 'Связь есть, синхронизирую...');
-      getAllData().then(function () {
-        setStatus('saved', 'Синхронизировано с Google ✓');
-        if (typeof root.onDataRefreshed === 'function') {
-          root.onDataRefreshed();
-        }
-      }).catch(function (err) {
-        setStatus('error', 'Ошибка синхронизации ✕', err.message);
+    if (typeof window !== 'undefined' && window.addEventListener) {
+      window.addEventListener('online', function () {
+        setStatus('saving', 'Связь есть, синхронизирую...');
+        getAllData().then(function () {
+          setStatus('saved', 'Синхронизировано с Google ✓');
+          if (typeof root !== 'undefined' && root && typeof root.onDataRefreshed === 'function') {
+            root.onDataRefreshed();
+          }
+          if (typeof root !== 'undefined' && root && typeof root.onNetworkOnline === 'function') {
+            root.onNetworkOnline();
+          }
+        }).catch(function (err) {
+          setStatus('error', 'Ошибка синхронизации ✕', err.message);
+        });
       });
-    });
-    window.addEventListener('offline', function () {
-      setStatus('error', 'Нет связи с Google ✕', 'Отсутствует интернет');
-    });
+      window.addEventListener('offline', function () {
+        setStatus('error', 'Нет связи с Google ✕', 'Отсутствует интернет');
+      });
+    }
 
-    // Проверка текущей авторизации
+    // Привязка кнопок и проверка текущей авторизации
+    updateUserChips();
     if (!isAuthenticated()) {
       showAuthModal();
-    } else {
-      updateUserChips();
     }
   }
 
@@ -966,9 +1104,14 @@
     }
   }
 
-  // --- ПУБЛИЧНЫЙ API МОДУЛЯ ---
+  // --- ПУБЛИЧНЫЙ API МОДУЛЯ (ПОЛНЫЙ ИНТЕРФЕЙС СТЕЙДЖА 5) ---
   return {
     CONFIG: CONFIG,
+    init: injectStylesAndMarkup,
+    initUI: injectStylesAndMarkup,
+    getState: getState,
+    getStatus: getState,
+    getAuthStorage: getAuthStorage,
     isAuthenticated: isAuthenticated,
     getCurrentUser: getCurrentUser,
     login: login,
@@ -979,11 +1122,18 @@
     saveClient: saveClient,
     deleteRecord: deleteRecord,
     confirmDeleteDialog: confirmDeleteDialog,
+    showDeleteConfirmation: confirmDeleteDialog,
+    showAuthModal: showAuthModal,
+    hideAuthModal: hideAuthModal,
+    getCachedData: getCachedData,
     isOnline: isOnline,
     _setOnlineForTesting: function (val) {
       testOnlineOverride = val;
     },
-    getStatus: function () {
+    _setTestOnlineOverride: function (val) {
+      testOnlineOverride = val;
+    },
+    getStatusState: function () {
       return {
         status: state.status,
         text: state.statusText,
@@ -994,6 +1144,8 @@
     onStatusChange: function (fn) {
       if (typeof fn === 'function') state.listeners.push(fn);
     },
-    initUI: injectStylesAndMarkup
+    subscribe: function (fn) {
+      if (typeof fn === 'function') state.listeners.push(fn);
+    }
   };
 });
