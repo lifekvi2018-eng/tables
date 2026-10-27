@@ -907,6 +907,23 @@
 
   function updateBadgeUI() {
     if (typeof document === 'undefined') return;
+
+    // Обновляем аккуратный индикатор-кружочек синхронизации возле буквы «А»
+    var dots = document.querySelectorAll('.mob-sync-dot');
+    for (var d = 0; d < dots.length; d++) {
+      dots[d].className = 'mob-sync-dot status-' + state.status;
+      if (state.status === 'saving') {
+        dots[d].style.background = '#D4A72C';
+        dots[d].title = 'Синхронизация с Google...';
+      } else if (state.status === 'saved' || state.status === 'idle') {
+        dots[d].style.background = '#2D9C5E';
+        dots[d].title = 'Синхронизировано с Google';
+      } else if (state.status === 'error') {
+        dots[d].style.background = '#E25B45';
+        dots[d].title = 'Ошибка синхронизации с Google';
+      }
+    }
+
     var badge = document.getElementById('mytables-sync-badge');
     if (!badge) return;
 
@@ -1022,18 +1039,9 @@
         '  box-shadow: 0 4px 14px rgba(185, 160, 100, 0.2), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95);',
         '}',
         '@media (max-width: 900px) {',
-        '  .mytables-sync-badge {',
-        '    position: fixed !important;',
-        '    top: 12px !important;',
-        '    right: 56px !important;',
+        '  .mytables-sync-badge, #mytables-sync-badge {',
+        '    display: none !important;',
         '    bottom: auto !important;',
-        '    left: auto !important;',
-        '    padding: 4px 10px !important;',
-        '    font-size: 11px !important;',
-        '    font-weight: 800 !important;',
-        '    border-radius: 999px !important;',
-        '    z-index: 90 !important;',
-        '    box-shadow: 0 2px 8px rgba(110, 85, 60, 0.16) !important;',
         '  }',
         '}',
         '.sync-spinner {',
@@ -1440,9 +1448,19 @@
     }
   }
 
+  function syncNow() {
+    return getAllData().then(function (res) {
+      if (res && res.data && typeof window !== 'undefined' && typeof window.updateCurrentScreen === 'function') {
+        window.updateCurrentScreen(res.data);
+      }
+      return res;
+    });
+  }
+
   // --- ПУБЛИЧНЫЙ API МОДУЛЯ (ПОЛНЫЙ ИНТЕРФЕЙС СТЕЙДЖА 5) ---
   return {
     CONFIG: CONFIG,
+    syncNow: syncNow,
     init: injectStylesAndMarkup,
     initUI: injectStylesAndMarkup,
     getState: getState,

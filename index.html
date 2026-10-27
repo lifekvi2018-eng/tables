@@ -4722,22 +4722,262 @@
       touch-action: manipulation;
     }
 
-    /* Мобильное позиционирование плашки синхронизации Google (не перекрывает нижнее меню) */
+    
+    /* ==========================================================================
+       ЗОЛОТОЙ СТАНДАРТ ТАКТИЛЬНЫХ 3D-КНОПОК АНИ («3D-БУМАЖЕЧКИ»)
+       Свет строго с левого верхнего бока: -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95)
+       Тень строго с нижнего правого бока: 2px 3.5px 8px rgba(140, 110, 80, 0.2)
+       0 рамок (border: none !important), 0 чисто белого цвета, мягкое нажатие :active
+       ========================================================================== */
+
+    /* 1. Кнопки статуса оплаты («Оплачено / Оплатить») */
+    .status-pill,
+    button.status-pill {
+      border: none !important;
+      outline: none !important;
+      transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease !important;
+    }
+    .status-pill.paid,
+    button.status-pill.paid {
+      background: #C8E2D2 !important;
+      color: #1E3F30 !important;
+      box-shadow: 2px 3.5px 8px rgba(45, 88, 71, 0.22), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95) !important;
+    }
+    .status-pill.unpaid,
+    button.status-pill.unpaid {
+      background: #FCE8D5 !important;
+      color: #58241B !important;
+      box-shadow: 2px 3.5px 8px rgba(170, 130, 95, 0.22), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95) !important;
+    }
+    .status-pill:hover {
+      transform: translateY(-1px);
+    }
+    .status-pill:active {
+      transform: translateY(1.5px) !important;
+      box-shadow: 1px 1.5px 3px rgba(35, 30, 20, 0.15), inset 0.5px 0.5px 1px rgba(0, 0, 0, 0.08) !important;
+    }
+
+    /* 2. Кнопки добавления («+ Добавить проект», «+ Добавить платеж», «+ Добавить клиента») */
+    .desk-btn-add,
+    .mob-add-project-btn,
+    .desk-add-btn,
+    .add-payment-pill-btn,
+    .mob-add-client-btn {
+      border: none !important;
+      outline: none !important;
+      box-shadow: 2.5px 4px 10px rgba(140, 110, 80, 0.2), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95) !important;
+      transition: transform 0.12s ease, box-shadow 0.12s ease !important;
+    }
+    .desk-btn-add:hover,
+    .mob-add-project-btn:hover,
+    .desk-add-btn:hover,
+    .add-payment-pill-btn:hover,
+    .mob-add-client-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 3.5px 5.5px 13px rgba(140, 110, 80, 0.26), -2px -2px 5px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95) !important;
+    }
+    .desk-btn-add:active,
+    .mob-add-project-btn:active,
+    .desk-add-btn:active,
+    .add-payment-pill-btn:active,
+    .mob-add-client-btn:active {
+      transform: translateY(1.5px) !important;
+      box-shadow: 1px 2px 4px rgba(140, 110, 80, 0.15), inset 0.5px 0.5px 1px rgba(0, 0, 0, 0.06) !important;
+    }
+
+    /* 3. Круглые плюсики («+») в категориях и карточках */
+    .cat-add-btn,
+    .btn-slip-plus,
+    .btn-add-payment {
+      border: none !important;
+      outline: none !important;
+      box-shadow: 2px 3.5px 7px rgba(140, 110, 80, 0.2), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95) !important;
+      transition: transform 0.12s ease, box-shadow 0.12s ease !important;
+    }
+    .cat-add-btn:hover,
+    .btn-slip-plus:hover,
+    .btn-add-payment:hover {
+      transform: translateY(-1px) scale(1.05);
+      box-shadow: 3px 5px 10px rgba(140, 110, 80, 0.25), -2px -2px 5px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95) !important;
+    }
+    .cat-add-btn:active,
+    .btn-slip-plus:active,
+    .btn-add-payment:active {
+      transform: translateY(1.5px) scale(0.96) !important;
+      box-shadow: 1px 1.5px 3px rgba(140, 110, 80, 0.15) !important;
+    }
+
+    /* 4. Круглые стрелочки навигации (календарь, карточки) */
+    .arrow-btn,
+    .arrow-btn-desk,
+    .paper-arrow-btn,
+    .cal-nav-btn {
+      border: none !important;
+      outline: none !important;
+      box-shadow: 2.5px 4px 8px rgba(140, 110, 80, 0.2), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95) !important;
+      transition: transform 0.12s ease, box-shadow 0.12s ease !important;
+    }
+    .arrow-btn:hover,
+    .arrow-btn-desk:hover,
+    .paper-arrow-btn:hover,
+    .cal-nav-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 3.5px 5.5px 12px rgba(140, 110, 80, 0.26), -2px -2px 5px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95) !important;
+    }
+    .arrow-btn:active,
+    .arrow-btn-desk:active,
+    .paper-arrow-btn:active,
+    .cal-nav-btn:active {
+      transform: translateY(1.5px) !important;
+      box-shadow: 1px 2px 4px rgba(140, 110, 80, 0.15) !important;
+    }
+
+    /* 5. Кнопки фильтров клиентов (Все, В работе, Ожидает, ...) */
+    .filter-pill {
+      border: none !important;
+      outline: none !important;
+      box-shadow: 2px 3.5px 7px rgba(140, 110, 80, 0.15), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95) !important;
+      transition: transform 0.12s ease, box-shadow 0.12s ease !important;
+    }
+    .filter-pill:hover {
+      transform: translateY(-1px);
+      box-shadow: 3px 5px 10px rgba(140, 110, 80, 0.22), -2px -2px 5px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95) !important;
+    }
+    .filter-pill.active {
+      box-shadow: 2.5px 4.5px 9px rgba(140, 110, 80, 0.24), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95) !important;
+    }
+    .filter-pill:active {
+      transform: translateY(1.5px) !important;
+      box-shadow: 1px 1.5px 3px rgba(140, 110, 80, 0.15) !important;
+    }
+
+    /* 6. Кнопки карандашика ✎, корзины, шеврона, закрытия модалок */
+    .edit-pencil-btn,
+    .card-chevron-btn,
+    .mob-back-btn,
+    .btn-archive-project,
+    .link-edit-pencil-btn,
+    .dossier-icon-btn,
+    .golden-modal-close,
+    .mytables-change-pwd-btn {
+      border: none !important;
+      outline: none !important;
+      box-shadow: 2px 3px 6px rgba(140, 110, 80, 0.18), -1.5px -1.5px 3.5px rgba(255, 255, 255, 0.95), inset 0.8px 0.8px 0 rgba(255, 255, 255, 0.95) !important;
+      transition: transform 0.12s ease, box-shadow 0.12s ease !important;
+    }
+    .edit-pencil-btn:hover,
+    .card-chevron-btn:hover,
+    .mob-back-btn:hover,
+    .btn-archive-project:hover,
+    .link-edit-pencil-btn:hover,
+    .dossier-icon-btn:hover,
+    .golden-modal-close:hover,
+    .mytables-change-pwd-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 3px 4.5px 9px rgba(140, 110, 80, 0.24), -2px -2px 4px rgba(255, 255, 255, 0.95), inset 0.8px 0.8px 0 rgba(255, 255, 255, 0.95) !important;
+    }
+    .edit-pencil-btn:active,
+    .card-chevron-btn:active,
+    .mob-back-btn:active,
+    .btn-archive-project:active,
+    .link-edit-pencil-btn:active,
+    .dossier-icon-btn:active,
+    .golden-modal-close:active,
+    .mytables-change-pwd-btn:active {
+      transform: translateY(1.5px) !important;
+      box-shadow: 1px 1.5px 3px rgba(140, 110, 80, 0.14) !important;
+    }
+
+    /* 7. Кнопки действий в модальных окнах («Сохранить», «Отмена», «Удалить») */
+    .btn-action-modal,
+    .modal-btn,
+    #exp-modal-submit,
+    #exp-modal-cancel,
+    #exp-modal-archive {
+      border: none !important;
+      outline: none !important;
+      box-shadow: 2.5px 4px 10px rgba(140, 110, 80, 0.2), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95) !important;
+      transition: transform 0.12s ease, box-shadow 0.12s ease !important;
+    }
+    .btn-action-modal:hover,
+    .modal-btn:hover,
+    #exp-modal-submit:hover,
+    #exp-modal-cancel:hover,
+    #exp-modal-archive:hover {
+      transform: translateY(-1px);
+      box-shadow: 3.5px 5.5px 13px rgba(140, 110, 80, 0.26), -2px -2px 5px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95) !important;
+    }
+    .btn-action-modal:active,
+    .modal-btn:active,
+    #exp-modal-submit:active,
+    #exp-modal-cancel:active,
+    #exp-modal-archive:active {
+      transform: translateY(1.5px) !important;
+      box-shadow: 1px 2px 4px rgba(140, 110, 80, 0.15) !important;
+    }
+
+    /* 8. Аватарки и профили */
+    .mob-avatar,
+    .user-avatar-circle,
+    .sidebar-avatar,
+    .client-avatar-round {
+      border: none !important;
+      box-shadow: 2px 3.5px 8px rgba(140, 110, 80, 0.18), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95) !important;
+    }
+
+    /* 9. Навигационные кнопки сайдбара и нижнего таб-бара */
+    .desk-nav-btn.active,
+    .mob-tab-btn.active {
+      box-shadow: 2.5px 4px 8px rgba(140, 110, 80, 0.22), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95) !important;
+    }
+
+    /* 10. Мобильный индикатор синхронизации Google возле буквы «А» */
+    .mob-avatar-wrap {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    .mob-sync-dot {
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: #2D9C5E;
+      box-shadow: 1.5px 2px 4px rgba(35, 30, 20, 0.2), -1px -1px 2px rgba(255, 255, 255, 0.95);
+      border: 2px solid #FAF2E7;
+      transition: background 0.2s ease, transform 0.2s ease;
+      z-index: 2;
+    }
+    .mob-sync-dot.status-saving {
+      background: #D4A72C !important;
+      animation: pulseSyncDot 0.9s infinite alternate ease-in-out;
+    }
+    .mob-sync-dot.status-error {
+      background: #E25B45 !important;
+    }
+    @keyframes pulseSyncDot {
+      from { transform: scale(1); opacity: 0.85; }
+      to { transform: scale(1.3); opacity: 1; }
+    }
+
+    /* Полное скрытие широкой плашки синхронизации на мобильных экранах (не закрывает интерфейс) */
     @media (max-width: 900px) {
       .mytables-sync-badge {
-        position: fixed !important;
-        top: 12px !important;
-        right: 56px !important;
+        display: none !important;
         bottom: auto !important;
-        left: auto !important;
-        padding: 4px 10px !important;
-        font-size: 11px !important;
-        font-weight: 800 !important;
-        border-radius: 999px !important;
-        z-index: 90 !important;
-        box-shadow: 0 2px 8px rgba(110, 85, 60, 0.16) !important;
+      }
+      #mytables-sync-badge {
+        display: none !important;
+        bottom: auto !important;
       }
     }
+
     .overlay-card {
       max-width: 440px;
       width: 100%;
@@ -4843,7 +5083,7 @@
             <div style="display: flex; justify-content: space-between; align-items: center; gap: 16px;">
               <div style="font-size: 24px; font-weight: 900; color: #2F261D; letter-spacing: -0.3px;">Главная</div>
               <div style="flex: 1;"></div>
-              <div class="cat-circle sidebar-avatar" title="Профиль: Аня" style="font-size: 14px; font-weight: 800; color: #5B481D;">А</div>
+              <div class="mob-avatar-wrap" onclick="if(window.MyTablesSync&&window.MyTablesSync.syncNow) window.MyTablesSync.syncNow();" title="Синхронизация с Google (нажмите для обновления)"><div class="cat-circle sidebar-avatar" title="Профиль: Аня" style="font-size: 14px; font-weight: 800; color: #5B481D;">А</div><span class="mob-sync-dot" title="Синхронизировано с Google"></span></div>
             </div>
 
             <!-- ============================================================== -->
@@ -5411,7 +5651,7 @@
             <span class="mob-header-title">Доходы ♡</span>
             <span class="mob-total-badge" id="mob-income-month-badge">195 000 ₽</span>
           </div>
-          <div class="mob-avatar" title="Аня">А</div>
+          <div class="mob-avatar-wrap" onclick="if(window.MyTablesSync&&window.MyTablesSync.syncNow) window.MyTablesSync.syncNow();" title="Синхронизация с Google (нажмите для обновления)"><div class="mob-avatar" title="Аня">А</div><span class="mob-sync-dot" title="Синхронизировано с Google"></span></div>
         </div>
 
         <!-- Аккуратная длинная кнопка «+ Добавить проект» (ТЁПЛО-ЖЁЛТАЯ #FDF1CC) -->
@@ -5428,7 +5668,7 @@
             <div class="phone-title">
               Расходы <span class="phone-heart">♡</span>
             </div>
-            <div class="user-avatar-circle" style="font-size: 14px; font-weight: 800; color: #5B481D; background: #FDF1CC; display: flex; align-items: center; justify-content: center;">А</div>
+            <div class="mob-avatar-wrap" onclick="if(window.MyTablesSync&&window.MyTablesSync.syncNow) window.MyTablesSync.syncNow();" title="Синхронизация с Google (нажмите для обновления)"><div class="user-avatar-circle" style="font-size: 14px; font-weight: 800; color: #5B481D; background: #FDF1CC; display: flex; align-items: center; justify-content: center;">А</div><span class="mob-sync-dot" title="Синхронизировано с Google"></span></div>
           </div>
 
           <!-- Кнопка «+ Добавить платеж» -->
@@ -5634,7 +5874,7 @@
               <span class="mob-header-title">Клиенты <span class="heart-icon">♡</span></span>
               <span class="mob-count-badge" id="mob-work-count-badge">2 в работе</span>
             </div>
-            <div class="mob-avatar" title="Аня">А</div>
+            <div class="mob-avatar-wrap" onclick="if(window.MyTablesSync&&window.MyTablesSync.syncNow) window.MyTablesSync.syncNow();" title="Синхронизация с Google (нажмите для обновления)"><div class="mob-avatar" title="Аня">А</div><span class="mob-sync-dot" title="Синхронизировано с Google"></span></div>
           </div>
 
           <!-- Кнопка «+ Добавить клиента» (ТЁПЛО-ЖЁЛТЫЙ ЦВЕТ) -->

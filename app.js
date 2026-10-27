@@ -7,9 +7,9 @@
  * и подтверждение удаления в единой эстетике «3D-Бумажечки».
  */
 
-(function () {
+(function (root) {
   'use strict';
-  var window = typeof window !== 'undefined' ? window : (typeof global !== 'undefined' ? global : {});
+  var window = root;
 
   // Форматирование чисел в рубли
   function formatRub(val) {
@@ -2461,6 +2461,24 @@
   };
 
   // --- МОДАЛЬНЫЕ ОКНА ДОБАВЛЕНИЯ ЗАПИСЕЙ (ЗОЛОТОЙ СТАНДАРТ АНИ) ---
+  function openAddExpenseModal() {
+    injectAddModal();
+    if (typeof window._realOpenAddExpenseModal === 'function') {
+      window._realOpenAddExpenseModal();
+    }
+  }
+  window.openAddExpenseModal = openAddExpenseModal;
+  root.openAddExpenseModal = openAddExpenseModal;
+
+  function openEditExpenseModal(title, slipEl) {
+    injectAddModal();
+    if (typeof window._realOpenEditExpenseModal === 'function') {
+      window._realOpenEditExpenseModal(title, slipEl);
+    }
+  }
+  window.openEditExpenseModal = openEditExpenseModal;
+  root.openEditExpenseModal = openEditExpenseModal;
+
   function injectAddModal() {
     // 1. Модальное окно РАСХОДОВ (строго 4 поля + палитра кружочков, персик #FCE8D5, сливки #FDF1CC, мята #C8E2D2, без рамок)
     if (!document.getElementById('mytables-expense-modal')) {
@@ -2550,7 +2568,7 @@
       var currentEditingSlip = null;
       var currentEditingPayment = null;
 
-      window.openAddExpenseModal = function () {
+      window._realOpenAddExpenseModal = function () {
         currentEditingSlip = null;
         currentEditingPayment = null;
         var modalTitle = expModal.querySelector('.mytables-paper-modal > div:first-child span:first-child');
@@ -2567,8 +2585,10 @@
         expModal.style.pointerEvents = 'auto';
         document.getElementById('exp-in-title').focus();
       };
+      window.openAddExpenseModal = window._realOpenAddExpenseModal;
+      root.openAddExpenseModal = window._realOpenAddExpenseModal;
 
-      window.openEditExpenseModal = function (title, slipEl) {
+      window._realOpenEditExpenseModal = function (title, slipEl) {
         currentEditingSlip = slipEl;
         var p = null;
         if (window.MyTablesCalendar && window.MyTablesCalendar.state && window.MyTablesCalendar.state.payments) {
@@ -2615,6 +2635,8 @@
         expModal.style.pointerEvents = 'auto';
         document.getElementById('exp-in-amount').focus();
       };
+      window.openEditExpenseModal = window._realOpenEditExpenseModal;
+      root.openEditExpenseModal = window._realOpenEditExpenseModal;
 
       var closeExpModal = function () {
         currentEditingSlip = null;
@@ -3039,6 +3061,17 @@
       .replace(/"/g, '&quot;');
   }
 
+  // Глобальный экспорт на root (window в браузере)
+  root.MyTablesIncome = typeof MyTablesIncome !== 'undefined' ? MyTablesIncome : null;
+  root.MyTablesClients = typeof MyTablesClients !== 'undefined' ? MyTablesClients : null;
+  root.openAddExpenseModal = typeof window !== 'undefined' ? window.openAddExpenseModal : null;
+  root.openEditExpenseModal = typeof window !== 'undefined' ? window.openEditExpenseModal : null;
+  root.toggleExpenseItemStatus = typeof window !== 'undefined' ? window.toggleExpenseItemStatus : null;
+  root.handleDeleteRow = typeof window !== 'undefined' ? window.handleDeleteRow : null;
+  root.updateCurrentScreen = typeof window !== 'undefined' ? window.updateCurrentScreen : null;
+  root.updateScreenData = typeof window !== 'undefined' ? window.updateScreenData : null;
+  root.openAddModal = typeof window !== 'undefined' ? window.openAddModal : null;
+
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
       MyTablesIncome: typeof MyTablesIncome !== 'undefined' ? MyTablesIncome : null,
@@ -3046,4 +3079,4 @@
     };
   }
 
-})();
+})(typeof window !== 'undefined' ? window : (typeof global !== 'undefined' ? global : this));
