@@ -1,0 +1,1837 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Макет Стейджа 3: Экран «Доходы ♡» — Мои таблицы</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    /* ========================================================
+       1. СБРОС И БАЗОВЫЕ НАСТРОЙКИ
+       ======================================================== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif !important;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: #FAF2E7;
+      color: #383025;
+      padding: 24px 16px 60px 16px;
+      line-height: 1.4;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 1380px;
+      margin: 0 auto;
+    }
+
+    /* ========================================================
+       2. ШАПКА МАКЕТА
+       ======================================================== */
+    .top-header {
+      margin-bottom: 26px;
+      text-align: center;
+    }
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      background: #C8E2D2;
+      color: #1E3F30;
+      padding: 6px 16px;
+      border-radius: 20px;
+      margin-bottom: 10px;
+      box-shadow: 2.5px 4px 10px rgba(35, 30, 20, 0.12), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95);
+      border: none;
+    }
+    .screen-title {
+      font-size: 28px;
+      font-weight: 900;
+      color: #2F261D;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+    }
+    .screen-desc {
+      font-size: 14px;
+      color: #726453;
+      font-weight: 600;
+      max-width: 780px;
+      margin: 0 auto;
+    }
+
+    /* ========================================================
+       3. ДУО-СЕТКА: ТЕЛЕФОН СЛЕВА, ДЕСКТОП СПРАВА
+       ======================================================== */
+    .duo-grid {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 32px;
+      align-items: start;
+      margin-bottom: 44px;
+    }
+    @media (max-width: 1120px) {
+      .duo-grid {
+        grid-template-columns: 1fr;
+        justify-items: center;
+      }
+    }
+
+    /* ========================================================
+       4. ТЕЛЕФОН (IPHONE ФРЕЙМ 380px)
+       ======================================================== */
+    .iphone-box {
+      width: 100%;
+      max-width: 380px;
+      background: #F6EDE2;
+      border-radius: 46px;
+      padding: 12px;
+      box-shadow: 16px 24px 50px rgba(140, 115, 90, 0.3), -4px -4px 12px rgba(255, 255, 255, 0.95);
+      border: none;
+    }
+    .iphone-screen {
+      background: #FAF2E7;
+      border-radius: 36px;
+      padding: 14px 12px 14px 12px;
+      min-height: 820px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      box-shadow: inset 1px 1px 3px rgba(140, 115, 90, 0.15);
+    }
+    .iphone-island {
+      width: 105px;
+      height: 25px;
+      background: #2A241C;
+      border-radius: 20px;
+      margin: 0 auto 10px auto;
+      flex-shrink: 0;
+    }
+    .iphone-status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 800;
+      color: #5A4E40;
+      padding: 0 8px;
+      margin-bottom: 12px;
+      flex-shrink: 0;
+    }
+
+    .mob-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      padding: 0 4px;
+      flex-shrink: 0;
+    }
+    .mob-header-left {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+    .mob-header-title {
+      font-size: 22px;
+      font-weight: 900;
+      color: #2F261D;
+      letter-spacing: -0.4px;
+    }
+    .mob-total-badge {
+      font-size: 11px;
+      font-weight: 800;
+      color: #1E3F30;
+      background: #C8E2D2;
+      padding: 4px 9px;
+      border-radius: 12px;
+      box-shadow: 1.5px 2px 5px rgba(35, 30, 20, 0.1), inset 0.5px 0.5px 0 rgba(255, 255, 255, 0.9);
+      border: none;
+    }
+    .mob-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #FDF1CC;
+      color: #5B481D;
+      font-size: 14px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 2.5px 4px 10px rgba(35, 30, 20, 0.12), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95);
+      border: none;
+      cursor: pointer;
+    }
+
+    /* Кнопка «+ Добавить проект» на мобильном (ТЁПЛО-ЖЁЛТЫЙ ЦВЕТ #FDF1CC) */
+    .mob-add-project-btn {
+      width: 100%;
+      min-height: 46px;
+      border-radius: 16px;
+      background: #FDF1CC;
+      color: #5B481D;
+      border: none;
+      font-size: 13.5px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      margin-bottom: 14px;
+      box-shadow: 2.5px 4px 10px rgba(35, 30, 20, 0.12), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95);
+      cursor: pointer;
+      transition: transform 0.12s ease;
+      flex-shrink: 0;
+    }
+    .mob-add-project-btn:active {
+      transform: translateY(1.5px);
+    }
+
+    /* Скролл-список карточек на телефоне без серого ползунка */
+    .mob-projects-scroll {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      overflow-y: auto;
+      padding-bottom: 68px;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      flex: 1;
+    }
+    .mob-projects-scroll::-webkit-scrollbar {
+      display: none;
+      width: 0;
+      height: 0;
+    }
+
+    /* Мобильный нижний таб-бар */
+    .mob-bottom-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: #FAF2E7;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 0 10px 10px 10px;
+      box-shadow: 0 -4px 12px rgba(35, 30, 20, 0.08);
+      border-top: none;
+      z-index: 10;
+    }
+    .mob-tab-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      font-size: 10px;
+      font-weight: 800;
+      color: #8C784C;
+      text-decoration: none;
+      padding: 4px 10px;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+    .mob-tab-item.active {
+      color: #1E3F30;
+      background: #C8E2D2;
+      box-shadow: 2px 3px 6px rgba(35, 30, 20, 0.1), inset 0.5px 0.5px 0 rgba(255, 255, 255, 0.9);
+    }
+
+    /* ========================================================
+       5. КАРТОЧКА ПРОЕКТА (ТЕЛЕФОН И ДЕСКТОП)
+       ======================================================== */
+    .project-card {
+      border-radius: 24px;
+      padding: 16px;
+      border: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 2.5px 4px 10px rgba(35, 30, 20, 0.12), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95);
+      transition: transform 0.12s ease;
+      position: relative;
+    }
+    .project-card:hover {
+      transform: translateY(-1.5px);
+    }
+
+    /* Пастельная палитра карточек */
+    .project-card.mint {
+      background: #C8E2D2;
+      color: #1E3F30;
+    }
+    .project-card.peach {
+      background: #FCD6CF;
+      color: #58241B;
+    }
+    .project-card.lavender {
+      background: #DBCCE9;
+      color: #3F2B56;
+    }
+    .project-card.blue {
+      background: #D3E7F8;
+      color: #16324F;
+    }
+
+    /* Шапка карточки */
+    .project-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .project-title-group {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+    .project-client-name {
+      font-size: 15px;
+      font-weight: 900;
+      line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .project-service-name {
+      font-size: 11.5px;
+      font-weight: 700;
+      opacity: 0.85;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .project-header-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    /* Налепочка полной стоимости проекта (МЯГКАЯ ЗЕЛЁНАЯ #C8E2D2, ЦИФРА ТЁМНО-ЗЕЛЁНАЯ #1E3F30) */
+    .project-total-pill {
+      background: #C8E2D2 !important;
+      color: #1E3F30 !important;
+      border-radius: 14px;
+      padding: 6px 11px;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      border: none;
+      box-shadow: 2.5px 4px 10px rgba(35, 30, 20, 0.12), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95);
+      cursor: pointer;
+      transition: transform 0.1s ease;
+    }
+    .project-total-pill:active {
+      transform: scale(0.96);
+    }
+    .project-total-val {
+      font-size: 13px;
+      font-weight: 800;
+      color: #1E3F30 !important;
+      letter-spacing: -0.2px;
+    }
+    /* Круглый значок-карандашик (✎) изменения суммы: строго круглый 22x22 */
+    .edit-pencil-btn {
+      width: 22px;
+      height: 22px;
+      min-width: 22px;
+      min-height: 22px;
+      max-width: 22px;
+      max-height: 22px;
+      border-radius: 50% !important;
+      aspect-ratio: 1 / 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      font-size: 11px;
+      cursor: pointer;
+      box-shadow: 1.5px 2px 4px rgba(35, 30, 20, 0.12), -1px -1px 2px rgba(255, 255, 255, 0.95), inset 0.5px 0.5px 0 rgba(255, 255, 255, 0.95);
+      transition: transform 0.1s ease, background 0.1s ease;
+      flex-shrink: 0;
+    }
+    .edit-pencil-btn:hover {
+      transform: scale(1.08);
+    }
+    .edit-pencil-btn:active {
+      transform: scale(0.92);
+    }
+
+    /* Иконка корзины: ВАРИАНТ № 1 (Классическая изящная корзинка, СТРОГО КРУГЛАЯ КНОПКА 34x34) */
+    .btn-archive-project {
+      width: 34px;
+      height: 34px;
+      min-width: 34px;
+      min-height: 34px;
+      max-width: 34px;
+      max-height: 34px;
+      border-radius: 50% !important;
+      aspect-ratio: 1 / 1;
+      background: #FAF2E7;
+      color: inherit;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 2.5px 4px 10px rgba(35, 30, 20, 0.12), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95);
+      transition: transform 0.1s ease, opacity 0.1s ease;
+      flex-shrink: 0;
+      opacity: 0.9;
+    }
+    .btn-archive-project:hover {
+      opacity: 1;
+      transform: scale(1.05);
+    }
+    .btn-archive-project:active {
+      transform: scale(0.92);
+    }
+
+    /* Секция ленты платежей */
+    .payments-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .payments-section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 2px;
+    }
+    .payments-section-title {
+      font-size: 11.5px;
+      font-weight: 800;
+      letter-spacing: 0.2px;
+      opacity: 0.9;
+    }
+
+    /* Список бумажечек платежей */
+    .payments-list {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    /* ========================================================
+       ПЛАШКА ОПЛАТЫ (УТВЕРЖДЁННАЯ СТРУКТУРА АНИ):
+       Слева: крупная сумма оплаты и маленькая дата под ней
+       Справа: аккуратная тактильная КРУГЛАЯ кнопочка с плюсиком (+)
+       ======================================================== */
+    .payment-slip {
+      background: #FAF2E7;
+      border-radius: 16px;
+      padding: 8px 10px 8px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: none;
+      box-shadow: 2.5px 4px 10px rgba(35, 30, 20, 0.12), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95);
+      cursor: pointer;
+      transition: transform 0.12s ease;
+      min-height: 52px;
+    }
+    .payment-slip:hover {
+      transform: translateY(-1px);
+    }
+    .payment-slip:active {
+      transform: scale(0.985);
+    }
+
+    .slip-data-col {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+    .slip-sum {
+      font-size: 15px;
+      font-weight: 900;
+      color: #2F261D;
+      line-height: 1.2;
+    }
+    .slip-date {
+      font-size: 11px;
+      font-weight: 700;
+      color: #8C784C;
+      line-height: 1;
+    }
+    .slip-empty-text {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #726453;
+    }
+
+    /* КРУГЛАЯ КНОПОЧКА С ПЛЮСИКОМ (+) НА ПЛАШКЕ (36x36, строго круглая border-radius: 50%) */
+    .btn-slip-plus {
+      width: 36px;
+      height: 36px;
+      min-width: 36px;
+      min-height: 36px;
+      max-width: 36px;
+      max-height: 36px;
+      border-radius: 50% !important;
+      aspect-ratio: 1 / 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+      font-weight: 900;
+      box-shadow: 2.5px 4px 8px rgba(35, 30, 20, 0.12), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95);
+      border: none;
+      cursor: pointer;
+      transition: transform 0.1s ease, background 0.1s ease;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .btn-slip-plus:hover {
+      transform: scale(1.06);
+    }
+    .btn-slip-plus:active {
+      transform: scale(0.92);
+    }
+
+    /* ========================================================
+       ЦВЕТА ЗНАЧКОВ ДЕЙСТВИЙ (КОРЗИНКА 🗑️, ПЛЮСИК + И КАРАНДАШИК ✎):
+       В цвет плашки/карточки клиента, только чуть светлее!
+       ======================================================== */
+    /* 1. Мятная карточка (#C8E2D2): светлый мятный фон #E2F1E8, цвет #1E3F30 */
+    .project-card.mint .btn-archive-project,
+    .project-card.mint .btn-slip-plus,
+    .project-card.mint .edit-pencil-btn {
+      background: #E2F1E8;
+      color: #1E3F30;
+    }
+    .project-card.mint .btn-archive-project:hover,
+    .project-card.mint .btn-slip-plus:hover,
+    .project-card.mint .edit-pencil-btn:hover {
+      background: #EEF8F2;
+    }
+
+    /* 2. Персиковая/коралловая карточка (#FCD6CF): светлый персиковый фон #FEECE9, цвет #58241B */
+    .project-card.peach .btn-archive-project,
+    .project-card.peach .btn-slip-plus,
+    .project-card.peach .edit-pencil-btn {
+      background: #FEECE9;
+      color: #58241B;
+    }
+    .project-card.peach .btn-archive-project:hover,
+    .project-card.peach .btn-slip-plus:hover,
+    .project-card.peach .edit-pencil-btn:hover {
+      background: #FFF4F2;
+    }
+
+    /* 3. Лавандовая карточка (#DBCCE9): светлый лавандовый фон #EDE4F4, цвет #422858 */
+    .project-card.lavender .btn-archive-project,
+    .project-card.lavender .btn-slip-plus,
+    .project-card.lavender .edit-pencil-btn {
+      background: #EDE4F4;
+      color: #422858;
+    }
+    .project-card.lavender .btn-archive-project:hover,
+    .project-card.lavender .btn-slip-plus:hover,
+    .project-card.lavender .edit-pencil-btn:hover {
+      background: #F6F0FA;
+    }
+
+    /* 4. Голубая карточка (#D3E7F8): светлый голубой фон #E8F3FC, цвет #16324F */
+    .project-card.blue .btn-archive-project,
+    .project-card.blue .btn-slip-plus,
+    .project-card.blue .edit-pencil-btn {
+      background: #E8F3FC;
+      color: #16324F;
+    }
+    .project-card.blue .btn-archive-project:hover,
+    .project-card.blue .btn-slip-plus:hover,
+    .project-card.blue .edit-pencil-btn:hover {
+      background: #F2F8FE;
+    }
+
+    /* ========================================================
+       6. ДЕСКТОП (КОМПЬЮТЕР)
+       ======================================================== */
+    .desktop-window {
+      background: #FAF2E7;
+      border-radius: 32px;
+      padding: 24px;
+      box-shadow: 16px 26px 52px rgba(140, 115, 85, 0.24), -4px -4px 14px rgba(255, 255, 255, 0.95);
+      border: none;
+      display: grid;
+      grid-template-columns: 210px 1fr;
+      gap: 26px;
+      min-height: 820px;
+    }
+    @media (max-width: 900px) {
+      .desktop-window {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Сайдбар десктопа */
+    .desk-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .sidebar-user-chip {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      margin-bottom: 12px;
+      background: #FCE8D5;
+      border-radius: 18px;
+      box-shadow: 2.5px 4px 10px rgba(35, 30, 20, 0.12), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95);
+      border: none;
+    }
+    .sidebar-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #FDF1CC;
+      color: #5B481D;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 900;
+      box-shadow: 1.5px 2px 5px rgba(35, 30, 20, 0.1);
+    }
+    .sidebar-user-name {
+      font-size: 13px;
+      font-weight: 900;
+      color: #2F261D;
+    }
+    .sidebar-user-email {
+      font-size: 10px;
+      color: #726453;
+      font-weight: 600;
+    }
+
+    .desk-nav-item {
+      min-height: 44px;
+      border-radius: 14px;
+      padding: 0 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 800;
+      color: #6D5C45;
+      text-decoration: none;
+      border: none;
+      background: transparent;
+      transition: all 0.12s ease;
+      cursor: pointer;
+    }
+    .desk-nav-item:hover {
+      background: #F4E8D8;
+      color: #2F261D;
+    }
+    .desk-nav-item.active {
+      background: #C8E2D2;
+      color: #1E3F30;
+      box-shadow: 2.5px 4px 10px rgba(35, 30, 20, 0.12), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95);
+    }
+
+    /* Главная рабочая область десктопа */
+    .desk-main-area {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .desk-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .desk-title-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .desk-page-title {
+      font-size: 24px;
+      font-weight: 900;
+      color: #2F261D;
+      letter-spacing: -0.4px;
+    }
+    .desk-month-badge {
+      font-size: 12.5px;
+      font-weight: 900;
+      color: #1E3F30;
+      background: #C8E2D2;
+      padding: 5px 12px;
+      border-radius: 12px;
+      box-shadow: 2px 3.5px 8px rgba(35, 30, 20, 0.1), inset 0.5px 0.5px 0 rgba(255, 255, 255, 0.9);
+      border: none;
+    }
+
+    /* Десктопная кнопка добавления (ТЁПЛО-ЖЁЛТЫЙ ЦВЕТ #FDF1CC) */
+    .desk-btn-add {
+      min-height: 44px;
+      padding: 0 20px;
+      border-radius: 14px;
+      background: #FDF1CC;
+      color: #5B481D;
+      border: none;
+      font-size: 13px;
+      font-weight: 900;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 2.5px 4px 10px rgba(35, 30, 20, 0.12), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95);
+      transition: transform 0.12s ease;
+    }
+    .desk-btn-add:hover {
+      transform: translateY(-1px);
+    }
+    .desk-btn-add:active {
+      transform: translateY(1.5px);
+    }
+
+    /* 2-колоночная бенто-сетка карточек на десктопе */
+    .desk-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    @media (max-width: 1250px) {
+      .desk-cards-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ========================================================
+       7. ЗОЛОТОЙ СТАНДАРТ МОДАЛЬНЫХ ОКОН (ДЕМОНСТРАЦИОННАЯ СЕКЦИЯ)
+       ======================================================== */
+    .showcase-section {
+      background: #FAF2E7;
+      border-radius: 32px;
+      padding: 32px 24px;
+      box-shadow: 16px 26px 52px rgba(140, 115, 85, 0.2), -4px -4px 14px rgba(255, 255, 255, 0.95);
+      border: none;
+      margin-top: 36px;
+    }
+    .showcase-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .showcase-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      background: #FCE8D5;
+      color: #6D3E14;
+      padding: 5px 14px;
+      border-radius: 20px;
+      margin-bottom: 8px;
+      box-shadow: 1.5px 2px 5px rgba(35, 30, 20, 0.1);
+    }
+    .showcase-title {
+      font-size: 22px;
+      font-weight: 900;
+      color: #2F261D;
+      margin-bottom: 6px;
+    }
+    .showcase-sub {
+      font-size: 13.5px;
+      color: #726453;
+      font-weight: 600;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .modals-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 26px;
+      align-items: start;
+    }
+
+    /* Карточка модалки (Золотой стандарт Ани) */
+    .golden-modal {
+      background: #FAF2E7;
+      border-radius: 24px;
+      padding: 22px;
+      border: none;
+      box-shadow: 8px 18px 45px rgba(110, 85, 60, 0.28), -4px -4px 12px rgba(255, 255, 255, 0.95);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: relative;
+    }
+    .golden-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .golden-modal-title {
+      font-size: 16px;
+      font-weight: 900;
+      color: #2F261D;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .golden-modal-close {
+      width: 28px;
+      height: 28px;
+      min-width: 28px;
+      min-height: 28px;
+      max-width: 28px;
+      max-height: 28px;
+      border-radius: 50% !important;
+      aspect-ratio: 1 / 1;
+      background: #FDF1CC;
+      color: #5B481D;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 900;
+      border: none;
+      cursor: pointer;
+      box-shadow: 1px 1.5px 3px rgba(35, 30, 20, 0.1);
+      transition: transform 0.1s ease;
+      flex-shrink: 0;
+    }
+    .golden-modal-close:hover {
+      transform: scale(1.08);
+    }
+    .golden-modal-close:active {
+      transform: scale(0.92);
+    }
+
+    /* Внутренняя плашка */
+    .golden-plaque {
+      background: #FCE8D5;
+      border-radius: 18px;
+      padding: 16px;
+      border: none;
+      box-shadow: 2.5px 4px 10px rgba(35, 30, 20, 0.12), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .field-label {
+      font-size: 11px;
+      font-weight: 900;
+      color: #6D3E14;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .field-input, .field-select {
+      width: 100%;
+      min-height: 42px;
+      border-radius: 12px;
+      background: #FAF2E7;
+      border: none;
+      padding: 8px 12px;
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #2F261D;
+      box-shadow: inset 1px 1.5px 3px rgba(150, 120, 80, 0.15), inset -1px -1px 2px rgba(255, 255, 255, 0.8);
+      outline: none;
+    }
+    .field-hint {
+      font-size: 11px;
+      color: #8C784C;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    /* Кружочки выбора цвета */
+    .palette-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-top: 2px;
+    }
+    .palette-circle {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 1.5px 2px 4px rgba(35, 30, 20, 0.2);
+      border: none;
+      transition: transform 0.1s ease;
+    }
+    .palette-circle:hover {
+      transform: scale(1.1);
+    }
+    .palette-circle.selected {
+      transform: scale(1.2);
+      box-shadow: 0 0 0 2.5px #5B481D, 2px 3px 6px rgba(35, 30, 20, 0.25);
+    }
+
+    /* Панель кнопок в модалках — СТРОГО ОДИНАКОВАЯ ШИРИНА */
+    .golden-actions-row {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+    }
+    .btn-action-modal {
+      flex: 1;
+      min-height: 44px;
+      border-radius: 12px;
+      border: none;
+      font-size: 13px;
+      font-weight: 900;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 0 8px;
+      box-shadow: 2.5px 4px 10px rgba(35, 30, 20, 0.12), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95);
+      transition: transform 0.1s ease;
+      white-space: nowrap;
+    }
+    .btn-action-modal:active {
+      transform: translateY(1.5px);
+    }
+
+    /* Цвета кнопок действий по стандарту */
+    .btn-action-modal.cancel {
+      background: #FDF1CC;
+      color: #5B481D;
+    }
+    .btn-action-modal.save {
+      background: #C8E2D2;
+      color: #1E3F30;
+    }
+    .btn-action-modal.delete {
+      background: #FCD6CF;
+      color: #58241B;
+    }
+
+    /* ========================================================
+       8. ИНТЕРАКТИВНОЕ ВСПЛЫВАЮЩЕЕ ОКНО (POPUP OVERLAY)
+       ======================================================== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(45, 35, 25, 0.45);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 16px;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+    .overlay-card {
+      max-width: 440px;
+      width: 100%;
+      animation: modalPop 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes modalPop {
+      0% { opacity: 0; transform: scale(0.92) translateY(10px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    /* Подвал */
+    .info-footer {
+      margin-top: 36px;
+      text-align: center;
+      font-size: 13px;
+      color: #8C784C;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- ВЕРХНИЙ ЗАГОЛОВОК -->
+    <div class="top-header">
+      <span class="badge-status">
+        <span>♡</span> СТЕЙДЖ 3 • ТАКТИЛЬНЫЙ МАКЕТ «3D-БУМАЖЕЧКИ»
+      </span>
+      <h1 class="screen-title">Экран «Доходы ♡»</h1>
+      <p class="screen-desc">
+        Разноцветные карточки проектов, гибкое изменение стоимости ✎, лента оплат с жёлтым плюсиком на плашке и Золотой стандарт модальных окон
+      </p>
+    </div>
+
+    <!-- ДУО-СЕТКА: ТЕЛЕФОН + ДЕСКТОП -->
+    <div class="duo-grid">
+      
+      <!-- ========================================================
+           1. МОБИЛЬНЫЙ ВИД (IPHONE FRAME 380px)
+           ======================================================== -->
+      <div class="iphone-box">
+        <div class="iphone-screen">
+          <div class="iphone-island"></div>
+          
+          <div class="iphone-status-bar">
+            <span>9:41</span>
+            <div style="display:flex; gap:6px; align-items:center;">
+              <svg width="13" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L12 22l7.03-4.39C20.26 16.07 21 14.12 21 12c0-4.97-4.03-9-9-9z"/></svg>
+              <svg width="14" height="11" viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="6" width="18" height="12" rx="3"/><path d="M22 10v4"/></svg>
+            </div>
+          </div>
+
+          <div class="mob-header-row">
+            <div class="mob-header-left">
+              <span class="mob-header-title">Доходы ♡</span>
+              <span class="mob-total-badge">195 000 ₽</span>
+            </div>
+            <div class="mob-avatar" title="Аня">А</div>
+          </div>
+
+          <!-- Аккуратная длинная кнопка «+ Добавить проект» (ТЁПЛО-ЖЁЛТАЯ) -->
+          <button class="mob-add-project-btn" onclick="openModal('modal-add-project')">
+            <span style="font-size:16px; font-weight:900;">+</span>
+            <span>Добавить проект</span>
+          </button>
+
+          <!-- Скролл-лента карточек проектов (без поисковых строк, чистый простор) -->
+          <div class="mob-projects-scroll">
+            
+            <!-- Карточка 1: ООО Вектор (Нежная мята) -->
+            <div class="project-card mint">
+              <div class="project-card-header">
+                <div class="project-title-group">
+                  <span class="project-client-name">ООО Вектор</span>
+                  <span class="project-service-name">Разработка CRM-системы</span>
+                </div>
+                <div class="project-header-right">
+                  <!-- Сумма проекта: мягкая зеленая плашка, темно-зеленая цифра -->
+                  <div class="project-total-pill" onclick="openModal('modal-edit-cost', 'ООО Вектор', '120 000')" title="Изменить стоимость">
+                    <span class="project-total-val">120 000 ₽</span>
+                    <button class="edit-pencil-btn" title="Редактировать сумму">✎</button>
+                  </div>
+                  <!-- Иконка корзины: Вариант № 1 (Классическая изящная корзинка с крышкой и ручкой) -->
+                  <button class="btn-archive-project" onclick="openModal('modal-archive', 'ООО Вектор')" title="В архив">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M3 6h18"/>
+                      <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+                      <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                      <line x1="10" y1="11" x2="10" y2="17"/>
+                      <line x1="14" y1="11" x2="14" y2="17"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Лента платежей: сумма и дата слева, жёлтый плюсик справа на плашке -->
+              <div class="payments-section">
+                <div class="payments-section-header">
+                  <span class="payments-section-title">Внесённые оплаты (2)</span>
+                </div>
+                <div class="payments-list">
+                  <div class="payment-slip" onclick="openModal('modal-edit-payment', 'ООО Вектор', '60 000', '2026-10-12', 'Аванс 50%')">
+                    <div class="slip-data-col">
+                      <span class="slip-sum">60 000 ₽</span>
+                      <span class="slip-date">12 окт</span>
+                    </div>
+                    <button class="btn-slip-plus" onclick="event.stopPropagation(); openModal('modal-add-payment', 'ООО Вектор')" title="Внести платёж">+</button>
+                  </div>
+                  <div class="payment-slip" onclick="openModal('modal-edit-payment', 'ООО Вектор', '40 000', '2026-10-20', 'Второй платёж')">
+                    <div class="slip-data-col">
+                      <span class="slip-sum">40 000 ₽</span>
+                      <span class="slip-date">20 окт</span>
+                    </div>
+                    <button class="btn-slip-plus" onclick="event.stopPropagation(); openModal('modal-add-payment', 'ООО Вектор')" title="Внести платёж">+</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Карточка 2: Мария Смирнова (Тёплый персик) -->
+            <div class="project-card peach">
+              <div class="project-card-header">
+                <div class="project-title-group">
+                  <span class="project-client-name">Мария Смирнова</span>
+                  <span class="project-service-name">Дизайн мобильного приложения</span>
+                </div>
+                <div class="project-header-right">
+                  <div class="project-total-pill" onclick="openModal('modal-edit-cost', 'Мария Смирнова', '85 000')" title="Изменить стоимость">
+                    <span class="project-total-val">85 000 ₽</span>
+                    <button class="edit-pencil-btn" title="Редактировать сумму">✎</button>
+                  </div>
+                  <button class="btn-archive-project" onclick="openModal('modal-archive', 'Мария Смирнова')" title="В архив">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M3 6h18"/>
+                      <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+                      <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                      <line x1="10" y1="11" x2="10" y2="17"/>
+                      <line x1="14" y1="11" x2="14" y2="17"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <div class="payments-section">
+                <div class="payments-section-header">
+                  <span class="payments-section-title">Внесённые оплаты (2)</span>
+                </div>
+                <div class="payments-list">
+                  <div class="payment-slip" onclick="openModal('modal-edit-payment', 'Мария Смирнова', '45 000', '2026-10-05', 'Аванс')">
+                    <div class="slip-data-col">
+                      <span class="slip-sum">45 000 ₽</span>
+                      <span class="slip-date">05 окт</span>
+                    </div>
+                    <button class="btn-slip-plus" onclick="event.stopPropagation(); openModal('modal-add-payment', 'Мария Смирнова')" title="Внести платёж">+</button>
+                  </div>
+                  <div class="payment-slip" onclick="openModal('modal-edit-payment', 'Мария Смирнова', '40 000', '2026-10-18', 'Окончательный расчёт')">
+                    <div class="slip-data-col">
+                      <span class="slip-sum">40 000 ₽</span>
+                      <span class="slip-date">18 окт</span>
+                    </div>
+                    <button class="btn-slip-plus" onclick="event.stopPropagation(); openModal('modal-add-payment', 'Мария Смирнова')" title="Внести платёж">+</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Карточка 3: Иван Петров (Лаванда) -->
+            <div class="project-card lavender">
+              <div class="project-card-header">
+                <div class="project-title-group">
+                  <span class="project-client-name">Иван Петров</span>
+                  <span class="project-service-name">SMM и ведение канала</span>
+                </div>
+                <div class="project-header-right">
+                  <div class="project-total-pill" onclick="openModal('modal-edit-cost', 'Иван Петров', '45 000')" title="Изменить стоимость">
+                    <span class="project-total-val">45 000 ₽</span>
+                    <button class="edit-pencil-btn" title="Редактировать сумму">✎</button>
+                  </div>
+                  <button class="btn-archive-project" onclick="openModal('modal-archive', 'Иван Петров')" title="В архив">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M3 6h18"/>
+                      <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+                      <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                      <line x1="10" y1="11" x2="10" y2="17"/>
+                      <line x1="14" y1="11" x2="14" y2="17"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <div class="payments-section">
+                <div class="payments-section-header">
+                  <span class="payments-section-title">Внесённые оплаты (1)</span>
+                </div>
+                <div class="payments-list">
+                  <div class="payment-slip" onclick="openModal('modal-edit-payment', 'Иван Петров', '45 000', '2026-10-01', 'Оклад за октябрь')">
+                    <div class="slip-data-col">
+                      <span class="slip-sum">45 000 ₽</span>
+                      <span class="slip-date">01 окт</span>
+                    </div>
+                    <button class="btn-slip-plus" onclick="event.stopPropagation(); openModal('modal-add-payment', 'Иван Петров')" title="Внести платёж">+</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Карточка 4: Елена Васильева (Чистое небо) — Показ состояния «Нет платежей» -->
+            <div class="project-card blue">
+              <div class="project-card-header">
+                <div class="project-title-group">
+                  <span class="project-client-name">Елена Васильева</span>
+                  <span class="project-service-name">SEO и контентная оптимизация</span>
+                </div>
+                <div class="project-header-right">
+                  <div class="project-total-pill" onclick="openModal('modal-edit-cost', 'Елена Васильева', '60 000')" title="Изменить стоимость">
+                    <span class="project-total-val">60 000 ₽</span>
+                    <button class="edit-pencil-btn" title="Редактировать сумму">✎</button>
+                  </div>
+                  <button class="btn-archive-project" onclick="openModal('modal-archive', 'Елена Васильева')" title="В архив">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M3 6h18"/>
+                      <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+                      <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                      <line x1="10" y1="11" x2="10" y2="17"/>
+                      <line x1="14" y1="11" x2="14" y2="17"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <div class="payments-section">
+                <div class="payments-section-header">
+                  <span class="payments-section-title">Внесённые оплаты (0)</span>
+                </div>
+                <div class="payments-list">
+                  <!-- Светлая плашечка «Нет платежей» с жёлтым плюсиком справа -->
+                  <div class="payment-slip" onclick="openModal('modal-add-payment', 'Елена Васильева')">
+                    <div class="slip-data-col">
+                      <span class="slip-empty-text">Нет платежей</span>
+                      <span class="slip-date">Нажмите, чтобы внести</span>
+                    </div>
+                    <button class="btn-slip-plus" onclick="event.stopPropagation(); openModal('modal-add-payment', 'Елена Васильева')" title="Внести платёж">+</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Нижний мобильный таб-бар -->
+          <div class="mob-bottom-bar">
+            <div class="mob-tab-item">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              <span>Главная</span>
+            </div>
+            <div class="mob-tab-item active">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+              <span>Доходы</span>
+            </div>
+            <div class="mob-tab-item">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" x2="21" y1="6" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+              <span>Расходы</span>
+            </div>
+            <div class="mob-tab-item">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              <span>Клиенты</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ========================================================
+           2. ДЕСКТОПНЫЙ ВИД (ОКНО ПРИЛОЖЕНИЯ)
+           ======================================================== -->
+      <div class="desktop-window">
+        
+        <!-- Сайдбар -->
+        <div class="desk-sidebar">
+          <div class="sidebar-user-chip">
+            <div class="sidebar-avatar">А</div>
+            <div>
+              <div class="sidebar-user-name">Аня</div>
+              <div class="sidebar-user-email">lifekvi2018@gmail.com</div>
+            </div>
+          </div>
+
+          <div class="desk-nav-item">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <span>Главная</span>
+          </div>
+
+          <div class="desk-nav-item active">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+            <span>Доходы ♡</span>
+          </div>
+
+          <div class="desk-nav-item">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" x2="21" y1="6" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            <span>Расходы ♡</span>
+          </div>
+
+          <div class="desk-nav-item">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <span>Клиенты ♡</span>
+          </div>
+        </div>
+
+        <!-- Рабочая зона -->
+        <div class="desk-main-area">
+          <div class="desk-top-bar">
+            <div class="desk-title-group">
+              <span class="desk-page-title">Проекты и доходы</span>
+              <span class="desk-month-badge">195 000 ₽ в октябре</span>
+            </div>
+            <!-- Тактильная кнопка добавления проекта (ТЁПЛО-ЖЁЛТЫЙ ЦВЕТ) -->
+            <button class="desk-btn-add" onclick="openModal('modal-add-project')">
+              <span style="font-size:16px;">+</span>
+              <span>Добавить проект</span>
+            </button>
+          </div>
+
+          <!-- 2-колоночная сетка карточек проектов на десктопе -->
+          <div class="desk-cards-grid">
+            
+            <!-- ДЕСКТОП: Карточка 1 (Мята) -->
+            <div class="project-card mint">
+              <div class="project-card-header">
+                <div class="project-title-group">
+                  <span class="project-client-name">ООО Вектор</span>
+                  <span class="project-service-name">Разработка CRM-системы</span>
+                </div>
+                <div class="project-header-right">
+                  <div class="project-total-pill" onclick="openModal('modal-edit-cost', 'ООО Вектор', '120 000')" title="Изменить стоимость">
+                    <span class="project-total-val">120 000 ₽</span>
+                    <button class="edit-pencil-btn" title="Редактировать сумму">✎</button>
+                  </div>
+                  <!-- Иконка корзины: Вариант № 1 -->
+                  <button class="btn-archive-project" onclick="openModal('modal-archive', 'ООО Вектор')" title="В архив">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M3 6h18"/>
+                      <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+                      <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                      <line x1="10" y1="11" x2="10" y2="17"/>
+                      <line x1="14" y1="11" x2="14" y2="17"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div class="payments-section">
+                <div class="payments-section-header">
+                  <span class="payments-section-title">Внесённые оплаты (2)</span>
+                </div>
+                <div class="payments-list">
+                  <div class="payment-slip" onclick="openModal('modal-edit-payment', 'ООО Вектор', '60 000', '2026-10-12', 'Аванс 50%')">
+                    <div class="slip-data-col">
+                      <span class="slip-sum">60 000 ₽</span>
+                      <span class="slip-date">12 окт</span>
+                    </div>
+                    <button class="btn-slip-plus" onclick="event.stopPropagation(); openModal('modal-add-payment', 'ООО Вектор')" title="Внести платёж">+</button>
+                  </div>
+                  <div class="payment-slip" onclick="openModal('modal-edit-payment', 'ООО Вектор', '40 000', '2026-10-20', 'Второй платёж')">
+                    <div class="slip-data-col">
+                      <span class="slip-sum">40 000 ₽</span>
+                      <span class="slip-date">20 окт</span>
+                    </div>
+                    <button class="btn-slip-plus" onclick="event.stopPropagation(); openModal('modal-add-payment', 'ООО Вектор')" title="Внести платёж">+</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ДЕСКТОП: Карточка 2 (Персик) -->
+            <div class="project-card peach">
+              <div class="project-card-header">
+                <div class="project-title-group">
+                  <span class="project-client-name">Мария Смирнова</span>
+                  <span class="project-service-name">Дизайн мобильного приложения</span>
+                </div>
+                <div class="project-header-right">
+                  <div class="project-total-pill" onclick="openModal('modal-edit-cost', 'Мария Смирнова', '85 000')" title="Изменить стоимость">
+                    <span class="project-total-val">85 000 ₽</span>
+                    <button class="edit-pencil-btn" title="Редактировать сумму">✎</button>
+                  </div>
+                  <button class="btn-archive-project" onclick="openModal('modal-archive', 'Мария Смирнова')" title="В архив">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M3 6h18"/>
+                      <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+                      <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                      <line x1="10" y1="11" x2="10" y2="17"/>
+                      <line x1="14" y1="11" x2="14" y2="17"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div class="payments-section">
+                <div class="payments-section-header">
+                  <span class="payments-section-title">Внесённые оплаты (2)</span>
+                </div>
+                <div class="payments-list">
+                  <div class="payment-slip" onclick="openModal('modal-edit-payment', 'Мария Смирнова', '45 000', '2026-10-05', 'Аванс')">
+                    <div class="slip-data-col">
+                      <span class="slip-sum">45 000 ₽</span>
+                      <span class="slip-date">05 окт</span>
+                    </div>
+                    <button class="btn-slip-plus" onclick="event.stopPropagation(); openModal('modal-add-payment', 'Мария Смирнова')" title="Внести платёж">+</button>
+                  </div>
+                  <div class="payment-slip" onclick="openModal('modal-edit-payment', 'Мария Смирнова', '40 000', '2026-10-18', 'Окончательный расчёт')">
+                    <div class="slip-data-col">
+                      <span class="slip-sum">40 000 ₽</span>
+                      <span class="slip-date">18 окт</span>
+                    </div>
+                    <button class="btn-slip-plus" onclick="event.stopPropagation(); openModal('modal-add-payment', 'Мария Смирнова')" title="Внести платёж">+</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ДЕСКТОП: Карточка 3 (Лаванда) -->
+            <div class="project-card lavender">
+              <div class="project-card-header">
+                <div class="project-title-group">
+                  <span class="project-client-name">Иван Петров</span>
+                  <span class="project-service-name">SMM и ведение канала</span>
+                </div>
+                <div class="project-header-right">
+                  <div class="project-total-pill" onclick="openModal('modal-edit-cost', 'Иван Петров', '45 000')" title="Изменить стоимость">
+                    <span class="project-total-val">45 000 ₽</span>
+                    <button class="edit-pencil-btn" title="Редактировать сумму">✎</button>
+                  </div>
+                  <button class="btn-archive-project" onclick="openModal('modal-archive', 'Иван Петров')" title="В архив">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M3 6h18"/>
+                      <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+                      <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                      <line x1="10" y1="11" x2="10" y2="17"/>
+                      <line x1="14" y1="11" x2="14" y2="17"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div class="payments-section">
+                <div class="payments-section-header">
+                  <span class="payments-section-title">Внесённые оплаты (1)</span>
+                </div>
+                <div class="payments-list">
+                  <div class="payment-slip" onclick="openModal('modal-edit-payment', 'Иван Петров', '45 000', '2026-10-01', 'Оклад за октябрь')">
+                    <div class="slip-data-col">
+                      <span class="slip-sum">45 000 ₽</span>
+                      <span class="slip-date">01 окт</span>
+                    </div>
+                    <button class="btn-slip-plus" onclick="event.stopPropagation(); openModal('modal-add-payment', 'Иван Петров')" title="Внести платёж">+</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ДЕСКТОП: Карточка 4 (Чистое небо) — Показ состояния «Нет платежей» -->
+            <div class="project-card blue">
+              <div class="project-card-header">
+                <div class="project-title-group">
+                  <span class="project-client-name">Елена Васильева</span>
+                  <span class="project-service-name">SEO и контентная оптимизация</span>
+                </div>
+                <div class="project-header-right">
+                  <div class="project-total-pill" onclick="openModal('modal-edit-cost', 'Елена Васильева', '60 000')" title="Изменить стоимость">
+                    <span class="project-total-val">60 000 ₽</span>
+                    <button class="edit-pencil-btn" title="Редактировать сумму">✎</button>
+                  </div>
+                  <button class="btn-archive-project" onclick="openModal('modal-archive', 'Елена Васильева')" title="В архив">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M3 6h18"/>
+                      <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+                      <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                      <line x1="10" y1="11" x2="10" y2="17"/>
+                      <line x1="14" y1="11" x2="14" y2="17"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div class="payments-section">
+                <div class="payments-section-header">
+                  <span class="payments-section-title">Внесённые оплаты (0)</span>
+                </div>
+                <div class="payments-list">
+                  <div class="payment-slip" onclick="openModal('modal-add-payment', 'Елена Васильева')">
+                    <div class="slip-data-col">
+                      <span class="slip-empty-text">Нет платежей</span>
+                      <span class="slip-date">Нажмите, чтобы внести</span>
+                    </div>
+                    <button class="btn-slip-plus" onclick="event.stopPropagation(); openModal('modal-add-payment', 'Елена Васильева')" title="Внести платёж">+</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ========================================================
+         7. ДЕМОНСТРАЦИОННАЯ СЕКЦИЯ: ЗОЛОТОЙ СТАНДАРТ ВСЕХ МОДАЛОК
+         ======================================================== -->
+    <div class="showcase-section">
+      <div class="showcase-header">
+        <span class="showcase-badge">УТВЕРЖДЁННЫЙ ЗОЛОТОЙ СТАНДАРТ АНИ</span>
+        <h2 class="showcase-title">Все всплывающие окна Стейджа 3 «Доходы»</h2>
+        <p class="showcase-sub">
+          Полное отсутствие рамок (border: none), объём только мягкими 3D-тенями бумаги, кнопки одинаковой ширины (flex: 1), запрет слова «Архив» в кнопке удаления
+        </p>
+      </div>
+
+      <div class="modals-grid">
+        
+        <!-- МОДАЛКА 1: + Новый проект -->
+        <div class="golden-modal">
+          <div class="golden-modal-header">
+            <span class="golden-modal-title">
+              <span style="color:#1E3F30;">+</span> Новый проект
+            </span>
+            <button class="golden-modal-close">✕</button>
+          </div>
+
+          <div class="golden-plaque">
+            <div class="field-group">
+              <label class="field-label">Клиент</label>
+              <select class="field-select">
+                <option selected>ООО Вектор</option>
+                <option>Мария Смирнова</option>
+                <option>Иван Петров</option>
+                <option>Елена Васильева</option>
+                <option>+ Ввести нового клиента...</option>
+              </select>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label">Название проекта / услуги</label>
+              <input type="text" class="field-input" value="Разработка CRM-системы" placeholder="Например: Дизайн сайта, SMM">
+            </div>
+
+            <div class="field-group">
+              <label class="field-label">Полная стоимость проекта (₽)</label>
+              <input type="number" class="field-input" value="120000" placeholder="120 000">
+              <span class="field-hint">Фиксированная сумма по договору</span>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label">Цвет карточки</label>
+              <div class="palette-row">
+                <button class="palette-circle selected" style="background:#C8E2D2;" title="Мята"></button>
+                <button class="palette-circle" style="background:#FCD6CF;" title="Персик"></button>
+                <button class="palette-circle" style="background:#DBCCE9;" title="Лаванда"></button>
+                <button class="palette-circle" style="background:#D3E7F8;" title="Небо"></button>
+                <button class="palette-circle" style="background:#FDF1CC;" title="Сливки"></button>
+              </div>
+            </div>
+          </div>
+
+          <div class="golden-actions-row">
+            <button class="btn-action-modal cancel">Отмена</button>
+            <button class="btn-action-modal save">Сохранить проект</button>
+          </div>
+        </div>
+
+        <!-- МОДАЛКА 2: + Внести платёж -->
+        <div class="golden-modal">
+          <div class="golden-modal-header">
+            <span class="golden-modal-title">
+              <span style="color:#1E3F30;">+</span> Внести платёж • ООО Вектор
+            </span>
+            <button class="golden-modal-close">✕</button>
+          </div>
+
+          <div class="golden-plaque">
+            <div class="field-group">
+              <label class="field-label">Сумма фактически внесённой оплаты (₽)</label>
+              <input type="number" class="field-input" value="40000" placeholder="40 000">
+            </div>
+
+            <div class="field-group">
+              <label class="field-label">Дата получения денег</label>
+              <input type="date" class="field-input" value="2026-10-20">
+            </div>
+
+            <div class="field-group">
+              <label class="field-label">Заметка / За что платёж</label>
+              <input type="text" class="field-input" value="Второй платёж" placeholder="Например: Аванс 50%, Оклад за октябрь">
+              <span class="field-hint">Отображается при редактировании</span>
+            </div>
+          </div>
+
+          <div class="golden-actions-row">
+            <button class="btn-action-modal cancel">Отмена</button>
+            <button class="btn-action-modal save">Сохранить платёж</button>
+          </div>
+        </div>
+
+        <!-- МОДАЛКА 3: Изменить платёж (3 РАВНЫЕ КНОПКИ) -->
+        <div class="golden-modal">
+          <div class="golden-modal-header">
+            <span class="golden-modal-title">
+              <span>✎</span> Изменить платёж • ООО Вектор
+            </span>
+            <button class="golden-modal-close">✕</button>
+          </div>
+
+          <div class="golden-plaque">
+            <div class="field-group">
+              <label class="field-label">Сумма платежа (₽)</label>
+              <input type="number" class="field-input" value="40000">
+            </div>
+
+            <div class="field-group">
+              <label class="field-label">Дата получения</label>
+              <input type="date" class="field-input" value="2026-10-20">
+            </div>
+
+            <div class="field-group">
+              <label class="field-label">Заметка / Назначение</label>
+              <input type="text" class="field-input" value="Второй платёж">
+            </div>
+          </div>
+
+          <!-- 3 КНОПКИ СТРОГО ОДИНАКОВОЙ ШИРИНЫ (flex: 1) -->
+          <div class="golden-actions-row">
+            <button class="btn-action-modal delete" title="Удалить платёж без слова Архив">Удалить</button>
+            <button class="btn-action-modal cancel">Отмена</button>
+            <button class="btn-action-modal save">Сохранить</button>
+          </div>
+        </div>
+
+        <!-- МОДАЛКА 4: Изменить стоимость проекта (Карандашик) -->
+        <div class="golden-modal">
+          <div class="golden-modal-header">
+            <span class="golden-modal-title">
+              <span>✎</span> Стоимость проекта • ООО Вектор
+            </span>
+            <button class="golden-modal-close">✕</button>
+          </div>
+
+          <div class="golden-plaque">
+            <div class="field-group">
+              <label class="field-label">Полная договорная стоимость (₽)</label>
+              <input type="number" class="field-input" value="120000">
+              <span class="field-hint">
+                Сумма проекта фиксируется договором и не зависит от разбивки на частичные оплаты
+              </span>
+            </div>
+          </div>
+
+          <div class="golden-actions-row">
+            <button class="btn-action-modal cancel">Отмена</button>
+            <button class="btn-action-modal save">Сохранить</button>
+          </div>
+        </div>
+
+        <!-- МОДАЛКА 5: Отправить в архив (Корзинка Вариант № 1) -->
+        <div class="golden-modal">
+          <div class="golden-modal-header">
+            <span class="golden-modal-title">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;">
+                <path d="M3 6h18"/>
+                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                <line x1="10" y1="11" x2="10" y2="17"/>
+                <line x1="14" y1="11" x2="14" y2="17"/>
+              </svg>
+              <span>Архивация проекта</span>
+            </span>
+            <button class="golden-modal-close">✕</button>
+          </div>
+
+          <div class="golden-plaque">
+            <p style="font-size: 13.5px; font-weight: 700; color: #4D3118; line-height: 1.45;">
+              Отправить проект <b>«ООО Вектор»</b> в архив?
+            </p>
+            <p style="font-size: 11.5px; font-weight: 600; color: #726453; line-height: 1.4;">
+              Карточка скроется из активного экрана Доходов, а все внесённые платежи сохранятся в Google Таблицах для годовой отчётности.
+            </p>
+          </div>
+
+          <div class="golden-actions-row">
+            <button class="btn-action-modal cancel">Отмена</button>
+            <button class="btn-action-modal delete">В архив</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ПОДВАЛ -->
+    <div class="info-footer">
+      «Мои таблицы ♡» • Стейдж 3 «Экран Доходы» • Фирменный стиль «3D-Бумажечки» • Шрифт Manrope
+    </div>
+
+  </div>
+
+  <!-- ========================================================
+       ИНТЕРАКТИВНЫЕ МОДАЛЬНЫЕ ОКНА (OVERLAY) ДЛЯ ЖИВОГО ТЕСТА
+       ======================================================== -->
+  <div id="modalOverlay" class="modal-overlay" onclick="closeModalOnBackdrop(event)">
+    <div class="overlay-card" id="overlayContainer"></div>
+  </div>
+
+  <script>
+    // Шаблоны модалок для живого интерактивного тестирования в браузере
+    function openModal(type, clientName = 'ООО Вектор', val1 = '', val2 = '', val3 = '') {
+      const container = document.getElementById('overlayContainer');
+      const overlay = document.getElementById('modalOverlay');
+
+      if (type === 'modal-add-project') {
+        container.innerHTML = `
+          <div class="golden-modal">
+            <div class="golden-modal-header">
+              <span class="golden-modal-title"><span style="color:#1E3F30;">+</span> Новый проект</span>
+              <button class="golden-modal-close" onclick="closeModal()">✕</button>
+            </div>
+            <div class="golden-plaque">
+              <div class="field-group">
+                <label class="field-label">Клиент</label>
+                <select class="field-select">
+                  <option selected>ООО Вектор</option>
+                  <option>Мария Смирнова</option>
+                  <option>Иван Петров</option>
+                  <option>Елена Васильева</option>
+                  <option>+ Ввести нового клиента...</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label class="field-label">Название проекта / услуги</label>
+                <input type="text" class="field-input" placeholder="Например: Дизайн сайта, SMM" value="Новый договор">
+              </div>
+              <div class="field-group">
+                <label class="field-label">Полная стоимость проекта (₽)</label>
+                <input type="number" class="field-input" placeholder="100 000" value="100000">
+              </div>
+              <div class="field-group">
+                <label class="field-label">Цвет карточки</label>
+                <div class="palette-row">
+                  <button class="palette-circle selected" style="background:#C8E2D2;"></button>
+                  <button class="palette-circle" style="background:#FCD6CF;"></button>
+                  <button class="palette-circle" style="background:#DBCCE9;"></button>
+                  <button class="palette-circle" style="background:#D3E7F8;"></button>
+                  <button class="palette-circle" style="background:#FDF1CC;"></button>
+                </div>
+              </div>
+            </div>
+            <div class="golden-actions-row">
+              <button class="btn-action-modal cancel" onclick="closeModal()">Отмена</button>
+              <button class="btn-action-modal save" onclick="closeModal()">Сохранить проект</button>
+            </div>
+          </div>
+        `;
+      } else if (type === 'modal-add-payment') {
+        container.innerHTML = `
+          <div class="golden-modal">
+            <div class="golden-modal-header">
+              <span class="golden-modal-title"><span style="color:#1E3F30;">+</span> Внести платёж • ${clientName}</span>
+              <button class="golden-modal-close" onclick="closeModal()">✕</button>
+            </div>
+            <div class="golden-plaque">
+              <div class="field-group">
+                <label class="field-label">Сумма фактически внесённой оплаты (₽)</label>
+                <input type="number" class="field-input" value="30000" placeholder="30 000">
+              </div>
+              <div class="field-group">
+                <label class="field-label">Дата получения денег</label>
+                <input type="date" class="field-input" value="2026-10-23">
+              </div>
+              <div class="field-group">
+                <label class="field-label">Заметка / За что платёж</label>
+                <input type="text" class="field-input" value="Очередной платёж" placeholder="Например: Аванс 50%">
+              </div>
+            </div>
+            <div class="golden-actions-row">
+              <button class="btn-action-modal cancel" onclick="closeModal()">Отмена</button>
+              <button class="btn-action-modal save" onclick="closeModal()">Сохранить платёж</button>
+            </div>
+          </div>
+        `;
+      } else if (type === 'modal-edit-payment') {
+        container.innerHTML = `
+          <div class="golden-modal">
+            <div class="golden-modal-header">
+              <span class="golden-modal-title"><span>✎</span> Изменить платёж • ${clientName}</span>
+              <button class="golden-modal-close" onclick="closeModal()">✕</button>
+            </div>
+            <div class="golden-plaque">
+              <div class="field-group">
+                <label class="field-label">Сумма платежа (₽)</label>
+                <input type="number" class="field-input" value="${val1.replace(/\s+/g, '')}">
+              </div>
+              <div class="field-group">
+                <label class="field-label">Дата получения</label>
+                <input type="date" class="field-input" value="${val2 || '2026-10-20'}">
+              </div>
+              <div class="field-group">
+                <label class="field-label">Заметка / Назначение</label>
+                <input type="text" class="field-input" value="${val3 || 'Платёж'}">
+              </div>
+            </div>
+            <!-- 3 КНОПКИ ОДИНАКОВОЙ ШИРИНЫ flex:1 -->
+            <div class="golden-actions-row">
+              <button class="btn-action-modal delete" onclick="closeModal()">Удалить</button>
+              <button class="btn-action-modal cancel" onclick="closeModal()">Отмена</button>
+              <button class="btn-action-modal save" onclick="closeModal()">Сохранить</button>
+            </div>
+          </div>
+        `;
+      } else if (type === 'modal-edit-cost') {
+        container.innerHTML = `
+          <div class="golden-modal">
+            <div class="golden-modal-header">
+              <span class="golden-modal-title"><span>✎</span> Стоимость проекта • ${clientName}</span>
+              <button class="golden-modal-close" onclick="closeModal()">✕</button>
+            </div>
+            <div class="golden-plaque">
+              <div class="field-group">
+                <label class="field-label">Полная договорная стоимость (₽)</label>
+                <input type="number" class="field-input" value="${val1.replace(/\s+/g, '')}">
+                <span class="field-hint">Сумма фиксируется договором и не зависит от оплат</span>
+              </div>
+            </div>
+            <div class="golden-actions-row">
+              <button class="btn-action-modal cancel" onclick="closeModal()">Отмена</button>
+              <button class="btn-action-modal save" onclick="closeModal()">Сохранить</button>
+            </div>
+          </div>
+        `;
+      } else if (type === 'modal-archive') {
+        container.innerHTML = `
+          <div class="golden-modal">
+            <div class="golden-modal-header">
+              <span class="golden-modal-title">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;">
+                  <path d="M3 6h18"/>
+                  <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+                  <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                  <line x1="10" y1="11" x2="10" y2="17"/>
+                  <line x1="14" y1="11" x2="14" y2="17"/>
+                </svg>
+                <span>Архивация проекта</span>
+              </span>
+              <button class="golden-modal-close" onclick="closeModal()">✕</button>
+            </div>
+            <div class="golden-plaque">
+              <p style="font-size:13.5px; font-weight:700; color:#4D3118; line-height:1.45;">
+                Отправить проект <b>«${clientName}»</b> в архив?
+              </p>
+              <p style="font-size:11.5px; font-weight:600; color:#726453; line-height:1.4;">
+                Карточка скроется из активного экрана Доходов, а вся история оплат останется сохранена.
+              </p>
+            </div>
+            <div class="golden-actions-row">
+              <button class="btn-action-modal cancel" onclick="closeModal()">Отмена</button>
+              <button class="btn-action-modal delete" onclick="closeModal()">В архив</button>
+            </div>
+          </div>
+        `;
+      }
+
+      overlay.classList.add('active');
+    }
+
+    function closeModal() {
+      const overlay = document.getElementById('modalOverlay');
+      overlay.classList.remove('active');
+    }
+
+    function closeModalOnBackdrop(e) {
+      if (e.target.id === 'modalOverlay') {
+        closeModal();
+      }
+    }
+  </script>
+</body>
+</html>

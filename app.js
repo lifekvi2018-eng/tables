@@ -65,6 +65,11 @@
         window.openEditExpenseModal(title, slip);
       }
     });
+
+    // 8. Инициализируем экран Доходов (Стейдж 3)
+    if (window.MyTablesIncome && typeof window.MyTablesIncome.renderIncome === 'function') {
+      window.MyTablesIncome.renderIncome();
+    }
   });
 
   // Загрузка живых данных и обновление текущего экрана
@@ -203,100 +208,731 @@
     }
   }
 
-  // --- ОБНОВЛЕНИЕ ЭКРАНА ДОХОДОВ ---
-  function updateIncomeScreen(data) {
-    var incomeList = data.income || [];
-    var totalIncome = incomeList.reduce(function (sum, item) {
-      return sum + (Number(item['Сумма'] || item.amount || 0));
-    }, 0);
+  // ==========================================================================
+  // СТЕЙДЖ 3: МЕНЕДЖЕР «ДОХОДЫ ♡» (ПРОЕКТЫ И ПЛАТЕЖИ)
+  // ==========================================================================
+  var MyTablesIncome = (function () {
+    // 1. Исходные проекты (пастельная палитра: мята, персик, лаванда, небо)
+    var initialProjects = [
+      { id: 'inc_proj_1', client: 'ООО Вектор', project: 'Разработка CRM-системы', totalCost: 120000, 'Полная_Стоимость': 120000, color: 'mint', isArchived: false, 'В_Архиве': false, createdAt: '2026-10-01' },
+      { id: 'inc_proj_2', client: 'Мария Смирнова', project: 'Дизайн мобильного приложения', totalCost: 85000, 'Полная_Стоимость': 85000, color: 'peach', isArchived: false, 'В_Архиве': false, createdAt: '2026-10-01' },
+      { id: 'inc_proj_3', client: 'Иван Петров', project: 'SMM и ведение канала', totalCost: 45000, 'Полная_Стоимость': 45000, color: 'lavender', isArchived: false, 'В_Архиве': false, createdAt: '2026-10-01' },
+      { id: 'inc_proj_4', client: 'Елена Васильева', project: 'SEO и контентная оптимизация', totalCost: 60000, 'Полная_Стоимость': 60000, color: 'blue', isArchived: false, 'В_Архиве': false, createdAt: '2026-10-01' }
+    ];
 
-    // Обновляем общую сумму доходов (налепочки / бейджи)
-    var totalPill = document.getElementById('income-total-val') || document.querySelector('.project-sum-val');
-    if (totalPill) totalPill.textContent = formatRub(totalIncome);
+    // 2. Исходные платежи
+    var initialPayments = [
+      { id: 'inc_pay_1', projectId: 'inc_proj_1', date: '2026-10-12', 'Дата': '2026-10-12', amount: 60000, 'Сумма': 60000, note: 'Аванс 50%', 'Заметка': 'Аванс 50%' },
+      { id: 'inc_pay_2', projectId: 'inc_proj_1', date: '2026-10-20', 'Дата': '2026-10-20', amount: 40000, 'Сумма': 40000, note: 'Второй платёж', 'Заметка': 'Второй платёж' },
+      { id: 'inc_pay_3', projectId: 'inc_proj_2', date: '2026-10-05', 'Дата': '2026-10-05', amount: 45000, 'Сумма': 45000, note: 'Аванс', 'Заметка': 'Аванс' },
+      { id: 'inc_pay_4', projectId: 'inc_proj_2', date: '2026-10-18', 'Дата': '2026-10-18', amount: 40000, 'Сумма': 40000, note: 'Окончательный расчёт', 'Заметка': 'Окончательный расчёт' },
+      { id: 'inc_pay_5', projectId: 'inc_proj_3', date: '2026-10-01', 'Дата': '2026-10-01', amount: 45000, 'Сумма': 45000, note: 'Оклад за октябрь', 'Заметка': 'Оклад за октябрь' }
+    ];
 
-    // Мобильный список карточек доходов
-    var mobContainer = document.getElementById('income-live-payments') || document.querySelector('.income-cards-list');
-    if (mobContainer && incomeList.length > 0) {
-      // Рендерим живые доходы в виде аккуратных 3D-бумажечек
-      mobContainer.innerHTML = incomeList.slice().reverse().map(function (item, idx) {
-        var id = item.ID || item.id || ('inc_' + idx);
-        var date = formatDate(item['Дата']);
-        var sum = formatRub(item['Сумма'] || 0);
-        var client = item['Клиент / Источник'] || 'Клиент';
-        var project = item['Проект / Услуга'] || 'Услуга';
-        var cat = item['Категория'] || 'Доход';
-        var color = PALETTE_COLORS[idx % PALETTE_COLORS.length];
-        var initials = getInitials(client);
+    var storageKeyProjects = 'mytables_income_projects_v3';
+    var storageKeyPayments = 'mytables_income_payments_v3';
 
-        return [
-          '<div class="income-client-card" style="background: ' + color + '; margin-bottom: 12px;" data-id="' + id + '">',
-          '  <div class="client-card-top">',
-          '    <div class="client-info-left">',
-          '      <div class="client-avatar" style="background: rgba(255,255,255,0.7);">' + initials + '</div>',
-          '      <div class="client-name-box">',
-          '        <span class="client-name">' + escapeHtml(client) + '</span>',
-          '        <span class="client-phone">' + escapeHtml(project) + '</span>',
-          '      </div>',
-          '    </div>',
-          '    <div class="project-sum-pill">',
-          '      <span class="project-sum-label">' + escapeHtml(cat) + ':</span>',
-          '      <span class="project-sum-val">' + sum + '</span>',
-          '    </div>',
-          '  </div>',
-          '  <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 6px; font-size: 11px; opacity: 0.8;">',
-          '    <span>' + escapeHtml(date) + '</span>',
-          '    <button class="item-del-btn" title="Удалить" onclick="window.handleDeleteRow(event, \'Доходы\', \'' + id + '\', \'' + escapeHtml(client) + '\')"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>',
-          '  </div>',
-          '</div>'
-        ].join('');
-      }).join('');
+    function loadProjects() {
+      if (typeof localStorage !== 'undefined') {
+        try {
+          var saved = localStorage.getItem(storageKeyProjects);
+          if (saved) return JSON.parse(saved);
+        } catch (e) {}
+      }
+      return initialProjects.slice();
     }
 
-    // Десктопный список карточек
-    var deskContainer = document.getElementById('income-desktop-list') || document.querySelector('.desk-income-list');
-    if (deskContainer && incomeList.length > 0) {
-      deskContainer.innerHTML = incomeList.slice().reverse().map(function (item, idx) {
-        var id = item.ID || item.id || ('inc_' + idx);
-        var date = formatDate(item['Дата']);
-        var sum = formatRub(item['Сумма'] || 0);
-        var client = item['Клиент / Источник'] || 'Клиент';
-        var project = item['Проект / Услуга'] || 'Услуга';
-        var cat = item['Категория'] || 'Доход';
-        var color = PALETTE_COLORS[idx % PALETTE_COLORS.length];
-        var initials = getInitials(client);
+    function loadPayments() {
+      if (typeof localStorage !== 'undefined') {
+        try {
+          var saved = localStorage.getItem(storageKeyPayments);
+          if (saved) return JSON.parse(saved);
+        } catch (e) {}
+      }
+      return initialPayments.slice();
+    }
 
-        return [
-          '<div class="desk-client-bento-card" style="background: ' + color + '; margin-bottom: 16px;" data-id="' + id + '">',
-          '  <div class="desk-card-profile">',
-          '    <div class="desk-profile-header">',
-          '      <div class="client-avatar desk-avatar-big">' + initials + '</div>',
-          '      <div>',
-          '        <div class="desk-profile-name">' + escapeHtml(client) + '</div>',
-          '        <div class="desk-profile-phone">' + escapeHtml(project) + ' • ' + escapeHtml(date) + '</div>',
-          '      </div>',
-          '    </div>',
-          '    <div class="project-sum-pill" style="width: fit-content;">',
-          '      <span class="project-sum-label">' + escapeHtml(cat) + ':</span>',
-          '      <span class="project-sum-val">' + sum + '</span>',
-          '    </div>',
+    var projects = loadProjects();
+    var payments = loadPayments();
+
+    function persist() {
+      if (typeof localStorage !== 'undefined') {
+        try {
+          localStorage.setItem(storageKeyProjects, JSON.stringify(projects));
+          localStorage.setItem(storageKeyPayments, JSON.stringify(payments));
+        } catch (e) {}
+      }
+    }
+
+    // Валидация создания проекта
+    function validateProject(client, project, totalCost, color) {
+      if (!client || !String(client).trim()) {
+        return { valid: false, error: 'Укажите клиента' };
+      }
+      var cost = Number(totalCost);
+      if (isNaN(cost) || cost <= 0) {
+        return { valid: false, error: 'Полная стоимость проекта должна быть больше нуля' };
+      }
+      return {
+        valid: true,
+        client: String(client).trim(),
+        project: String(project || 'Услуга').trim(),
+        totalCost: cost,
+        color: color || 'mint'
+      };
+    }
+
+    // Валидация внесения/изменения платежа
+    function validatePayment(amount, date, note) {
+      var sum = Number(amount);
+      if (isNaN(sum) || sum <= 0) {
+        return { valid: false, error: 'Сумма платежа должна быть больше нуля' };
+      }
+      var d = date ? String(date).trim() : new Date().toISOString().slice(0, 10);
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(d)) {
+        return { valid: false, error: 'Укажите дату в формате ГГГГ-ММ-ДД' };
+      }
+      return {
+        valid: true,
+        amount: sum,
+        date: d,
+        note: String(note || '').trim()
+      };
+    }
+
+    // Добавление проекта со строгими полями
+    function addProject(data) {
+      var val = validateProject(data.client, data.project, data.totalCost, data.color);
+      if (!val.valid) throw new Error(val.error);
+      var newProj = {
+        id: 'inc_proj_' + Date.now(),
+        client: val.client,
+        project: val.project,
+        totalCost: val.totalCost,
+        'Полная_Стоимость': val.totalCost,
+        color: val.color,
+        isArchived: false,
+        'В_Архиве': false,
+        createdAt: new Date().toISOString().slice(0, 10)
+      };
+      projects.push(newProj);
+      persist();
+      renderIncome();
+      return newProj;
+    }
+
+    // Изменение договорной стоимости проекта
+    function updateProjectCost(projectId, newCost) {
+      var cost = Number(newCost);
+      if (isNaN(cost) || cost <= 0) throw new Error('Стоимость должна быть больше нуля');
+      var proj = projects.find(function (p) { return p.id === projectId; });
+      if (proj) {
+        proj.totalCost = cost;
+        proj['Полная_Стоимость'] = cost;
+        persist();
+        renderIncome();
+      }
+    }
+
+    // Архивация проекта (скрывается с экрана, платежи сохраняются)
+    function archiveProject(projectId) {
+      var proj = projects.find(function (p) { return p.id === projectId; });
+      if (proj) {
+        proj.isArchived = true;
+        proj['В_Архиве'] = true;
+        persist();
+        renderIncome();
+      }
+    }
+
+    // Добавление платежа
+    function addPayment(projectId, payData) {
+      var val = validatePayment(payData.amount, payData.date, payData.note);
+      if (!val.valid) throw new Error(val.error);
+      var newPay = {
+        id: 'inc_pay_' + Date.now(),
+        projectId: projectId,
+        date: val.date,
+        'Дата': val.date,
+        amount: val.amount,
+        'Сумма': val.amount,
+        note: val.note,
+        'Заметка': val.note
+      };
+      payments.push(newPay);
+      persist();
+      syncToMainScreen();
+      renderIncome();
+      return newPay;
+    }
+
+    // Редактирование платежа
+    function updatePayment(paymentId, payData) {
+      var val = validatePayment(payData.amount, payData.date, payData.note);
+      if (!val.valid) throw new Error(val.error);
+      var pay = payments.find(function (p) { return p.id === paymentId; });
+      if (pay) {
+        pay.amount = val.amount;
+        pay['Сумма'] = val.amount;
+        pay.date = val.date;
+        pay['Дата'] = val.date;
+        pay.note = val.note;
+        pay['Заметка'] = val.note;
+        persist();
+        syncToMainScreen();
+        renderIncome();
+      }
+    }
+
+    // Удаление платежа
+    function deletePayment(paymentId) {
+      var idx = payments.findIndex(function (p) { return p.id === paymentId; });
+      if (idx !== -1) {
+        payments.splice(idx, 1);
+        persist();
+        syncToMainScreen();
+        renderIncome();
+      }
+    }
+
+    // Реактивная связь с Главным экраном
+    function syncToMainScreen() {
+      var flatPayments = payments.map(function (p) {
+        var proj = projects.find(function (pr) { return pr.id === p.projectId; });
+        return {
+          ID: p.id,
+          id: p.id,
+          'Дата': p.date,
+          date: p.date,
+          'Сумма': p.amount,
+          amount: p.amount,
+          'Клиент / Источник': proj ? proj.client : '',
+          'Проект / Услуга': proj ? proj.project : '',
+          'Заметка': p.note
+        };
+      });
+
+      if (window.MyTablesCalendar) {
+        if (!window.MyTablesCalendar.state) window.MyTablesCalendar.state = {};
+        if (!window.MyTablesCalendar.state.data) window.MyTablesCalendar.state.data = {};
+        window.MyTablesCalendar.state.data.income = flatPayments;
+        if (typeof window.MyTablesCalendar.updateSummaryCards === 'function') {
+          window.MyTablesCalendar.updateSummaryCards();
+        }
+      }
+
+      var ym = (window.MyTablesCalendar && typeof window.MyTablesCalendar.getYearMonth === 'function')
+        ? window.MyTablesCalendar.getYearMonth()
+        : new Date().toISOString().slice(0, 7);
+
+      var monthIncomeTotal = payments.reduce(function (sum, pay) {
+        if (String(pay.date || '').indexOf(ym) === 0) {
+          return sum + Number(pay.amount || 0);
+        }
+        return sum;
+      }, 0);
+
+      var mobIncomeSumEl = document.getElementById('mob-income-sum');
+      if (mobIncomeSumEl) {
+        mobIncomeSumEl.textContent = formatRub(monthIncomeTotal);
+      }
+
+      var deskMonthBadge = document.getElementById('desk-income-month-badge');
+      if (deskMonthBadge) {
+        deskMonthBadge.textContent = formatRub(monthIncomeTotal) + ' в ' + getMonthNameRu(ym);
+      }
+
+      var mobMonthBadge = document.getElementById('mob-income-month-badge');
+      if (mobMonthBadge) {
+        mobMonthBadge.textContent = formatRub(monthIncomeTotal);
+      }
+
+      var deskIncomeItems = document.getElementById('desk-income-items');
+      if (deskIncomeItems && flatPayments.length > 0) {
+        var recent = flatPayments.slice(-4).reverse();
+        deskIncomeItems.innerHTML = recent.map(function (item, idx) {
+          var title = item['Проект / Услуга'] || item['Клиент / Источник'] || 'Доход';
+          var sum = formatRub(item['Сумма'] || 0);
+          var date = formatDayMonth(item['Дата']);
+          var dotColor = PALETTE_COLORS[idx % PALETTE_COLORS.length];
+          return [
+            '<div class="sub-item-income" onclick="switchAppTab(\'income\')" style="cursor: pointer;">',
+            '  <div style="display: flex; align-items: center; gap: 8px;">',
+            '    <div style="width: 10px; height: 10px; border-radius: 50%; background: ' + dotColor + ';"></div>',
+            '    <div>',
+            '      <div style="font-weight: 800; color: #1E3F30;">' + escapeHtml(title) + '</div>',
+            '      <div style="font-size: 10px; color: #4A6E5A;">' + escapeHtml(date) + '</div>',
+            '    </div>',
+            '  </div>',
+            '  <div style="display: flex; align-items: center; gap: 4px;">',
+            '    <span style="font-weight: 900; color: #1E3F30;">+ ' + sum + '</span>',
+            '    <span class="sub-arrow-income"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></span>',
+            '  </div>',
+            '</div>'
+          ].join('');
+        }).join('');
+      }
+    }
+
+    function getMonthNameRu(ym) {
+      var months = ['январе', 'феврале', 'марте', 'апреле', 'мае', 'июне', 'июле', 'августе', 'сентябре', 'октябре', 'ноябре', 'декабре'];
+      var parts = String(ym || '').split('-');
+      var idx = (parseInt(parts[1], 10) || 1) - 1;
+      return months[idx] || 'этом месяце';
+    }
+
+    function formatDayMonth(dateStr) {
+      if (!dateStr) return '';
+      var monthsShort = ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
+      var parts = String(dateStr).split('-');
+      if (parts.length === 3) {
+        var day = parts[2];
+        var mIdx = (parseInt(parts[1], 10) || 1) - 1;
+        return day + ' ' + (monthsShort[mIdx] || '');
+      }
+      return dateStr;
+    }
+
+    var CARD_COLOR_CLASSES = {
+      mint: 'project-card mint',
+      peach: 'project-card peach',
+      lavender: 'project-card lavender',
+      blue: 'project-card blue',
+      cream: 'project-card cream'
+    };
+
+    function renderProjectCard(p) {
+      var projectPayments = payments.filter(function (pay) { return pay.projectId === p.id; });
+      var cardClass = CARD_COLOR_CLASSES[p.color] || 'project-card mint';
+
+      var paymentsHtml = '';
+      if (projectPayments.length > 0) {
+        paymentsHtml = projectPayments.map(function (pay) {
+          return [
+            '<div class="payment-slip" onclick="window.MyTablesIncome.openEditPaymentModal(\'' + pay.id + '\')">',
+            '  <div class="slip-data-col">',
+            '    <span class="slip-sum">' + formatRub(pay.amount) + ' ₽</span>',
+            '    <span class="slip-date">' + formatDayMonth(pay.date) + '</span>',
+            '  </div>',
+            '  <button class="btn-slip-plus" onclick="event.stopPropagation(); window.MyTablesIncome.openAddPaymentModal(\'' + p.id + '\')" title="Внести платёж">+</button>',
+            '</div>'
+          ].join('');
+        }).join('');
+      } else {
+        paymentsHtml = [
+          '<div class="payment-slip" onclick="window.MyTablesIncome.openAddPaymentModal(\'' + p.id + '\')">',
+          '  <div class="slip-data-col">',
+          '    <span class="slip-empty-text">Нет платежей</span>',
+          '    <span class="slip-date">Нажмите, чтобы внести</span>',
           '  </div>',
-          '  <div class="desk-payments-block">',
-          '    <div class="desk-payments-header">',
-          '      <span class="desk-payments-title">Поступление</span>',
-          '      <button class="payment-dots-btn" title="Удалить" onclick="window.handleDeleteRow(event, \'Доходы\', \'' + id + '\', \'' + escapeHtml(client) + '\')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>',
-          '    </div>',
-          '    <div class="desk-payments-grid">',
-          '      <div class="payment-paper-slip">',
-          '        <span class="payment-date">' + escapeHtml(date) + '</span>',
-          '        <div class="payment-right-group">',
-          '          <span class="payment-sum">' + sum + '</span>',
-          '        </div>',
-          '      </div>',
-          '    </div>',
-          '  </div>',
+          '  <button class="btn-slip-plus" onclick="event.stopPropagation(); window.MyTablesIncome.openAddPaymentModal(\'' + p.id + '\')" title="Внести платёж">+</button>',
           '</div>'
         ].join('');
+      }
+
+      return [
+        '<div class="' + cardClass + '" data-project-id="' + p.id + '">',
+        '  <div class="project-card-header">',
+        '    <div class="project-title-group">',
+        '      <span class="project-client-name">' + escapeHtml(p.client) + '</span>',
+        '      <span class="project-service-name">' + escapeHtml(p.project) + '</span>',
+        '    </div>',
+        '    <div class="project-header-right">',
+        '      <div class="project-total-pill" onclick="window.MyTablesIncome.openEditCostModal(\'' + p.id + '\')" title="Изменить стоимость">',
+        '        <span class="project-total-val">' + formatRub(p.totalCost) + ' ₽</span>',
+        '        <button class="edit-pencil-btn" title="Редактировать сумму">✎</button>',
+        '      </div>',
+        '      <button class="btn-archive-project" onclick="window.MyTablesIncome.openArchiveModal(\'' + p.id + '\')" title="В архив">',
+        '        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">',
+        '          <path d="M3 6h18"/>',
+        '          <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>',
+        '          <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>',
+        '          <line x1="10" y1="11" x2="10" y2="17"/>',
+        '          <line x1="14" y1="11" x2="14" y2="17"/>',
+        '        </svg>',
+        '      </button>',
+        '    </div>',
+        '  </div>',
+        '  <div class="payments-section">',
+        '    <div class="payments-section-header">',
+        '      <span class="payments-section-title">Внесённые оплаты (' + projectPayments.length + ')</span>',
+        '    </div>',
+        '    <div class="payments-list">',
+        paymentsHtml,
+        '    </div>',
+        '  </div>',
+        '</div>'
+      ].join('');
+    }
+
+    function renderIncome() {
+      if (typeof document === 'undefined') return;
+
+      var activeProjects = projects.filter(function (p) { return !p.isArchived && !p['В_Архиве']; });
+      var cardsHtml = activeProjects.map(renderProjectCard).join('');
+
+      var deskContainer = document.getElementById('desk-income-cards-grid');
+      if (deskContainer) {
+        deskContainer.innerHTML = cardsHtml;
+      }
+
+      var mobContainer = document.getElementById('mob-income-projects-scroll');
+      if (mobContainer) {
+        mobContainer.innerHTML = cardsHtml;
+      }
+
+      syncToMainScreen();
+    }
+
+    function ensureOverlay() {
+      var overlay = document.getElementById('mytables-income-overlay');
+      if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'mytables-income-overlay';
+        overlay.style.cssText = 'position: fixed; inset: 0; background: rgba(45, 35, 25, 0.45); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 16px; box-sizing: border-box;';
+        overlay.onclick = function (e) {
+          if (e.target.id === 'mytables-income-overlay') closeIncomeModal();
+        };
+        document.body.appendChild(overlay);
+      }
+      return overlay;
+    }
+
+    function closeIncomeModal() {
+      var overlay = document.getElementById('mytables-income-overlay');
+      if (overlay) {
+        overlay.style.display = 'none';
+        overlay.innerHTML = '';
+      }
+    }
+
+    // 1. Модалка добавления нового проекта
+    function openAddProjectModal() {
+      var overlay = ensureOverlay();
+      var existingClients = Array.from(new Set(projects.map(function (p) { return p.client; })));
+      var optionsHtml = existingClients.map(function (c) {
+        return '<option value="' + escapeHtml(c) + '">' + escapeHtml(c) + '</option>';
       }).join('');
+      optionsHtml += '<option value="__new__">+ Ввести нового клиента...</option>';
+
+      var colors = [
+        { name: 'mint', hex: '#C8E2D2' },
+        { name: 'peach', hex: '#FCD6CF' },
+        { name: 'lavender', hex: '#DBCCE9' },
+        { name: 'blue', hex: '#D3E7F8' },
+        { name: 'cream', hex: '#FDF1CC' }
+      ];
+
+      var selectedColor = 'mint';
+
+      overlay.innerHTML = [
+        '<div class="golden-modal" style="max-width: 440px; width: 100%;">',
+        '  <div class="golden-modal-header">',
+        '    <span class="golden-modal-title"><span style="color:#1E3F30;">+</span> Новый проект</span>',
+        '    <button type="button" class="golden-modal-close" onclick="window.MyTablesIncome.closeModal()">✕</button>',
+        '  </div>',
+        '  <div class="golden-plaque">',
+        '    <div class="golden-field-group">',
+        '      <label class="golden-field-label">Клиент</label>',
+        '      <select id="inc-modal-client-select" class="golden-field-select">',
+        optionsHtml,
+        '      </select>',
+        '      <input type="text" id="inc-modal-client" class="golden-field-input inc-proj-client" placeholder="Имя нового клиента" style="display: none; margin-top: 6px;">',
+        '    </div>',
+        '    <div class="golden-field-group">',
+        '      <label class="golden-field-label">Название проекта / услуги</label>',
+        '      <input type="text" id="inc-modal-title" class="golden-field-input inc-proj-title" placeholder="Например: Разработка CRM, Дизайн">',
+        '    </div>',
+        '    <div class="golden-field-group">',
+        '      <label class="golden-field-label">Полная стоимость проекта (₽)</label>',
+        '      <input type="number" id="inc-modal-cost" class="golden-field-input inc-proj-cost" placeholder="100 000" min="1">',
+        '      <span class="golden-field-hint">Фиксированная сумма по договору</span>',
+        '    </div>',
+        '    <div class="golden-field-group">',
+        '      <label class="golden-field-label">Цвет карточки</label>',
+        '      <div class="golden-palette-row" id="inc-proj-palette">',
+        colors.map(function (c, idx) {
+          return '<button type="button" class="palette-circle ' + (idx === 0 ? 'selected' : '') + '" data-color="' + c.name + '" style="background:' + c.hex + ';"></button>';
+        }).join(''),
+        '      </div>',
+        '      <input type="hidden" id="inc-proj-color" class="inc-proj-color" value="mint">',
+        '    </div>',
+        '  </div>',
+        '  <div class="golden-actions-row">',
+        '    <button type="button" class="btn-action-modal cancel" onclick="window.MyTablesIncome.closeModal()">Отмена</button>',
+        '    <button type="button" class="btn-action-modal save" id="inc-modal-save-proj">Сохранить проект</button>',
+        '  </div>',
+        '</div>'
+      ].join('');
+
+      var select = document.getElementById('inc-modal-client-select');
+      var clientInput = document.getElementById('inc-modal-client');
+      select.onchange = function () {
+        if (select.value === '__new__') {
+          clientInput.style.display = 'block';
+          clientInput.focus();
+        } else {
+          clientInput.style.display = 'none';
+        }
+      };
+
+      var paletteCircles = overlay.querySelectorAll('.palette-circle');
+      paletteCircles.forEach(function (btn) {
+        btn.onclick = function () {
+          paletteCircles.forEach(function (b) { b.classList.remove('selected'); });
+          btn.classList.add('selected');
+          selectedColor = btn.getAttribute('data-color');
+          document.getElementById('inc-proj-color').value = selectedColor;
+        };
+      });
+
+      document.getElementById('inc-modal-save-proj').onclick = function () {
+        var client = select.value === '__new__' ? clientInput.value : select.value;
+        var title = document.getElementById('inc-modal-title').value;
+        var cost = document.getElementById('inc-modal-cost').value;
+        var color = document.getElementById('inc-proj-color').value || 'mint';
+
+        try {
+          addProject({ client: client, project: title, totalCost: cost, color: color });
+          closeIncomeModal();
+        } catch (err) {
+          alert(err.message);
+        }
+      };
+
+      overlay.style.display = 'flex';
+    }
+
+    // 2. Модалка добавления платежа
+    function openAddPaymentModal(projectId) {
+      var proj = projects.find(function (p) { return p.id === projectId; });
+      var clientName = proj ? proj.client : 'Клиент';
+      var overlay = ensureOverlay();
+      var today = new Date().toISOString().slice(0, 10);
+
+      overlay.innerHTML = [
+        '<div class="golden-modal" style="max-width: 440px; width: 100%;">',
+        '  <div class="golden-modal-header">',
+        '    <span class="golden-modal-title"><span style="color:#1E3F30;">+</span> Внести платёж • ' + escapeHtml(clientName) + '</span>',
+        '    <button type="button" class="golden-modal-close" onclick="window.MyTablesIncome.closeModal()">✕</button>',
+        '  </div>',
+        '  <div class="golden-plaque">',
+        '    <div class="golden-field-group">',
+        '      <label class="golden-field-label">Сумма фактически внесённой оплаты (₽)</label>',
+        '      <input type="number" id="inc-pay-amount" class="golden-field-input inc-pay-amount" placeholder="40 000" min="1" required>',
+        '    </div>',
+        '    <div class="golden-field-group">',
+        '      <label class="golden-field-label">Дата получения денег</label>',
+        '      <input type="date" id="inc-pay-date" class="golden-field-input inc-pay-date" value="' + today + '" required>',
+        '    </div>',
+        '    <div class="golden-field-group">',
+        '      <label class="golden-field-label">Заметка / За что платёж</label>',
+        '      <input type="text" id="inc-pay-note" class="golden-field-input inc-pay-note" placeholder="Например: Аванс 50%, Оклад за октябрь">',
+        '      <span class="golden-field-hint">Отображается при редактировании</span>',
+        '    </div>',
+        '  </div>',
+        '  <div class="golden-actions-row">',
+        '    <button type="button" class="btn-action-modal cancel" onclick="window.MyTablesIncome.closeModal()">Отмена</button>',
+        '    <button type="button" class="btn-action-modal save" id="inc-pay-save-btn">Сохранить платёж</button>',
+        '  </div>',
+        '</div>'
+      ].join('');
+
+      document.getElementById('inc-pay-save-btn').onclick = function () {
+        var amount = document.getElementById('inc-pay-amount').value;
+        var date = document.getElementById('inc-pay-date').value;
+        var note = document.getElementById('inc-pay-note').value;
+
+        try {
+          addPayment(projectId, { amount: amount, date: date, note: note });
+          closeIncomeModal();
+        } catch (err) {
+          alert(err.message);
+        }
+      };
+
+      overlay.style.display = 'flex';
+      setTimeout(function () {
+        var inp = document.getElementById('inc-pay-amount');
+        if (inp) inp.focus();
+      }, 50);
+    }
+
+    // 3. Модалка редактирования и удаления платежа (3 равные кнопки, [ Удалить ] коралловая)
+    function openEditPaymentModal(paymentId) {
+      var pay = payments.find(function (p) { return p.id === paymentId; });
+      if (!pay) return;
+      var proj = projects.find(function (p) { return p.id === pay.projectId; });
+      var clientName = proj ? proj.client : 'Клиент';
+      var overlay = ensureOverlay();
+
+      overlay.innerHTML = [
+        '<div class="golden-modal" style="max-width: 440px; width: 100%;">',
+        '  <div class="golden-modal-header">',
+        '    <span class="golden-modal-title"><span>✎</span> Изменить платёж • ' + escapeHtml(clientName) + '</span>',
+        '    <button type="button" class="golden-modal-close" onclick="window.MyTablesIncome.closeModal()">✕</button>',
+        '  </div>',
+        '  <div class="golden-plaque">',
+        '    <div class="golden-field-group">',
+        '      <label class="golden-field-label">Сумма платежа (₽)</label>',
+        '      <input type="number" id="inc-pay-amount" class="golden-field-input inc-pay-amount" value="' + pay.amount + '" min="1" required>',
+        '    </div>',
+        '    <div class="golden-field-group">',
+        '      <label class="golden-field-label">Дата получения</label>',
+        '      <input type="date" id="inc-pay-date" class="golden-field-input inc-pay-date" value="' + (pay.date || '') + '" required>',
+        '    </div>',
+        '    <div class="golden-field-group">',
+        '      <label class="golden-field-label">Заметка / Назначение</label>',
+        '      <input type="text" id="inc-pay-note" class="golden-field-input inc-pay-note" value="' + escapeHtml(pay.note || '') + '">',
+        '    </div>',
+        '  </div>',
+        '  <div class="golden-actions-row">',
+        '    <button type="button" class="btn-action-modal delete inc-btn-delete-pay" id="inc-btn-delete-pay" title="Удалить платёж">Удалить</button>',
+        '    <button type="button" class="btn-action-modal cancel" onclick="window.MyTablesIncome.closeModal()">Отмена</button>',
+        '    <button type="button" class="btn-action-modal save" id="inc-pay-update-btn">Сохранить</button>',
+        '  </div>',
+        '</div>'
+      ].join('');
+
+      document.getElementById('inc-btn-delete-pay').onclick = function () {
+        deletePayment(paymentId);
+        closeIncomeModal();
+      };
+
+      document.getElementById('inc-pay-update-btn').onclick = function () {
+        var amount = document.getElementById('inc-pay-amount').value;
+        var date = document.getElementById('inc-pay-date').value;
+        var note = document.getElementById('inc-pay-note').value;
+
+        try {
+          updatePayment(paymentId, { amount: amount, date: date, note: note });
+          closeIncomeModal();
+        } catch (err) {
+          alert(err.message);
+        }
+      };
+
+      overlay.style.display = 'flex';
+    }
+
+    // 4. Модалка изменения договорной стоимости проекта
+    function openEditCostModal(projectId) {
+      var proj = projects.find(function (p) { return p.id === projectId; });
+      if (!proj) return;
+      var overlay = ensureOverlay();
+
+      overlay.innerHTML = [
+        '<div class="golden-modal" style="max-width: 440px; width: 100%;">',
+        '  <div class="golden-modal-header">',
+        '    <span class="golden-modal-title"><span>✎</span> Стоимость проекта • ' + escapeHtml(proj.client) + '</span>',
+        '    <button type="button" class="golden-modal-close" onclick="window.MyTablesIncome.closeModal()">✕</button>',
+        '  </div>',
+        '  <div class="golden-plaque">',
+        '    <div class="golden-field-group">',
+        '      <label class="golden-field-label">Полная договорная стоимость (₽)</label>',
+        '      <input type="number" id="inc-proj-cost" class="golden-field-input inc-proj-cost" value="' + proj.totalCost + '" min="1" required>',
+        '      <span class="golden-field-hint">Сумма проекта фиксируется договором и не зависит от разбивки на частичные оплаты</span>',
+        '    </div>',
+        '  </div>',
+        '  <div class="golden-actions-row">',
+        '    <button type="button" class="btn-action-modal cancel" onclick="window.MyTablesIncome.closeModal()">Отмена</button>',
+        '    <button type="button" class="btn-action-modal save" id="inc-proj-cost-save-btn">Сохранить</button>',
+        '  </div>',
+        '</div>'
+      ].join('');
+
+      document.getElementById('inc-proj-cost-save-btn').onclick = function () {
+        var cost = document.getElementById('inc-proj-cost').value;
+        try {
+          updateProjectCost(projectId, cost);
+          closeIncomeModal();
+        } catch (err) {
+          alert(err.message);
+        }
+      };
+
+      overlay.style.display = 'flex';
+      setTimeout(function () {
+        var inp = document.getElementById('inc-proj-cost');
+        if (inp) inp.focus();
+      }, 50);
+    }
+
+    // 5. Модалка архивации проекта
+    function openArchiveModal(projectId) {
+      var proj = projects.find(function (p) { return p.id === projectId; });
+      if (!proj) return;
+      var overlay = ensureOverlay();
+
+      overlay.innerHTML = [
+        '<div class="golden-modal" style="max-width: 440px; width: 100%;">',
+        '  <div class="golden-modal-header">',
+        '    <span class="golden-modal-title">',
+        '      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;">',
+        '        <path d="M3 6h18"/>',
+        '        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>',
+        '        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>',
+        '        <line x1="10" y1="11" x2="10" y2="17"/>',
+        '        <line x1="14" y1="11" x2="14" y2="17"/>',
+        '      </svg>',
+        '      <span>Архивация проекта</span>',
+        '    </span>',
+        '    <button type="button" class="golden-modal-close" onclick="window.MyTablesIncome.closeModal()">✕</button>',
+        '  </div>',
+        '  <div class="golden-plaque">',
+        '    <p style="font-size: 13.5px; font-weight: 700; color: #4D3118; line-height: 1.45; margin-bottom: 6px;">',
+        '      Отправить проект <b>«' + escapeHtml(proj.client) + '»</b> в архив?',
+        '    </p>',
+        '    <p style="font-size: 11.5px; font-weight: 600; color: #726453; line-height: 1.4;">',
+        '      Карточка скроется из активного экрана Доходов, а все внесённые платежи сохранятся в Google Таблицах для годовой отчётности.',
+        '    </p>',
+        '  </div>',
+        '  <div class="golden-actions-row">',
+        '    <button type="button" class="btn-action-modal cancel" onclick="window.MyTablesIncome.closeModal()">Отмена</button>',
+        '    <button type="button" class="btn-action-modal delete" id="inc-proj-archive-btn">В архив</button>',
+        '  </div>',
+        '</div>'
+      ].join('');
+
+      document.getElementById('inc-proj-archive-btn').onclick = function () {
+        archiveProject(projectId);
+        closeIncomeModal();
+      };
+
+      overlay.style.display = 'flex';
+    }
+
+    return {
+      getProjects: function () { return projects; },
+      getPayments: function (projectId) {
+        if (!projectId) return payments;
+        return payments.filter(function (p) { return p.projectId === projectId; });
+      },
+      validateProject: validateProject,
+      validatePayment: validatePayment,
+      addProject: addProject,
+      updateProjectCost: updateProjectCost,
+      archiveProject: archiveProject,
+      addPayment: addPayment,
+      updatePayment: updatePayment,
+      deletePayment: deletePayment,
+      renderIncome: renderIncome,
+      syncToMainScreen: syncToMainScreen,
+      openAddProjectModal: openAddProjectModal,
+      openAddPaymentModal: openAddPaymentModal,
+      openEditPaymentModal: openEditPaymentModal,
+      openEditCostModal: openEditCostModal,
+      openArchiveModal: openArchiveModal,
+      closeModal: closeIncomeModal
+    };
+  })();
+
+  window.MyTablesIncome = MyTablesIncome;
+
+  // --- ОБНОВЛЕНИЕ ЭКРАНА ДОХОДОВ ---
+  function updateIncomeScreen(data) {
+    if (window.MyTablesIncome && typeof window.MyTablesIncome.renderIncome === 'function') {
+      window.MyTablesIncome.renderIncome();
     }
   }
 
@@ -916,6 +1552,12 @@
 
   // Открытие модалки добавления для соответствующего типа
   window.openAddModal = function (type) {
+    if (type === 'income') {
+      if (window.MyTablesIncome && typeof window.MyTablesIncome.openAddProjectModal === 'function') {
+        window.MyTablesIncome.openAddProjectModal();
+        return;
+      }
+    }
     if (type === 'expense') {
       var expModal = document.getElementById('mytables-expense-modal');
       if (!expModal) {

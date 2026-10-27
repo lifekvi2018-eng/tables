@@ -3075,6 +3075,596 @@
     .btn-pay-toggle:active {
       transform: scale(0.96);
     }
+
+    /* ========================================================
+       СТЕЙДЖ 3: КАРТОЧКИ И ЭЛЕМЕНТЫ ЭКРАНА «ДОХОДЫ ♡»
+       ======================================================== */
+    .project-card {
+      border-radius: 24px;
+      padding: 16px;
+      border: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 2.5px 4px 10px rgba(35, 30, 20, 0.12), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95);
+      transition: transform 0.12s ease;
+      position: relative;
+    }
+    .project-card:hover {
+      transform: translateY(-1.5px);
+    }
+
+    .project-card.mint {
+      background: #C8E2D2;
+      color: #1E3F30;
+    }
+    .project-card.peach {
+      background: #FCD6CF;
+      color: #58241B;
+    }
+    .project-card.lavender {
+      background: #DBCCE9;
+      color: #3F2B56;
+    }
+    .project-card.blue {
+      background: #D3E7F8;
+      color: #16324F;
+    }
+    .project-card.cream {
+      background: #FDF1CC;
+      color: #5B481D;
+    }
+
+    .project-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .project-title-group {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+    .project-client-name {
+      font-size: 15px;
+      font-weight: 900;
+      line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .project-service-name {
+      font-size: 11.5px;
+      font-weight: 700;
+      opacity: 0.85;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .project-header-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .project-total-pill {
+      background: #C8E2D2 !important;
+      color: #1E3F30 !important;
+      border-radius: 14px;
+      padding: 6px 11px;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      border: none;
+      box-shadow: 2.5px 4px 10px rgba(35, 30, 20, 0.12), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95);
+      cursor: pointer;
+      transition: transform 0.1s ease;
+      outline: none !important;
+    }
+    .project-total-pill:active {
+      transform: scale(0.96);
+    }
+    .project-total-val {
+      font-size: 13px;
+      font-weight: 800;
+      color: #1E3F30 !important;
+      letter-spacing: -0.2px;
+    }
+
+    .edit-pencil-btn {
+      width: 22px;
+      height: 22px;
+      min-width: 22px;
+      min-height: 22px;
+      max-width: 22px;
+      max-height: 22px;
+      border-radius: 50% !important;
+      aspect-ratio: 1 / 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      font-size: 11px;
+      cursor: pointer;
+      box-shadow: 1.5px 2px 4px rgba(35, 30, 20, 0.12), -1px -1px 2px rgba(255, 255, 255, 0.95), inset 0.5px 0.5px 0 rgba(255, 255, 255, 0.95);
+      transition: transform 0.1s ease, background 0.1s ease;
+      flex-shrink: 0;
+      outline: none !important;
+    }
+    .edit-pencil-btn:hover {
+      transform: scale(1.08);
+    }
+    .edit-pencil-btn:active {
+      transform: scale(0.92);
+    }
+
+    /* Иконка корзины: ВАРИАНТ № 1 (Классическая изящная корзинка, СТРОГО КРУГЛАЯ 34x34) */
+    .btn-archive-project {
+      width: 34px;
+      height: 34px;
+      min-width: 34px;
+      min-height: 34px;
+      max-width: 34px;
+      max-height: 34px;
+      border-radius: 50% !important;
+      aspect-ratio: 1 / 1;
+      background: #FAF2E7;
+      color: inherit;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 2.5px 4px 10px rgba(35, 30, 20, 0.12), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95);
+      transition: transform 0.1s ease, opacity 0.1s ease;
+      flex-shrink: 0;
+      opacity: 0.9;
+      outline: none !important;
+    }
+    .btn-archive-project:hover {
+      opacity: 1;
+      transform: scale(1.05);
+    }
+    .btn-archive-project:active {
+      transform: scale(0.92);
+    }
+
+    .payments-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .payments-section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 2px;
+    }
+    .payments-section-title {
+      font-size: 11.5px;
+      font-weight: 800;
+      letter-spacing: 0.2px;
+      opacity: 0.9;
+    }
+
+    .payments-list {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .payment-slip {
+      background: #FAF2E7;
+      border-radius: 16px;
+      padding: 8px 10px 8px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: none;
+      box-shadow: 2.5px 4px 10px rgba(35, 30, 20, 0.12), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95);
+      cursor: pointer;
+      transition: transform 0.12s ease;
+      min-height: 52px;
+      outline: none !important;
+    }
+    .payment-slip:hover {
+      transform: translateY(-1px);
+    }
+    .payment-slip:active {
+      transform: scale(0.985);
+    }
+
+    .slip-data-col {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+    .slip-sum {
+      font-size: 15px;
+      font-weight: 900;
+      color: #2F261D;
+      line-height: 1.2;
+    }
+    .slip-date {
+      font-size: 11px;
+      font-weight: 700;
+      color: #8C784C;
+      line-height: 1;
+    }
+    .slip-empty-text {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #726453;
+    }
+
+    .btn-slip-plus {
+      width: 36px;
+      height: 36px;
+      min-width: 36px;
+      min-height: 36px;
+      max-width: 36px;
+      max-height: 36px;
+      border-radius: 50% !important;
+      aspect-ratio: 1 / 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+      font-weight: 900;
+      box-shadow: 2.5px 4px 8px rgba(35, 30, 20, 0.12), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95);
+      border: none;
+      cursor: pointer;
+      transition: transform 0.1s ease, background 0.1s ease;
+      line-height: 1;
+      flex-shrink: 0;
+      outline: none !important;
+    }
+    .btn-slip-plus:hover {
+      transform: scale(1.06);
+    }
+    .btn-slip-plus:active {
+      transform: scale(0.92);
+    }
+
+    /* Значки в цвет карточки клиента */
+    .project-card.mint .btn-archive-project,
+    .project-card.mint .btn-slip-plus,
+    .project-card.mint .edit-pencil-btn {
+      background: #E2F1E8;
+      color: #1E3F30;
+    }
+    .project-card.mint .btn-archive-project:hover,
+    .project-card.mint .btn-slip-plus:hover,
+    .project-card.mint .edit-pencil-btn:hover {
+      background: #EEF8F2;
+    }
+
+    .project-card.peach .btn-archive-project,
+    .project-card.peach .btn-slip-plus,
+    .project-card.peach .edit-pencil-btn {
+      background: #FEECE9;
+      color: #58241B;
+    }
+    .project-card.peach .btn-archive-project:hover,
+    .project-card.peach .btn-slip-plus:hover,
+    .project-card.peach .edit-pencil-btn:hover {
+      background: #FFF4F2;
+    }
+
+    .project-card.lavender .btn-archive-project,
+    .project-card.lavender .btn-slip-plus,
+    .project-card.lavender .edit-pencil-btn {
+      background: #EDE4F4;
+      color: #422858;
+    }
+    .project-card.lavender .btn-archive-project:hover,
+    .project-card.lavender .btn-slip-plus:hover,
+    .project-card.lavender .edit-pencil-btn:hover {
+      background: #F6F0FA;
+    }
+
+    .project-card.blue .btn-archive-project,
+    .project-card.blue .btn-slip-plus,
+    .project-card.blue .edit-pencil-btn {
+      background: #E8F3FC;
+      color: #16324F;
+    }
+    .project-card.blue .btn-archive-project:hover,
+    .project-card.blue .btn-slip-plus:hover,
+    .project-card.blue .edit-pencil-btn:hover {
+      background: #F2F8FE;
+    }
+
+    .project-card.cream .btn-archive-project,
+    .project-card.cream .btn-slip-plus,
+    .project-card.cream .edit-pencil-btn {
+      background: #FBF4DC;
+      color: #5B481D;
+    }
+
+    /* Десктопная сетка и кнопки */
+    .desk-btn-add {
+      min-height: 44px;
+      padding: 0 20px;
+      border-radius: 14px;
+      background: #FDF1CC;
+      color: #5B481D;
+      border: none;
+      font-size: 13px;
+      font-weight: 900;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 2.5px 4px 10px rgba(35, 30, 20, 0.12), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95);
+      transition: transform 0.12s ease;
+      outline: none !important;
+    }
+    .desk-btn-add:hover {
+      transform: translateY(-1px);
+    }
+    .desk-btn-add:active {
+      transform: translateY(1.5px);
+    }
+    .desk-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    @media (max-width: 1250px) {
+      .desk-cards-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .desk-month-badge {
+      font-size: 12.5px;
+      font-weight: 900;
+      color: #1E3F30;
+      background: #C8E2D2;
+      padding: 5px 12px;
+      border-radius: 12px;
+      box-shadow: 2px 3.5px 8px rgba(35, 30, 20, 0.1), inset 0.5px 0.5px 0 rgba(255, 255, 255, 0.9);
+      border: none;
+    }
+
+    /* Мобильные элементы Доходов */
+    .mob-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      padding: 0 4px;
+      flex-shrink: 0;
+    }
+    .mob-header-left {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+    .mob-header-title {
+      font-size: 22px;
+      font-weight: 900;
+      color: #2F261D;
+      letter-spacing: -0.4px;
+    }
+    .mob-total-badge {
+      font-size: 11px;
+      font-weight: 800;
+      color: #1E3F30;
+      background: #C8E2D2;
+      padding: 4px 9px;
+      border-radius: 12px;
+      box-shadow: 1.5px 2px 5px rgba(35, 30, 20, 0.1), inset 0.5px 0.5px 0 rgba(255, 255, 255, 0.9);
+      border: none;
+    }
+    .mob-add-project-btn {
+      width: 100%;
+      min-height: 46px;
+      border-radius: 16px;
+      background: #FDF1CC;
+      color: #5B481D;
+      border: none;
+      font-size: 13.5px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      margin-bottom: 14px;
+      box-shadow: 2.5px 4px 10px rgba(35, 30, 20, 0.12), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95);
+      cursor: pointer;
+      transition: transform 0.12s ease;
+      flex-shrink: 0;
+      outline: none !important;
+    }
+    .mob-add-project-btn:active {
+      transform: translateY(1.5px);
+    }
+    .mob-projects-scroll {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      overflow-y: auto;
+      padding-bottom: 68px;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      flex: 1;
+    }
+    .mob-projects-scroll::-webkit-scrollbar {
+      display: none;
+      width: 0;
+      height: 0;
+    }
+
+    /* ЗОЛОТОЙ СТАНДАРТ МОДАЛЬНЫХ ОКОН */
+    .golden-modal {
+      background: #FAF2E7;
+      border-radius: 24px;
+      padding: 22px;
+      border: none;
+      box-shadow: 8px 18px 45px rgba(110, 85, 60, 0.28), -4px -4px 12px rgba(255, 255, 255, 0.95);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: relative;
+    }
+    .golden-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .golden-modal-title {
+      font-size: 16px;
+      font-weight: 900;
+      color: #2F261D;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .golden-modal-close {
+      width: 28px;
+      height: 28px;
+      min-width: 28px;
+      min-height: 28px;
+      max-width: 28px;
+      max-height: 28px;
+      border-radius: 50% !important;
+      aspect-ratio: 1 / 1;
+      background: #FDF1CC;
+      color: #5B481D;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 900;
+      border: none;
+      cursor: pointer;
+      box-shadow: 1px 1.5px 3px rgba(35, 30, 20, 0.1);
+      transition: transform 0.1s ease;
+      flex-shrink: 0;
+      outline: none !important;
+    }
+    .golden-modal-close:hover {
+      transform: scale(1.08);
+    }
+    .golden-modal-close:active {
+      transform: scale(0.92);
+    }
+    .golden-plaque {
+      background: #FCE8D5;
+      border-radius: 18px;
+      padding: 16px;
+      border: none;
+      box-shadow: 2.5px 4px 10px rgba(35, 30, 20, 0.12), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .golden-field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .golden-field-label {
+      font-size: 11px;
+      font-weight: 900;
+      color: #6D3E14;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .golden-field-input, .golden-field-select {
+      width: 100%;
+      min-height: 42px;
+      border-radius: 12px;
+      background: #FAF2E7;
+      border: none;
+      padding: 8px 12px;
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #2F261D;
+      box-shadow: inset 1px 1.5px 3px rgba(150, 120, 80, 0.15), inset -1px -1px 2px rgba(255, 255, 255, 0.8);
+      outline: none !important;
+      box-sizing: border-box;
+      font-family: inherit;
+    }
+    .golden-field-hint {
+      font-size: 11px;
+      color: #8C784C;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+    .golden-palette-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-top: 2px;
+    }
+    .palette-circle {
+      width: 26px;
+      height: 26px;
+      border-radius: 50% !important;
+      aspect-ratio: 1 / 1;
+      cursor: pointer;
+      box-shadow: 1.5px 2px 4px rgba(35, 30, 20, 0.2);
+      border: none;
+      transition: transform 0.1s ease;
+      outline: none !important;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .palette-circle:hover {
+      transform: scale(1.1);
+    }
+    .palette-circle.selected {
+      transform: scale(1.2);
+      box-shadow: 2px 3px 6px rgba(35, 30, 20, 0.25);
+    }
+    .golden-actions-row {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+    }
+    .btn-action-modal {
+      flex: 1;
+      min-height: 44px;
+      border-radius: 12px;
+      border: none;
+      font-size: 13px;
+      font-weight: 900;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 0 8px;
+      box-shadow: 2.5px 4px 10px rgba(35, 30, 20, 0.12), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95);
+      transition: transform 0.1s ease;
+      white-space: nowrap;
+      outline: none !important;
+    }
+    .btn-action-modal:active {
+      transform: translateY(1.5px);
+    }
+    .btn-action-modal.cancel {
+      background: #FDF1CC;
+      color: #5B481D;
+    }
+    .btn-action-modal.save {
+      background: #C8E2D2;
+      color: #1E3F30;
+    }
+    .btn-action-modal.delete {
+      background: #FCD6CF;
+      color: #58241B;
+    }
+
   </style>
 </head>
 <body>
@@ -3337,189 +3927,21 @@
 
           </div></div>
         <div id="desk-view-income" class="app-tab-pane" style="display:none;"><div class="desk-main-content">
-          
           <div class="desk-top-bar">
-            <div class="desk-page-title">Доходы</div>
-            <div class="desk-controls">
-              <div class="desk-search-box">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8C784C" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                <input type="text" class="search-input" placeholder="Поиск клиента...">
-              </div>
-              <button class="desk-add-btn btn-plus-income">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                Добавить доход
-              </button>
+            <div class="desk-title-group">
+              <span class="desk-page-title">Проекты и доходы</span>
+              <span class="desk-month-badge" id="desk-income-month-badge">195 000 ₽ в октябре</span>
             </div>
+            <!-- Тактильная кнопка добавления проекта (ТЁПЛО-ЖЁЛТЫЙ ЦВЕТ #FDF1CC) -->
+            <button class="desk-btn-add" onclick="window.MyTablesIncome.openAddProjectModal()">
+              <span style="font-size:16px;">+</span>
+              <span>Добавить проект</span>
+            </button>
           </div>
 
-          <!-- ШИРОКИЕ БЕНТО-КАРТОЧКИ КЛИЕНТОВ -->
-          <div class="desk-income-list">
-
-            <!-- 1. Анна Смирнова (Мята) -->
-            <div class="desk-client-bento-card mint">
-              <div class="desk-card-profile">
-                <div class="desk-profile-header">
-                  <div class="client-avatar desk-avatar-big">АС</div>
-                  <div>
-                    <div class="desk-profile-name">Анна Смирнова</div>
-                    <div class="desk-profile-phone">+7 916 123-45-67</div>
-                  </div>
-                </div>
-                <div class="project-sum-pill" style="width: fit-content;">
-                  <span class="project-sum-label">Сумма проекта:</span>
-                  <span class="project-sum-val">120 000 ₽</span>
-                </div>
-              </div>
-
-              <!-- Правая часть: список платежей как отдельные 3D-бумажечки -->
-              <div class="desk-payments-block">
-                <div class="desk-payments-header">
-                  <span class="desk-payments-title">Платежи по проекту (2)</span>
-                  <button class="paper-arrow-btn" title="Развернуть">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                  </button>
-                </div>
-                <div class="desk-payments-grid">
-                  <div class="payment-paper-slip">
-                    <span class="payment-date">12.05.2024</span>
-                    <div class="payment-right-group">
-                      <span class="payment-sum">60 000 ₽</span>
-                      <button class="payment-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
-                    </div>
-                  </div>
-                  <div class="payment-paper-slip">
-                    <span class="payment-date">25.05.2024</span>
-                    <div class="payment-right-group">
-                      <span class="payment-sum">40 000 ₽</span>
-                      <button class="payment-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- 2. Ирина Кузнецова (Абрикос) -->
-            <div class="desk-client-bento-card apricot">
-              <div class="desk-card-profile">
-                <div class="desk-profile-header">
-                  <div class="client-avatar desk-avatar-big">ИК</div>
-                  <div>
-                    <div class="desk-profile-name">Ирина Кузнецова</div>
-                    <div class="desk-profile-phone">+7 905 987-65-43</div>
-                  </div>
-                </div>
-                <div class="project-sum-pill" style="width: fit-content;">
-                  <span class="project-sum-label">Сумма проекта:</span>
-                  <span class="project-sum-val">85 000 ₽</span>
-                </div>
-              </div>
-
-              <div class="desk-payments-block">
-                <div class="desk-payments-header">
-                  <span class="desk-payments-title">Платежи по проекту (3)</span>
-                  <button class="paper-arrow-btn" title="Развернуть"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></button>
-                </div>
-                <div class="desk-payments-grid">
-                  <div class="payment-paper-slip">
-                    <span class="payment-date">10.04.2024</span>
-                    <div class="payment-right-group">
-                      <span class="payment-sum">30 000 ₽</span>
-                      <button class="payment-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
-                    </div>
-                  </div>
-                  <div class="payment-paper-slip">
-                    <span class="payment-date">28.04.2024</span>
-                    <div class="payment-right-group">
-                      <span class="payment-sum">30 000 ₽</span>
-                      <button class="payment-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
-                    </div>
-                  </div>
-                  <div class="payment-paper-slip">
-                    <span class="payment-date">15.05.2024</span>
-                    <div class="payment-right-group">
-                      <span class="payment-sum">25 000 ₽</span>
-                      <button class="payment-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- 3. Мария Лебедева (Розовый) -->
-            <div class="desk-client-bento-card pink">
-              <div class="desk-card-profile">
-                <div class="desk-profile-header">
-                  <div class="client-avatar desk-avatar-big">МЛ</div>
-                  <div>
-                    <div class="desk-profile-name">Мария Лебедева</div>
-                    <div class="desk-profile-phone">+7 926 555-11-22</div>
-                  </div>
-                </div>
-                <div class="project-sum-pill" style="width: fit-content;">
-                  <span class="project-sum-label">Сумма проекта:</span>
-                  <span class="project-sum-val">50 000 ₽</span>
-                </div>
-              </div>
-
-              <div class="desk-payments-block">
-                <div class="desk-payments-header">
-                  <span class="desk-payments-title">Платежи по проекту (1)</span>
-                  <button class="paper-arrow-btn" title="Развернуть"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></button>
-                </div>
-                <div class="desk-payments-grid">
-                  <div class="payment-paper-slip">
-                    <span class="payment-date">05.05.2024</span>
-                    <div class="payment-right-group">
-                      <span class="payment-sum">50 000 ₽</span>
-                      <button class="payment-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- 4. Дмитрий Ковалёв (Голубой) -->
-            <div class="desk-client-bento-card blue">
-              <div class="desk-card-profile">
-                <div class="desk-profile-header">
-                  <div class="client-avatar desk-avatar-big">ДК</div>
-                  <div>
-                    <div class="desk-profile-name">Дмитрий Ковалёв</div>
-                    <div class="desk-profile-phone">+7 909 333-44-55</div>
-                  </div>
-                </div>
-                <div class="project-sum-pill" style="width: fit-content;">
-                  <span class="project-sum-label">Сумма проекта:</span>
-                  <span class="project-sum-val">200 000 ₽</span>
-                </div>
-              </div>
-
-              <div class="desk-payments-block">
-                <div class="desk-payments-header">
-                  <span class="desk-payments-title">Платежи по проекту (2)</span>
-                  <button class="paper-arrow-btn" title="Развернуть"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></button>
-                </div>
-                <div class="desk-payments-grid">
-                  <div class="payment-paper-slip">
-                    <span class="payment-date">20.03.2024</span>
-                    <div class="payment-right-group">
-                      <span class="payment-sum">100 000 ₽</span>
-                      <button class="payment-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
-                    </div>
-                  </div>
-                  <div class="payment-paper-slip">
-                    <span class="payment-date">18.04.2024</span>
-                    <div class="payment-right-group">
-                      <span class="payment-sum">100 000 ₽</span>
-                      <button class="payment-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
+          <!-- 2-колоночная сетка карточек проектов на десктопе -->
+          <div class="desk-cards-grid" id="desk-income-cards-grid">
           </div>
-
         </div></div>
         <div id="desk-view-expenses" class="app-tab-pane" style="display:none;"><div class="desk-main-content">
           
@@ -4036,199 +4458,25 @@
               </div>
 
             </div></div>
-      <div id="mob-view-income" class="mob-tab-pane" style="display:none;"><div class="phone-income-header">
-            <div class="phone-income-title">Доходы</div>
-            <button class="phone-add-btn btn-plus-income" title="Добавить клиента или платёж">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-            </button>
+      <div id="mob-view-income" class="mob-tab-pane" style="display:none;">
+        <div class="mob-header-row">
+          <div class="mob-header-left">
+            <span class="mob-header-title">Доходы ♡</span>
+            <span class="mob-total-badge" id="mob-income-month-badge">195 000 ₽</span>
           </div>
+          <div class="mob-avatar" title="Аня">А</div>
+        </div>
 
-          <!-- Поиск клиента -->
-          <div class="search-box">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8C784C" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <input type="text" class="search-input" placeholder="Поиск клиента...">
-          </div>
+        <!-- Аккуратная длинная кнопка «+ Добавить проект» (ТЁПЛО-ЖЁЛТАЯ #FDF1CC) -->
+        <button class="mob-add-project-btn" onclick="window.MyTablesIncome.openAddProjectModal()">
+          <span style="font-size:16px; font-weight:900;">+</span>
+          <span>Добавить проект</span>
+        </button>
 
-          <!-- Список карточек клиентов (чистый скролл пальцем без серого ползунка) -->
-          <div class="income-cards-list">
-
-            <!-- 1. Анна Смирнова (Нежная мята) -->
-            <div class="income-client-card mint">
-              <div class="client-card-top">
-                <div class="client-info-left">
-                  <div class="client-avatar">АС</div>
-                  <div class="client-name-box">
-                    <span class="client-name">Анна Смирнова</span>
-                    <span class="client-phone">+7 916 123-45-67</span>
-                  </div>
-                </div>
-                <!-- Отдельная бумажечка-налепочка «Сумма проекта» в одну строчку -->
-                <div class="project-sum-pill">
-                  <span class="project-sum-label">Проект:</span>
-                  <span class="project-sum-val">120 000 ₽</span>
-                </div>
-              </div>
-
-              <!-- Блок платежей с отдельными бумажечками -->
-              <div class="client-payments-section">
-                <div class="payments-section-header">
-                  <span class="payments-section-title">Платежи (2)</span>
-                  <button class="paper-arrow-btn" title="Развернуть">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                  </button>
-                </div>
-                <div class="payments-paper-list">
-                  <!-- Платёж 1: отдельная 3D-бумажечка -->
-                  <div class="payment-paper-slip">
-                    <span class="payment-date">12.05.2024</span>
-                    <div class="payment-right-group">
-                      <span class="payment-sum">60 000 ₽</span>
-                      <button class="payment-dots-btn" title="Действия">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
-                      </button>
-                    </div>
-                  </div>
-                  <!-- Платёж 2: отдельная 3D-бумажечка -->
-                  <div class="payment-paper-slip">
-                    <span class="payment-date">25.05.2024</span>
-                    <div class="payment-right-group">
-                      <span class="payment-sum">40 000 ₽</span>
-                      <button class="payment-dots-btn" title="Действия">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- 2. Ирина Кузнецова (Тёплый абрикос) -->
-            <div class="income-client-card apricot">
-              <div class="client-card-top">
-                <div class="client-info-left">
-                  <div class="client-avatar">ИК</div>
-                  <div class="client-name-box">
-                    <span class="client-name">Ирина Кузнецова</span>
-                    <span class="client-phone">+7 905 987-65-43</span>
-                  </div>
-                </div>
-                <div class="project-sum-pill">
-                  <span class="project-sum-label">Проект:</span>
-                  <span class="project-sum-val">85 000 ₽</span>
-                </div>
-              </div>
-
-              <div class="client-payments-section">
-                <div class="payments-section-header">
-                  <span class="payments-section-title">Платежи (3)</span>
-                  <button class="paper-arrow-btn" title="Развернуть">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                  </button>
-                </div>
-                <div class="payments-paper-list">
-                  <div class="payment-paper-slip">
-                    <span class="payment-date">10.04.2024</span>
-                    <div class="payment-right-group">
-                      <span class="payment-sum">30 000 ₽</span>
-                      <button class="payment-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
-                    </div>
-                  </div>
-                  <div class="payment-paper-slip">
-                    <span class="payment-date">28.04.2024</span>
-                    <div class="payment-right-group">
-                      <span class="payment-sum">30 000 ₽</span>
-                      <button class="payment-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
-                    </div>
-                  </div>
-                  <div class="payment-paper-slip">
-                    <span class="payment-date">15.05.2024</span>
-                    <div class="payment-right-group">
-                      <span class="payment-sum">25 000 ₽</span>
-                      <button class="payment-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- 3. Мария Лебедева (Пудровая роза) -->
-            <div class="income-client-card pink">
-              <div class="client-card-top">
-                <div class="client-info-left">
-                  <div class="client-avatar">МЛ</div>
-                  <div class="client-name-box">
-                    <span class="client-name">Мария Лебедева</span>
-                    <span class="client-phone">+7 926 555-11-22</span>
-                  </div>
-                </div>
-                <div class="project-sum-pill">
-                  <span class="project-sum-label">Проект:</span>
-                  <span class="project-sum-val">50 000 ₽</span>
-                </div>
-              </div>
-
-              <div class="client-payments-section">
-                <div class="payments-section-header">
-                  <span class="payments-section-title">Платежи (1)</span>
-                  <button class="paper-arrow-btn" title="Развернуть">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                  </button>
-                </div>
-                <div class="payments-paper-list">
-                  <div class="payment-paper-slip">
-                    <span class="payment-date">05.05.2024</span>
-                    <div class="payment-right-group">
-                      <span class="payment-sum">50 000 ₽</span>
-                      <button class="payment-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- 4. Дмитрий Ковалёв (Небесно-голубой) -->
-            <div class="income-client-card blue">
-              <div class="client-card-top">
-                <div class="client-info-left">
-                  <div class="client-avatar">ДК</div>
-                  <div class="client-name-box">
-                    <span class="client-name">Дмитрий Ковалёв</span>
-                    <span class="client-phone">+7 909 333-44-55</span>
-                  </div>
-                </div>
-                <div class="project-sum-pill">
-                  <span class="project-sum-label">Проект:</span>
-                  <span class="project-sum-val">200 000 ₽</span>
-                </div>
-              </div>
-
-              <div class="client-payments-section">
-                <div class="payments-section-header">
-                  <span class="payments-section-title">Платежи (2)</span>
-                  <button class="paper-arrow-btn" title="Развернуть">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                  </button>
-                </div>
-                <div class="payments-paper-list">
-                  <div class="payment-paper-slip">
-                    <span class="payment-date">20.03.2024</span>
-                    <div class="payment-right-group">
-                      <span class="payment-sum">100 000 ₽</span>
-                      <button class="payment-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
-                    </div>
-                  </div>
-                  <div class="payment-paper-slip">
-                    <span class="payment-date">18.04.2024</span>
-                    <div class="payment-right-group">
-                      <span class="payment-sum">100 000 ₽</span>
-                      <button class="payment-dots-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </div></div>
+        <!-- Скролл-лента карточек проектов (без поисковых строк, чистый простор) -->
+        <div class="mob-projects-scroll" id="mob-income-projects-scroll">
+        </div>
+      </div>
       <div id="mob-view-expenses" class="mob-tab-pane" style="display:none;"><div class="phone-header-row">
             <div class="phone-title">
               Расходы <span class="phone-heart">♡</span>
