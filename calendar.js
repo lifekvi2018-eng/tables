@@ -259,8 +259,15 @@
       return sum;
     }, 0);
 
-    // Клиенты: только со статусом 'work' или 'В работе'
+    // Клиенты: только со статусом 'work' или 'В работе' и не в архиве
     var activeClientsCount = clientsList.reduce(function (count, item) {
+      if (!item) return count;
+      var isArchived = Boolean(
+        item.isArchived === true ||
+        item['В_Архиве'] === true ||
+        String(item['В_Архиве']).toUpperCase() === 'TRUE'
+      );
+      if (isArchived) return count;
       var status = String(item.status || item['Статус'] || '').trim().toLowerCase();
       if (status === 'work' || status === 'в работе') {
         return count + 1;
@@ -567,6 +574,8 @@
     var clientsStr = metrics.activeClientsCount + ' в работе';
     var mobClientsEl = document.getElementById('mob-clients-count');
     if (mobClientsEl) mobClientsEl.innerText = clientsStr;
+    var deskClientsEl = document.getElementById('desk-clients-count');
+    if (deskClientsEl) deskClientsEl.innerText = clientsStr;
   }
 
   function prevMonth() {

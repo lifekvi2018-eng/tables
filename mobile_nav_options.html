@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ищем идеальный значок «Расходы» — Мои таблицы ♡</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif !important;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: #FAF2E7;
+      color: #383025;
+      padding: 30px 16px 80px 16px;
+      line-height: 1.4;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .container {
+      max-width: 680px;
+      width: 100%;
+    }
+
+    .header-box {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .badge-top {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      background: #FDF1CC;
+      color: #5B481D;
+      padding: 6px 14px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+      box-shadow: 2px 3.5px 8px rgba(180, 150, 90, 0.18), -1px -1px 3px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95);
+      border: none;
+    }
+    .title {
+      font-size: 26px;
+      font-weight: 900;
+      color: #2F261D;
+      letter-spacing: -0.4px;
+      margin-bottom: 6px;
+    }
+    .desc {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #726453;
+      line-height: 1.5;
+    }
+
+    .status-summary-bar {
+      background: #FAF2E7;
+      border-radius: 20px;
+      padding: 14px 18px;
+      margin-bottom: 24px;
+      box-shadow: 4px 7px 18px rgba(120, 95, 70, 0.14), -2px -2px 6px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .status-summary-title {
+      font-size: 12px;
+      font-weight: 800;
+      color: #8C784C;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .status-pills-demo {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .demo-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 800;
+      box-shadow: 2.5px 4.5px 8px rgba(120, 95, 70, 0.16), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 0.5px 1px 0 rgba(255, 255, 255, 0.95);
+    }
+    .demo-pill.work { background: #C8E2D2; color: #1E3F30; }
+    .demo-pill.discuss { background: #DCEEFE; color: #113F6B; }
+    .demo-pill.waiting { background: #FDF1C2; color: #5A3A00; }
+    .demo-pill.done { background: #EADBCC; color: #5A4E40; }
+    .demo-dot { width: 6px; height: 6px; border-radius: 50%; }
+
+    /* КАРТОЧКА ВАРИАНТА */
+    .option-card {
+      background: #FAF2E7;
+      border-radius: 24px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 5px 9px 22px -4px rgba(150, 125, 100, 0.2), -3px -3px 8px rgba(255, 255, 255, 0.9), inset 0 1.5px 0 rgba(255, 255, 255, 0.85);
+      border: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .option-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .option-title {
+      font-size: 15.5px;
+      font-weight: 900;
+      color: #2F261D;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .option-meaning {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #726453;
+      line-height: 1.45;
+    }
+
+    /* ИМИТАЦИЯ ТЕЛЕФОННОЙ КАПСУЛЫ */
+    .phone-mock-dock-area {
+      background: #F2E8DC;
+      border-radius: 26px;
+      padding: 12px 14px;
+      box-shadow: inset 1px 2px 5px rgba(120, 95, 75, 0.15), 0 2px 6px rgba(255, 255, 255, 0.8);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .tabbar-box {
+      background: #F5ECE0;
+      border-radius: 26px;
+      padding: 6px 8px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      /* 3D-Бумага: свет сверху-слева, тень снизу-справа (Закон Ани) */
+      box-shadow: 6px 12px 28px -4px rgba(140, 115, 85, 0.26), 2px 4px 8px rgba(140, 115, 85, 0.12), -2.5px -2.5px 8px rgba(255, 255, 255, 0.95), inset 1px 1.5px 0 rgba(255, 255, 255, 0.95) !important;
+      border: none !important;
+    }
+
+    .mob-tab-btn {
+      width: 46px;
+      height: 46px;
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #7A6C5B;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      transition: all 0.14s ease;
+    }
+    .mob-tab-btn:hover {
+      background: rgba(239, 228, 214, 0.6);
+    }
+    .mob-tab-btn.active.expenses {
+      background: #FCD6CF !important;
+      color: #58241B !important;
+      box-shadow: 2px 3.5px 7px rgba(180, 100, 90, 0.28), -1px -1px 3px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95) !important;
+    }
+    .mob-tab-btn.active.main {
+      background: #FDF1CC !important;
+      color: #5B481D !important;
+      box-shadow: 2px 3.5px 7px rgba(190, 170, 110, 0.28), -1px -1px 3px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95) !important;
+    }
+    .mob-tab-btn.active.income {
+      background: #C8E2D2 !important;
+      color: #1E3F30 !important;
+      box-shadow: 2px 3.5px 7px rgba(100, 150, 120, 0.28), -1px -1px 3px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95) !important;
+    }
+    .mob-tab-btn.active.clients {
+      background: #D3E7F8 !important;
+      color: #16324F !important;
+      box-shadow: 2px 3.5px 7px rgba(100, 140, 180, 0.28), -1px -1px 3px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95) !important;
+    }
+
+    .icon-legend-row {
+      display: flex;
+      justify-content: space-around;
+      max-width: 380px;
+      margin: 2px auto 0 auto;
+      width: 100%;
+    }
+    .legend-item {
+      width: 46px;
+      text-align: center;
+      font-size: 10.5px;
+      font-weight: 800;
+      color: #726453;
+    }
+    .legend-item.highlight {
+      color: #B34433;
+      font-weight: 900;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <div class="header-box">
+      <div class="badge-top">Подбираем для Ани ♡</div>
+      <h1 class="title">Ищем идеальный значок «Расходы»</h1>
+      <p class="desc">
+        Главная (🏠), Доходы (💳) и Клиенты (👥) уже утверждены!<br>
+        Посмотри, как разные значки Расходов смотрятся рядом с ними в нашем меню:
+      </p>
+    </div>
+
+    <!-- БЛОК СТАТУСОВ (КАК ХОТЕЛА АНЯ) -->
+    <div class="status-summary-bar">
+      <div class="status-summary-title">Твоя восстановленная палитра статусов:</div>
+      <div class="status-pills-demo">
+        <span class="demo-pill discuss">
+          <span class="demo-dot" style="background:#113F6B;"></span>
+          Обсуждение (Небо)
+        </span>
+        <span class="demo-pill work">
+          <span class="demo-dot" style="background:#154D2B;"></span>
+          В работе (Мята)
+        </span>
+        <span class="demo-pill waiting">
+          <span class="demo-dot" style="background:#5A3A00;"></span>
+          Ожидает (Жёлтый)
+        </span>
+        <span class="demo-pill done">
+          <span class="demo-dot" style="background:#5A4E40;"></span>
+          Завершён (Песок)
+        </span>
+      </div>
+    </div>
+
+    <!-- ВАРИАНТ А: ТАКТИЛЬНАЯ БУМАЖНАЯ БИРОЧКА / ЦЕННИК -->
+    <div class="option-card">
+      <div class="option-header">
+        <div class="option-title">Вариант А: «Бумажная бирочка / ярлычок» 🏷️</div>
+      </div>
+      <div class="option-meaning">
+        Аккуратный ценник с круглым отверстием для шнурка. Очень бумажный, тактильный и прямо ассоциируется с оплатой стоимости и ценой сервисов.
+      </div>
+      <div class="phone-mock-dock-area">
+        <div class="tabbar-box">
+          <button class="mob-tab-btn" onclick="selectTab(this, 'main')" title="Главная">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </button>
+          <button class="mob-tab-btn" onclick="selectTab(this, 'income')" title="Доходы">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="3"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+          </button>
+          <!-- ЗНАЧОК РАСХОДОВ: БИРКА / TAG -->
+          <button class="mob-tab-btn active expenses" onclick="selectTab(this, 'expenses')" title="Расходы">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z"/>
+              <path d="M7 7h.01"/>
+            </svg>
+          </button>
+          <button class="mob-tab-btn" onclick="selectTab(this, 'clients')" title="Клиенты">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </button>
+        </div>
+        <div class="icon-legend-row">
+          <div class="legend-item">Главная</div>
+          <div class="legend-item">Доходы</div>
+          <div class="legend-item highlight">Расходы</div>
+          <div class="legend-item">Клиенты</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ВАРИАНТ Б: КРУГОВЫЕ СТРЕЛОЧКИ ПОДПИСОК (РЕГУЛЯРНЫЕ ОПЛАТЫ) -->
+    <div class="option-card">
+      <div class="option-header">
+        <div class="option-title">Вариант Б: «Регулярные платежи / подписки» 🔄</div>
+      </div>
+      <div class="option-explanation">
+        Две мягкие стрелочки по кругу. Точно передаёт суть экрана «Расходы» — ведь это именно регулярные ежемесячные подписки (ChatGPT, VPN, iCloud, связь), которые мы оплачиваем каждый месяц!
+      </div>
+      <div class="phone-mock-dock-area">
+        <div class="tabbar-box">
+          <button class="mob-tab-btn" onclick="selectTab(this, 'main')" title="Главная">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </button>
+          <button class="mob-tab-btn" onclick="selectTab(this, 'income')" title="Доходы">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="3"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+          </button>
+          <!-- ЗНАЧОК РАСХОДОВ: КРУГОВЫЕ СТРЕЛОЧКИ -->
+          <button class="mob-tab-btn active expenses" onclick="selectTab(this, 'expenses')" title="Расходы">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+              <path d="M3 3v5h5"/>
+              <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/>
+              <path d="M16 21h5v-5"/>
+            </svg>
+          </button>
+          <button class="mob-tab-btn" onclick="selectTab(this, 'clients')" title="Клиенты">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </button>
+        </div>
+        <div class="icon-legend-row">
+          <div class="legend-item">Главная</div>
+          <div class="legend-item">Доходы</div>
+          <div class="legend-item highlight">Расходы</div>
+          <div class="legend-item">Клиенты</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ВАРИАНТ В: КОШЕЛЁК С ЗАМКОМ-КЛИПСОЙ -->
+    <div class="option-card">
+      <div class="option-header">
+        <div class="option-title">Вариант В: «Тактильный кошелёк с замочком» 👛</div>
+      </div>
+      <div class="option-meaning">
+        Если для Доходов мы берём плоскую банковскую карту 💳, то для Расходов — пухлый винтажный кошелёчек с двумя круглыми защёлками наверху. Очень милый и осязаемый!
+      </div>
+      <div class="phone-mock-dock-area">
+        <div class="tabbar-box">
+          <button class="mob-tab-btn" onclick="selectTab(this, 'main')" title="Главная">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </button>
+          <button class="mob-tab-btn" onclick="selectTab(this, 'income')" title="Доходы">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="3"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+          </button>
+          <!-- ЗНАЧОК РАСХОДОВ: КОШЕЛЕЧЕК С ЗАЩЕЛКОЙ -->
+          <button class="mob-tab-btn active expenses" onclick="selectTab(this, 'expenses')" title="Расходы">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 7V6a3 3 0 0 0-3-3H8a3 3 0 0 0-3 3v1"/>
+              <rect width="18" height="14" x="3" y="7" rx="4"/>
+              <circle cx="12" cy="14" r="1.5"/>
+              <circle cx="10" cy="3" r="1"/>
+              <circle cx="14" cy="3" r="1"/>
+            </svg>
+          </button>
+          <button class="mob-tab-btn" onclick="selectTab(this, 'clients')" title="Клиенты">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </button>
+        </div>
+        <div class="icon-legend-row">
+          <div class="legend-item">Главная</div>
+          <div class="legend-item">Доходы</div>
+          <div class="legend-item highlight">Расходы</div>
+          <div class="legend-item">Клиенты</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ВАРИАНТ Г: СТРЕЛОЧКА ОПЛАТЫ / ОТПРАВКИ (SEND / OUTGOING) -->
+    <div class="option-card">
+      <div class="option-header">
+        <div class="option-title">Вариант Г: «Стрелочка платежа / перевод» ↗️</div>
+      </div>
+      <div class="option-meaning">
+        Стрелочка исходящего перевода в кружочке. Чистый минималистичный символ списания / совершения оплаты.
+      </div>
+      <div class="phone-mock-dock-area">
+        <div class="tabbar-box">
+          <button class="mob-tab-btn" onclick="selectTab(this, 'main')" title="Главная">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </button>
+          <button class="mob-tab-btn" onclick="selectTab(this, 'income')" title="Доходы">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="3"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+          </button>
+          <!-- ЗНАЧОК РАСХОДОВ: СТРЕЛКА ОПЛАТЫ -->
+          <button class="mob-tab-btn active expenses" onclick="selectTab(this, 'expenses')" title="Расходы">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 8 8 12 12 16"/>
+              <line x1="16" y1="12" x2="8" y2="12"/>
+            </svg>
+          </button>
+          <button class="mob-tab-btn" onclick="selectTab(this, 'clients')" title="Клиенты">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </button>
+        </div>
+        <div class="icon-legend-row">
+          <div class="legend-item">Главная</div>
+          <div class="legend-item">Доходы</div>
+          <div class="legend-item highlight">Расходы</div>
+          <div class="legend-item">Клиенты</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ВАРИАНТ Д: КАЛЕНДАРИК ОПЛАТ / СРОКОВ -->
+    <div class="option-card">
+      <div class="option-header">
+        <div class="option-title">Вариант Д: «Календарик регулярных платежей» 📅</div>
+      </div>
+      <div class="option-meaning">
+        Маленький бумажный календарик с галочкой или точкой. Ведь расходы на этом экране — это подписки, которые списываются по дням месяца (1-го, 15-го и т.д.).
+      </div>
+      <div class="phone-mock-dock-area">
+        <div class="tabbar-box">
+          <button class="mob-tab-btn" onclick="selectTab(this, 'main')" title="Главная">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </button>
+          <button class="mob-tab-btn" onclick="selectTab(this, 'income')" title="Доходы">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="3"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+          </button>
+          <!-- ЗНАЧОК РАСХОДОВ: КАЛЕНДАРИК -->
+          <button class="mob-tab-btn active expenses" onclick="selectTab(this, 'expenses')" title="Расходы">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="18" x="3" y="4" rx="3"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+              <path d="m9 16 2 2 4-4"/>
+            </svg>
+          </button>
+          <button class="mob-tab-btn" onclick="selectTab(this, 'clients')" title="Клиенты">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </button>
+        </div>
+        <div class="icon-legend-row">
+          <div class="legend-item">Главная</div>
+          <div class="legend-item">Доходы</div>
+          <div class="legend-item highlight">Расходы</div>
+          <div class="legend-item">Клиенты</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function selectTab(btn, tabType) {
+      const parent = btn.closest('.tabbar-box');
+      parent.querySelectorAll('.mob-tab-btn').forEach(b => {
+        b.className = 'mob-tab-btn';
+      });
+      btn.classList.add('active', tabType);
+    }
+  </script>
+</body>
+</html>

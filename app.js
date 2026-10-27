@@ -9,6 +9,7 @@
 
 (function () {
   'use strict';
+  var window = typeof window !== 'undefined' ? window : (typeof global !== 'undefined' ? global : {});
 
   // Форматирование чисел в рубли
   function formatRub(val) {
@@ -30,29 +31,35 @@
   var PALETTE_COLORS = ['#C8E2D2', '#FCD6CF', '#D3E7F8', '#FDF1CC', '#FCE8D5', '#DBCCE9'];
 
   // Инициализация при загрузке страницы
-  document.addEventListener('DOMContentLoaded', function () {
-    // 1. Проверяем наличие MyTablesSync
-    if (typeof MyTablesSync === 'undefined') {
-      console.error('MyTablesSync не найден. Убедитесь, что sync.js подключен.');
-      return;
-    }
+  if (typeof document !== 'undefined') {
+    document.addEventListener('DOMContentLoaded', function () {
+      // 1. Проверяем наличие MyTablesSync
+      if (typeof MyTablesSync === 'undefined') {
+        console.error('MyTablesSync не найден. Убедитесь, что sync.js подключен.');
+        return;
+      }
 
-    // 2. Внедряем модальное окно добавления записей (+)
-    injectAddModal();
+      // 2. Внедряем модальное окно добавления записей (+)
+      injectAddModal();
 
-    // 3. Подключаем кнопки добавления на странице
-    bindAddButtons();
+      // 3. Подключаем кнопки добавления на странице
+      bindAddButtons();
 
-    // 4. Подключаем кнопки выхода в сайдбарах и шапках
-    bindLogoutButtons();
+      // 4. Подключаем кнопки выхода в сайдбарах и шапках
+      bindLogoutButtons();
 
-    // 5. Загружаем живые данные из Google Таблицы
-    loadLiveData();
-
-    // 6. Подписываемся на повторный вход при смене аккаунта
-    window.onAuthSuccess = function () {
+      // 5. Загружаем живые данные из Google Таблицы
       loadLiveData();
-    };
+
+      // 6. Подписываемся на повторный вход при смене аккаунта
+      window.onAuthSuccess = function () {
+        loadLiveData();
+      };
+
+      // 7. Инициализация MyTablesClients
+      if (typeof MyTablesClients !== 'undefined' && MyTablesClients.init) {
+        MyTablesClients.init();
+      }
 
     // 7. Клик по плашке расхода открывает окно изменения суммы и тарифа
     document.addEventListener('click', function (e) {
@@ -71,6 +78,7 @@
       window.MyTablesIncome.renderIncome();
     }
   });
+}
 
   // Загрузка живых данных и обновление текущего экрана
   function loadLiveData() {
@@ -92,7 +100,7 @@
   window.updateScreenData = updateCurrentScreen;
 
   function detectCurrentPage() {
-    var path = window.location.pathname.toLowerCase();
+    var path = (window.location && window.location.pathname ? window.location.pathname : '').toLowerCase();
     if (path.indexOf('income') !== -1) return 'income';
     if (path.indexOf('expense') !== -1) return 'expenses';
     if (path.indexOf('client') !== -1) return 'clients';
@@ -949,72 +957,1360 @@
 
   // --- ОБНОВЛЕНИЕ ЭКРАНА КЛИЕНТОВ ---
   function updateClientsScreen(data) {
-    var clientsList = data.clients || [];
-    var countPill = document.getElementById('clients-count-pill');
-    if (countPill) countPill.textContent = clientsList.length + ' активных';
-
-    // Мобильный список клиентов
-    var mobContainer = document.getElementById('clients-live-grid') || document.querySelector('.client-slips-list');
-    if (mobContainer && clientsList.length > 0) {
-      mobContainer.innerHTML = clientsList.slice().reverse().map(function (item, idx) {
-        var id = item.ID || item.id || ('cli_' + idx);
-        var name = item['Имя клиента'] || 'Клиент';
-        var phone = String(item['Телефон / Контакт'] || '').replace(/^'/, '');
-        var project = item['Проект'] || '';
-        var status = item['Статус'] || 'В работе';
-        var color = item['Цвет'] || 'mint';
-        var initials = getInitials(name);
-
-        return [
-          '<div class="client-item-slip ' + color + '" data-id="' + id + '" style="margin-bottom: 10px;">',
-          '  <div class="client-item-left">',
-          '    <div class="client-avatar-round" style="width: 38px; height: 38px; border-radius: 50%; aspect-ratio: 1/1; flex-shrink: 0; background: rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; color: #2F261D;">' + initials + '</div>',
-          '    <div class="client-details">',
-          '      <span class="client-name-title">' + escapeHtml(name) + '</span>',
-          '      <span class="client-project-sub">' + escapeHtml(project) + '</span>',
-          '      <span class="client-phone-sub">' + escapeHtml(phone) + '</span>',
-          '    </div>',
-          '  </div>',
-          '  <div style="display: flex; align-items: center; gap: 6px;">',
-          '    <span class="client-status-badge badge-work" style="font-size: 10px; padding: 4px 8px;">' + escapeHtml(status) + '</span>',
-          '    <button class="item-del-btn" title="Удалить" onclick="window.handleDeleteRow(event, \'Клиенты\', \'' + id + '\', \'' + escapeHtml(name) + '\')"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>',
-          '  </div>',
-          '</div>'
-        ].join('');
-      }).join('');
-    }
-
-    // Десктопная колонка клиентов
-    var deskContainer = document.getElementById('clients-desktop-grid') || document.querySelector('.desk-client-list-column');
-    if (deskContainer && clientsList.length > 0) {
-      deskContainer.innerHTML = clientsList.slice().reverse().map(function (item, idx) {
-        var id = item.ID || item.id || ('cli_' + idx);
-        var name = item['Имя клиента'] || 'Клиент';
-        var phone = String(item['Телефон / Контакт'] || '').replace(/^'/, '');
-        var project = item['Проект'] || '';
-        var status = item['Статус'] || 'В работе';
-        var color = item['Цвет'] || 'mint';
-        var initials = getInitials(name);
-
-        return [
-          '<div class="client-item-slip ' + color + '" data-id="' + id + '" style="margin-bottom: 10px;">',
-          '  <div class="client-item-left">',
-          '    <div class="client-avatar-round" style="width: 38px; height: 38px; border-radius: 50%; aspect-ratio: 1/1; flex-shrink: 0; background: rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; color: #2F261D;">' + initials + '</div>',
-          '    <div>',
-          '      <div class="client-name-title" style="font-size: 13px;">' + escapeHtml(name) + '</div>',
-          '      <div class="client-project-sub" style="font-size: 11px;">' + escapeHtml(project) + '</div>',
-          '      <div class="client-phone-sub" style="font-size: 10px;">' + escapeHtml(phone) + '</div>',
-          '    </div>',
-          '  </div>',
-          '  <div style="display: flex; align-items: center; gap: 6px;">',
-          '    <span class="client-status-badge badge-work" style="font-size: 9px; padding: 4px 8px;">' + escapeHtml(status) + '</span>',
-          '    <button class="item-del-btn" title="Удалить" onclick="window.handleDeleteRow(event, \'Клиенты\', \'' + id + '\', \'' + escapeHtml(name) + '\')"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>',
-          '  </div>',
-          '</div>'
-        ].join('');
-      }).join('');
+    if (window.MyTablesClients && typeof window.MyTablesClients.setClientsFromSync === 'function') {
+      window.MyTablesClients.setClientsFromSync(data.clients || []);
     }
   }
+
+  // ==========================================================================
+  // СТЕЙДЖ 4: МЕНЕДЖЕР «КЛИЕНТЫ ♡»
+  // ==========================================================================
+  var MyTablesClients = (function () {
+    var storageKeyClients = 'mytables_clients_v4';
+
+    var STATUS_CONFIG = {
+      work: { title: 'В работе', dotColor: '#2D9C5E', activeClass: 'active-work' },
+      waiting: { title: 'Ожидает', dotColor: '#D4A72C', activeClass: 'active-waiting' },
+      discuss: { title: 'Обсуждение', dotColor: '#2B82D9', activeClass: 'active-discuss' },
+      done: { title: 'Завершён', dotColor: '#9B8A78', activeClass: 'active-done' }
+    };
+
+    var initialClients = [
+      {
+        id: 'cli_1',
+        name: 'Анна Смирнова',
+        phone: '+7 900 123-45-67',
+        email: 'anna@mail.ru',
+        telegram: '@anna_site',
+        project: 'Разработка сайта (лендинг)',
+        status: 'work',
+        color: 'mint',
+        links: [
+          { title: 'Trello: Доска проекта сайта', url: 'https://trello.com/b/anna-landing' },
+          { title: 'Google Диск с макетами', url: 'https://drive.google.com/drive/folders/anna-site' }
+        ],
+        passwords: 'admin / pass2026_anna',
+        notes: 'Дедлайн 31 октября. Первый этап сдан, ждём согласования текстов для блока 3.',
+        taskDesc: 'Создание продающего лендинга под ключ. Адаптив под мобильные, интеграция с CRM и Telegram-уведомлениями.',
+        isArchived: false
+      },
+      {
+        id: 'cli_2',
+        name: 'Максим Юрьев',
+        phone: '+7 930 567-89-01',
+        email: 'maxim.y@corp.ru',
+        telegram: '@maxim_law',
+        project: 'Юридический консалтинг',
+        status: 'work',
+        color: 'lavender',
+        links: [
+          { title: 'Реестр договоров в Таблицах', url: 'https://docs.google.com/spreadsheets/d/example-maxim' }
+        ],
+        passwords: 'vault_law: key994_legal',
+        notes: 'Готовим спецификацию к соглашению. Оплата аванса 50% получена.',
+        taskDesc: 'Аудит договоров на разработку для digital-агентства, проверка соглашений о конфиденциальности (NDA).',
+        isArchived: false
+      },
+      {
+        id: 'cli_3',
+        name: 'Игорь Соколов',
+        phone: '8 911 234-56-78',
+        email: 'igor@sokolov.tech',
+        telegram: '@igor_sokol',
+        project: 'Внедрение CRM-системы',
+        status: 'waiting',
+        color: 'peach',
+        links: [
+          { title: 'Notion база проекта CRM', url: 'https://notion.so/crm-sokolov' }
+        ],
+        passwords: 'api_token: sk_live_8392104',
+        notes: 'Ждём выгрузку клиентской базы от заказчика до понедельника.',
+        taskDesc: 'Настройка воронки продаж, автоматизация распределения лидов и подключение телефонии.',
+        isArchived: false
+      },
+      {
+        id: 'cli_4',
+        name: 'Елена Васильева',
+        phone: '+7 905 456-78-90',
+        email: 'elena@vasilyeva.pro',
+        telegram: '@elena_ads',
+        project: 'Аудит рекламных кампаний',
+        status: 'discuss',
+        color: 'honey',
+        links: [
+          { title: 'Google Drive с отчётами по рекламе', url: 'https://drive.google.com/drive/folders/audit-elena' }
+        ],
+        passwords: 'yandex_direct: view_only',
+        notes: 'Первый созвон прошёл отлично. Готовим КП и смету до четверга.',
+        taskDesc: 'Глубокий аудит контекстной рекламы в Яндекс Директ и рекомендации по оптимизации стоимости заявки.',
+        isArchived: false
+      },
+      {
+        id: 'cli_5',
+        name: 'Катя Григорьева',
+        phone: '+7 920 345-67-89',
+        email: 'katya@grigorieva.ru',
+        telegram: '@katya_dash',
+        project: 'Настройка Google Таблиц',
+        status: 'done',
+        color: 'sand',
+        links: [
+          { title: 'Дашборд финансов в Таблицах', url: 'https://docs.google.com/spreadsheets/d/dashboard-katya' }
+        ],
+        passwords: 'google_service_account',
+        notes: 'Проект успешно сдан! Отзыв получен, клиент очень доволен ♡.',
+        taskDesc: 'Автоматический дашборд управленческого учета, интеграция с банком и учет остатков.',
+        isArchived: false
+      }
+    ];
+
+    var activeFilter = 'all';
+    var selectedClientId = 'cli_1';
+    var isPasswordRevealed = false;
+    var selectedModalColor = 'mint';
+
+    function loadClients() {
+      if (typeof localStorage !== 'undefined') {
+        try {
+          var saved = localStorage.getItem(storageKeyClients);
+          if (saved) {
+            var parsed = JSON.parse(saved);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              return parsed.map(normalizeClient);
+            }
+          }
+        } catch (e) {}
+      }
+      return initialClients.map(normalizeClient);
+    }
+
+    var clients = loadClients();
+
+    function saveClients() {
+      if (typeof localStorage !== 'undefined') {
+        try {
+          localStorage.setItem(storageKeyClients, JSON.stringify(clients));
+        } catch (e) {}
+      }
+    }
+
+    function canonicalStatus(rawStatus) {
+      if (!rawStatus || typeof rawStatus !== 'string') return 'discuss';
+      var s = rawStatus.trim().toLowerCase();
+      if (s === 'work' || s.indexOf('работ') !== -1) return 'work';
+      if (s === 'done' || s.indexOf('заверш') !== -1) return 'done';
+      if (s === 'waiting' || s.indexOf('ожида') !== -1) return 'waiting';
+      if (s === 'discuss' || s.indexOf('обсужд') !== -1) return 'discuss';
+      return 'discuss';
+    }
+
+    function sanitizePhoneForStorage(phone) {
+      if (!phone) return '';
+      var s = String(phone).trim();
+      if (s.indexOf("'+") === 0) return s;
+      if (s.indexOf('+') === 0) return "'" + s;
+      return s;
+    }
+
+    function displayPhone(phone) {
+      if (!phone) return '';
+      return String(phone).replace(/^'/, '').trim();
+    }
+
+    function getCleanPhoneDigits(phone) {
+      return String(phone || '').replace(/\D/g, '');
+    }
+
+    function getWhatsAppUrl(phone) {
+      var digits = String(phone || '').replace(/\D/g, '');
+      if (digits.length === 11 && digits.indexOf('8') === 0) {
+        digits = '7' + digits.slice(1);
+      } else if (digits.length === 10 && digits.indexOf('9') === 0) {
+        digits = '7' + digits;
+      }
+      return 'https://wa.me/' + digits;
+    }
+
+    function normalizeClient(raw) {
+      if (!raw) raw = {};
+      var id = raw.id || raw.ID || ('cli_' + Date.now());
+      var name = raw.name || raw['Имя клиента'] || raw['Имя'] || '';
+      var phone = raw.phone || raw['Телефон / Контакт'] || raw['Телефон'] || '';
+      var project = raw.project || raw['Проект'] || '';
+      var rawStatus = raw.status || raw['Статус'] || 'discuss';
+      var status = canonicalStatus(rawStatus);
+      var color = raw.color || raw['Цвет'] || 'mint';
+      var notes = raw.notes || raw['Заметки'] || raw['Заметка'] || '';
+      var email = raw.email || raw['Email'] || raw['Почта'] || '';
+      var telegram = raw.telegram || raw['Telegram'] || raw['Телеграм'] || '';
+      var taskDesc = raw.taskDesc || raw['Описание задачи'] || raw['Описание'] || '';
+      var passwords = raw.passwords || raw['Пароли'] || raw['Доступы'] || '';
+
+      var links = [];
+      if (Array.isArray(raw.links)) {
+        links = raw.links;
+      } else if (typeof raw.links === 'string' && raw.links.trim()) {
+        try {
+          links = JSON.parse(raw.links);
+        } catch (e) {
+          links = [];
+        }
+      }
+
+      var isArchived = (
+        raw.isArchived === true ||
+        raw.isArchived === 'true' ||
+        raw.isArchived === 'TRUE' ||
+        raw['В_Архиве'] === true ||
+        raw['В_Архиве'] === 'TRUE' ||
+        raw['В_Архиве'] === 'true'
+      );
+
+      return {
+        id: String(id),
+        name: String(name),
+        phone: String(phone),
+        project: String(project),
+        status: status,
+        color: String(color),
+        notes: String(notes),
+        email: String(email),
+        telegram: String(telegram),
+        taskDesc: String(taskDesc),
+        passwords: String(passwords),
+        links: links,
+        isArchived: Boolean(isArchived)
+      };
+    }
+
+    function validateClient(name, phone, project, status, color) {
+      if (!name || typeof name !== 'string' || !name.trim()) {
+        return { valid: false, error: 'Имя клиента обязательно' };
+      }
+      return {
+        valid: true,
+        name: name.trim(),
+        phone: (phone || '').trim(),
+        project: (project || '').trim(),
+        status: canonicalStatus(status),
+        color: color || 'mint'
+      };
+    }
+
+    function sortClients(list) {
+      if (!list || !Array.isArray(list)) return [];
+      var active = [];
+      var done = [];
+      for (var i = 0; i < list.length; i++) {
+        var item = list[i];
+        var st = canonicalStatus(item.status || item['Статус']);
+        if (st === 'done') {
+          done.push(item);
+        } else {
+          active.push(item);
+        }
+      }
+      return active.concat(done);
+    }
+
+    function filterClients(list, filter) {
+      if (!list || !Array.isArray(list)) return [];
+      var nonArchived = list.filter(function (c) {
+        return !(
+          c.isArchived === true ||
+          c.isArchived === 'true' ||
+          c.isArchived === 'TRUE' ||
+          c['В_Архиве'] === true ||
+          c['В_Архиве'] === 'TRUE' ||
+          c['В_Архиве'] === 'true'
+        );
+      });
+
+      if (!filter || filter === 'all' || filter === 'Все') {
+        return nonArchived;
+      }
+
+      var targetStatus = canonicalStatus(filter);
+      return nonArchived.filter(function (c) {
+        return canonicalStatus(c.status || c['Статус']) === targetStatus;
+      });
+    }
+
+    function getActiveClients() {
+      return clients.filter(function (c) {
+        return !c.isArchived;
+      });
+    }
+
+    function getAllClients() {
+      return clients.slice();
+    }
+
+    function getActiveWorkCount() {
+      return clients.filter(function (c) {
+        return !c.isArchived && canonicalStatus(c.status) === 'work';
+      }).length;
+    }
+
+    function getSelectedClientId() {
+      return selectedClientId;
+    }
+
+    function selectClient(id, openMobileDossier) {
+      selectedClientId = id;
+      renderClientLists();
+      renderDossiers();
+      if (openMobileDossier) {
+        switchMobileView('dossier');
+      }
+    }
+
+    function switchMobileView(view) {
+      if (typeof document === 'undefined') return;
+      var listView = document.getElementById('mob-view-list');
+      var dossierView = document.getElementById('mob-view-dossier');
+      var btnList = document.getElementById('mob-switch-list-btn');
+      var btnDossier = document.getElementById('mob-switch-dossier-btn');
+
+      if (view === 'dossier') {
+        if (listView) listView.style.display = 'none';
+        if (dossierView) dossierView.style.display = 'flex';
+        if (btnList) btnList.classList.remove('active');
+        if (btnDossier) btnDossier.classList.add('active');
+      } else {
+        if (listView) listView.style.display = 'flex';
+        if (dossierView) dossierView.style.display = 'none';
+        if (btnList) btnList.classList.add('active');
+        if (btnDossier) btnDossier.classList.remove('active');
+      }
+    }
+
+    function setFilter(status, btnElement) {
+      activeFilter = status || 'all';
+      if (typeof document !== 'undefined') {
+        var pills = document.querySelectorAll('#mob-filter-pills .filter-pill, #desk-filter-pills .filter-pill');
+        for (var i = 0; i < pills.length; i++) {
+          pills[i].classList.remove('active');
+        }
+        var classMap = {
+          all: '.pill-all',
+          work: '.pill-work',
+          waiting: '.pill-waiting',
+          discuss: '.pill-discuss',
+          done: '.pill-done'
+        };
+        var sel = classMap[activeFilter] || '.pill-all';
+        var activePills = document.querySelectorAll('#mob-filter-pills ' + sel + ', #desk-filter-pills ' + sel);
+        for (var j = 0; j < activePills.length; j++) {
+          activePills[j].classList.add('active');
+        }
+      }
+      renderClientLists();
+    }
+
+    function setClients(newClients) {
+      clients = (newClients || []).map(normalizeClient);
+      saveClients();
+      var active = getActiveClients();
+      if (active.length > 0) {
+        var found = active.find(function (c) { return c.id === selectedClientId; });
+        if (!found) {
+          selectedClientId = active[0].id;
+        }
+      } else {
+        selectedClientId = null;
+      }
+      syncToMainScreen();
+      renderClients();
+    }
+
+    function setClientsFromSync(syncClients) {
+      if (Array.isArray(syncClients) && syncClients.length > 0) {
+        clients = syncClients.map(normalizeClient);
+        saveClients();
+        var active = getActiveClients();
+        if (active.length > 0) {
+          var found = active.find(function (c) { return c.id === selectedClientId; });
+          if (!found) {
+            selectedClientId = active[0].id;
+          }
+        } else {
+          selectedClientId = null;
+        }
+      }
+      syncToMainScreen();
+      renderClients();
+    }
+
+    function addClient(data) {
+      var v = validateClient(data.name, data.phone, data.project, data.status, data.color);
+      if (!v.valid) return null;
+      var newId = 'cli_' + Date.now();
+      var newClient = {
+        id: newId,
+        name: v.name,
+        phone: sanitizePhoneForStorage(v.phone),
+        project: v.project,
+        status: v.status,
+        color: v.color,
+        notes: data.notes || '',
+        email: data.email || '',
+        telegram: data.telegram || '',
+        taskDesc: data.taskDesc || '',
+        passwords: data.passwords || '',
+        links: data.links || [],
+        isArchived: false
+      };
+      clients.push(newClient);
+      saveClients();
+      selectedClientId = newClient.id;
+
+      if (window.MyTablesSync && typeof window.MyTablesSync.saveClient === 'function') {
+        var statusLabels = { work: 'В работе', waiting: 'Ожидает', discuss: 'Обсуждение', done: 'Завершён' };
+        window.MyTablesSync.saveClient({
+          ID: newClient.id,
+          'Имя клиента': newClient.name,
+          'Телефон / Контакт': newClient.phone,
+          'Проект': newClient.project,
+          'Статус': statusLabels[newClient.status] || newClient.status,
+          'Цвет': newClient.color,
+          'Заметки': newClient.notes,
+          'В_Архиве': false,
+          isArchived: false,
+          isUpdate: false
+        }).catch(function () {});
+      }
+
+      syncToMainScreen();
+      renderClients();
+      return newClient;
+    }
+
+    function updateClient(id, data) {
+      var target = null;
+      for (var i = 0; i < clients.length; i++) {
+        if (clients[i].id === id) {
+          target = clients[i];
+          break;
+        }
+      }
+      if (!target) return null;
+      if (data.name !== undefined) target.name = data.name.trim();
+      if (data.phone !== undefined) target.phone = sanitizePhoneForStorage(data.phone);
+      if (data.project !== undefined) target.project = data.project.trim();
+      if (data.status !== undefined) target.status = canonicalStatus(data.status);
+      if (data.color !== undefined) target.color = data.color;
+      if (data.notes !== undefined) target.notes = data.notes;
+      if (data.email !== undefined) target.email = data.email;
+      if (data.telegram !== undefined) target.telegram = data.telegram;
+      if (data.taskDesc !== undefined) target.taskDesc = data.taskDesc;
+      if (data.passwords !== undefined) target.passwords = data.passwords;
+      if (data.links !== undefined) target.links = data.links;
+      if (data.isArchived !== undefined) target.isArchived = Boolean(data.isArchived);
+
+      saveClients();
+
+      if (window.MyTablesSync && typeof window.MyTablesSync.saveClient === 'function') {
+        var statusLabels = { work: 'В работе', waiting: 'Ожидает', discuss: 'Обсуждение', done: 'Завершён' };
+        window.MyTablesSync.saveClient({
+          ID: target.id,
+          'Имя клиента': target.name,
+          'Телефон / Контакт': target.phone,
+          'Проект': target.project,
+          'Статус': statusLabels[target.status] || target.status,
+          'Цвет': target.color,
+          'Заметки': target.notes,
+          'В_Архиве': target.isArchived,
+          isArchived: target.isArchived,
+          isUpdate: true
+        }).catch(function () {});
+      }
+
+      syncToMainScreen();
+      renderClients();
+      return target;
+    }
+
+    function archiveClient(id) {
+      var target = null;
+      for (var i = 0; i < clients.length; i++) {
+        if (clients[i].id === id) {
+          clients[i].isArchived = true;
+          clients[i]['В_Архиве'] = true;
+          target = clients[i];
+          break;
+        }
+      }
+      saveClients();
+
+      if (target && window.MyTablesSync && typeof window.MyTablesSync.saveClient === 'function') {
+        var statusLabels = { work: 'В работе', waiting: 'Ожидает', discuss: 'Обсуждение', done: 'Завершён' };
+        window.MyTablesSync.saveClient({
+          ID: target.id,
+          'Имя клиента': target.name,
+          'Телефон / Контакт': target.phone,
+          'Проект': target.project,
+          'Статус': statusLabels[target.status] || target.status,
+          'Цвет': target.color,
+          'Заметки': target.notes,
+          'В_Архиве': true,
+          isArchived: true,
+          isUpdate: true
+        }).catch(function () {});
+      }
+
+      if (selectedClientId === id) {
+        var remaining = getActiveClients();
+        selectedClientId = remaining.length > 0 ? remaining[0].id : null;
+      }
+
+      syncToMainScreen();
+      renderClients();
+      return target;
+    }
+
+    function addClientLink(clientId, linkObj) {
+      var client = clients.find(function (c) { return c.id === clientId; });
+      if (!client) {
+        client = clients.find(function (c) { return c.id === selectedClientId; });
+      }
+      if (!client) return null;
+      if (!client.links) client.links = [];
+      client.links.push({
+        title: (linkObj && linkObj.title) || 'Новая ссылка',
+        url: (linkObj && linkObj.url) || '#'
+      });
+      saveClients();
+      renderDossiers();
+      return client;
+    }
+
+    function editClientLink(clientId, index, linkObj) {
+      var client = clients.find(function (c) { return c.id === clientId; });
+      if (!client) {
+        client = clients.find(function (c) { return c.id === selectedClientId; });
+      }
+      if (!client || !client.links || !client.links[index]) return null;
+      if (!linkObj || !linkObj.title) {
+        client.links.splice(index, 1);
+      } else {
+        client.links[index].title = linkObj.title;
+        client.links[index].url = linkObj.url || client.links[index].url;
+      }
+      saveClients();
+      renderDossiers();
+      return client;
+    }
+
+    function togglePasswordVisibility() {
+      isPasswordRevealed = !isPasswordRevealed;
+      renderDossiers();
+    }
+
+    function updateCounters() {
+      if (typeof document === 'undefined') return;
+      var active = getActiveClients();
+      var counts = {
+        all: active.length,
+        work: 0,
+        waiting: 0,
+        discuss: 0,
+        done: 0
+      };
+
+      for (var i = 0; i < active.length; i++) {
+        var st = canonicalStatus(active[i].status || active[i]['Статус']);
+        if (counts[st] !== undefined) {
+          counts[st]++;
+        }
+      }
+
+      // 1. Верхние бейджи «В работе» экрана Клиентов
+      var deskBadge = document.getElementById('desk-work-count-badge');
+      if (deskBadge) deskBadge.textContent = 'В работе: ' + counts.work;
+
+      var mobBadge = document.getElementById('mob-work-count-badge');
+      if (mobBadge) mobBadge.textContent = counts.work + ' в работе';
+
+      // 2. Кнопки фильтров (десктоп и мобильный)
+      var rows = ['#desk-filter-pills', '#mob-filter-pills'];
+      for (var r = 0; r < rows.length; r++) {
+        var prefix = rows[r];
+        var pillAll = document.querySelector(prefix + ' .pill-all');
+        if (pillAll) pillAll.innerHTML = 'Все ' + counts.all;
+
+        var pillWork = document.querySelector(prefix + ' .pill-work');
+        if (pillWork) pillWork.innerHTML = '<span class="filter-dot" style="background:#2D9C5E;"></span>В работе ' + counts.work;
+
+        var pillWaiting = document.querySelector(prefix + ' .pill-waiting');
+        if (pillWaiting) pillWaiting.innerHTML = '<span class="filter-dot" style="background:#D4A72C;"></span>Ожидает ' + counts.waiting;
+
+        var pillDiscuss = document.querySelector(prefix + ' .pill-discuss');
+        if (pillDiscuss) pillDiscuss.innerHTML = '<span class="filter-dot" style="background:#2B82D9;"></span>Обсуждение ' + counts.discuss;
+
+        var pillDone = document.querySelector(prefix + ' .pill-done');
+        if (pillDone) pillDone.innerHTML = '<span class="filter-dot" style="background:#9B8A78;"></span>Завершён ' + counts.done;
+      }
+    }
+
+    function syncToMainScreen() {
+      var activeCount = getActiveWorkCount();
+      if (typeof document !== 'undefined') {
+        var deskEl = document.getElementById('desk-clients-count');
+        if (deskEl) deskEl.textContent = activeCount + ' в работе';
+        var mobEl = document.getElementById('mob-clients-count');
+        if (mobEl) mobEl.textContent = activeCount + ' в работе';
+        var countPill = document.getElementById('clients-count-pill');
+        if (countPill) countPill.textContent = activeCount + ' в работе';
+        updateCounters();
+      }
+    }
+
+    function copyPassword(clientId) {
+      var id = clientId || selectedClientId;
+      var client = clients.find(function (c) { return c.id === id; });
+      if (!client) return;
+      copyText(client.passwords || '', 'Пароль');
+    }
+
+    function copyText(text, label) {
+      if (typeof navigator !== 'undefined' && navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function () {
+          showToast((label || 'Текст') + ' скопирован в буфер ♡');
+        }).catch(function () {
+          showToast('Скопировано: ' + text);
+        });
+      } else {
+        showToast('Скопировано: ' + text);
+      }
+    }
+
+    function showToast(msg) {
+      if (typeof document === 'undefined') return;
+      var toast = document.getElementById('toast-popup');
+      var toastText = document.getElementById('toast-text');
+      if (toast && toastText) {
+        toastText.textContent = msg;
+        toast.classList.add('active');
+        setTimeout(function () {
+          toast.classList.remove('active');
+        }, 2200);
+      }
+    }
+
+    function getLinkIconBadge(link) {
+      var url = (link.url || '').toLowerCase();
+      var title = (link.title || '').toLowerCase();
+
+      if (url.indexOf('trello') !== -1 || title.indexOf('trello') !== -1 || title.indexOf('доска') !== -1) {
+        return '<div class="link-circle-badge blue"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 7h3v8H7z"/><path d="M14 7h3v5h-3z"/></svg></div>';
+      } else if (url.indexOf('drive.google') !== -1 || title.indexOf('диск') !== -1 || title.indexOf('папк') !== -1) {
+        return '<div class="link-circle-badge yellow"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 8 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg></div>';
+      } else if (url.indexOf('spreadsheets') !== -1 || url.indexOf('docs.google') !== -1 || title.indexOf('таблиц') !== -1 || title.indexOf('дашборд') !== -1) {
+        return '<div class="link-circle-badge mint"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v18"/></svg></div>';
+      } else {
+        return '<div class="link-circle-badge lavender"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" x2="22" y1="12" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>';
+      }
+    }
+
+    function renderLinksHtml(links) {
+      if (!links || links.length === 0) {
+        return '<div style="font-size:12px; opacity:0.75; padding:6px 2px;">Ссылки ещё не добавлены</div>';
+      }
+      return links.map(function (l, index) {
+        var cleanUrl = (l.url || '').replace(/^https?:\/\//, '');
+        return [
+          '<div class="link-item-row tooltip-anchor">',
+          '  <a href="' + escapeHtml(l.url) + '" target="_blank" rel="noopener noreferrer" class="link-item-main" title="' + escapeHtml(l.url) + '">',
+          '    <div style="display:flex; align-items:center; gap:10px; min-width:0;">',
+          '      ' + getLinkIconBadge(l),
+          '      <div style="display:flex; flex-direction:column; min-width:0; gap:1px;">',
+          '        <span class="link-title-text">' + escapeHtml(l.title) + '</span>',
+          '        <span class="link-url-text">' + escapeHtml(cleanUrl) + '</span>',
+          '      </div>',
+          '    </div>',
+          '    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; opacity:0.6;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>',
+          '  </a>',
+          '  <button class="link-edit-pencil-btn" onclick="window.MyTablesClients.openEditLinkPrompt(' + index + ')" title="Изменить ссылку">✎</button>',
+          '  <span class="shadcn-tooltip">Открыть: ' + escapeHtml(l.title) + '</span>',
+          '</div>'
+        ].join('');
+      }).join('');
+    }
+
+    function renderClients() {
+      renderClientLists();
+      renderDossiers();
+      updateCounters();
+    }
+
+    function renderClientLists() {
+      if (typeof document === 'undefined') return;
+      var mobContainer = document.getElementById('mob-clients-container');
+      var deskContainer = document.getElementById('desk-clients-container');
+      if (!mobContainer && !deskContainer) return;
+
+      var filtered = filterClients(clients, activeFilter);
+      var sorted = sortClients(filtered);
+
+      if (sorted.length === 0) {
+        var emptyHtml = [
+          '<div style="background:#FAF2E7; border-radius:18px; padding:22px; text-align:center; box-shadow:2px 3px 6px rgba(35,30,20,0.08);">',
+          '  <div style="font-size:20px; margin-bottom:4px;">♡</div>',
+          '  <div style="font-size:13px; font-weight:800; color:#5A4E40;">В этом статусе клиентов нет</div>',
+          '</div>'
+        ].join('');
+        if (mobContainer) mobContainer.innerHTML = emptyHtml;
+        if (deskContainer) deskContainer.innerHTML = emptyHtml;
+        return;
+      }
+
+      if (mobContainer) {
+        mobContainer.innerHTML = sorted.map(function (c) {
+          var initials = getInitials(c.name);
+          var stConfig = STATUS_CONFIG[c.status] || STATUS_CONFIG.discuss;
+          return [
+            '<div class="client-card-slip ' + c.color + '" onclick="window.MyTablesClients.selectClient(\'' + c.id + '\', true)">',
+            '  <div class="client-card-left">',
+            '    <div class="client-avatar-round">' + initials + '</div>',
+            '    <div class="client-info-group">',
+            '      <span class="client-name">' + escapeHtml(c.name) + '</span>',
+            '      <span class="client-project">' + escapeHtml(c.project) + '</span>',
+            '      <span class="client-phone-sub">' + escapeHtml(displayPhone(c.phone)) + '</span>',
+            '    </div>',
+            '  </div>',
+            '  <div class="client-card-right">',
+            '    <span class="status-badge ' + c.status + '">',
+            '      <span class="status-dot"></span>',
+            '      <span>' + stConfig.title + '</span>',
+            '    </span>',
+            '    <button class="card-chevron-btn" title="Открыть анкету">',
+            '      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>',
+            '    </button>',
+            '  </div>',
+            '</div>'
+          ].join('');
+        }).join('');
+      }
+
+      if (deskContainer) {
+        deskContainer.innerHTML = sorted.map(function (c) {
+          var initials = getInitials(c.name);
+          var stConfig = STATUS_CONFIG[c.status] || STATUS_CONFIG.discuss;
+          var selectedClass = (c.id === selectedClientId) ? 'selected' : '';
+          return [
+            '<div class="client-card-slip ' + c.color + ' ' + selectedClass + '" onclick="window.MyTablesClients.selectClient(\'' + c.id + '\', false)">',
+            '  <div class="client-card-left">',
+            '    <div class="client-avatar-round">' + initials + '</div>',
+            '    <div class="client-info-group">',
+            '      <span class="client-name">' + escapeHtml(c.name) + '</span>',
+            '      <span class="client-project">' + escapeHtml(c.project) + '</span>',
+            '      <span class="client-phone-sub">' + escapeHtml(displayPhone(c.phone)) + '</span>',
+            '    </div>',
+            '  </div>',
+            '  <div class="client-card-right">',
+            '    <span class="status-badge ' + c.status + '">',
+            '      <span class="status-dot"></span>',
+            '      <span>' + stConfig.title + '</span>',
+            '    </span>',
+            '  </div>',
+            '</div>'
+          ].join('');
+        }).join('');
+      }
+    }
+
+    function renderDossiers() {
+      if (typeof document === 'undefined') return;
+      var mobDossier = document.getElementById('mob-dossier-wrapper');
+      var deskDossier = document.getElementById('desk-dossier-wrapper');
+      if (!mobDossier && !deskDossier) return;
+
+      var activeList = getActiveClients();
+      var client = activeList.find(function (c) { return c.id === selectedClientId; });
+      if (!client && activeList.length > 0) {
+        client = activeList[0];
+        selectedClientId = client.id;
+      }
+
+      if (!client) {
+        var emptyDossier = '<div style="padding:32px; text-align:center; color:#7A6E5F; font-size:14px; font-weight:700;">Выберите клиента из списка или добавьте нового ♡</div>';
+        if (mobDossier) mobDossier.innerHTML = emptyDossier;
+        if (deskDossier) deskDossier.innerHTML = emptyDossier;
+        return;
+      }
+
+      var colorClasses = ['mint', 'peach', 'lavender', 'blue', 'honey', 'sand'];
+      for (var i = 0; i < colorClasses.length; i++) {
+        var cls = colorClasses[i];
+        if (mobDossier) mobDossier.classList.remove(cls);
+        if (deskDossier) deskDossier.classList.remove(cls);
+      }
+      if (mobDossier) mobDossier.classList.add(client.color || 'mint');
+      if (deskDossier) deskDossier.classList.add(client.color || 'mint');
+
+      var initials = getInitials(client.name);
+      var stConfig = STATUS_CONFIG[client.status] || STATUS_CONFIG.discuss;
+      var cleanPhone = displayPhone(client.phone);
+      var displayedPass = isPasswordRevealed ? client.passwords : '••••••••••••••••';
+      var passEye = isPasswordRevealed ? '👁' : '🔒';
+
+      if (mobDossier) {
+        mobDossier.innerHTML = [
+          '<div class="dossier-profile-card">',
+          '  <div class="dossier-profile-left">',
+          '    <div class="dossier-avatar-large">' + initials + '</div>',
+          '    <div class="dossier-profile-info">',
+          '      <span class="dossier-name">' + escapeHtml(client.name) + '</span>',
+          '      <span class="dossier-project-sub">' + escapeHtml(client.project) + '</span>',
+          '    </div>',
+          '  </div>',
+          '  <div class="dossier-header-actions">',
+          '    <span class="status-badge ' + client.status + '">',
+          '      <span class="status-dot"></span>',
+          '      <span>' + stConfig.title + '</span>',
+          '    </span>',
+          '  </div>',
+          '</div>',
+          '<div class="dossier-paper-slip">',
+          '  <div class="slip-title-row">',
+          '    <div class="slip-title-left">',
+          '      <span class="slip-icon-badge mint">',
+          '        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>',
+          '      </span>',
+          '      <span>Контакты</span>',
+          '    </div>',
+          '  </div>',
+          '  <div class="contact-clean-box">',
+          '    <div style="margin-bottom: 6px;">',
+          '      <a href="tel:' + escapeHtml(cleanPhone) + '" class="contact-phone-big" title="Нажмите для вызова или копирования" onclick="window.MyTablesClients.copyText(\'' + escapeHtml(cleanPhone) + '\', \'Номер телефона\')">' + escapeHtml(cleanPhone) + '</a>',
+          '    </div>',
+          '    <div class="contact-sub-links">',
+          (client.telegram ? '      <a href="https://t.me/' + escapeHtml(client.telegram.replace('@', '')) + '" target="_blank" class="contact-sub-item">✈️ ' + escapeHtml(client.telegram) + '</a>' : ''),
+          (client.telegram && client.email ? '      <span class="contact-dot-sep">•</span>' : ''),
+          (client.email ? '      <a href="mailto:' + escapeHtml(client.email) + '" class="contact-sub-item">✉️ ' + escapeHtml(client.email) + '</a>' : ''),
+          '    </div>',
+          '  </div>',
+          '</div>',
+          '<div class="dossier-paper-slip">',
+          '  <div class="slip-title-row">',
+          '    <div class="slip-title-left">',
+          '      <span class="slip-icon-badge yellow">',
+          '        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>',
+          '      </span>',
+          '      <span>Ссылки и таблицы</span>',
+          '    </div>',
+          '  </div>',
+          '  <div class="links-list-container">',
+          renderLinksHtml(client.links),
+          '    <button class="btn-add-link-creamy" onclick="window.MyTablesClients.openAddLinkPrompt()" title="Прикрепить новую ссылку">',
+          '      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>',
+          '      <span style="font-size:14px; font-weight:900;">+</span>',
+          '      <span>Добавить ссылку</span>',
+          '    </button>',
+          '  </div>',
+          '</div>',
+          '<div class="dossier-paper-slip">',
+          '  <div class="slip-title-row">',
+          '    <div class="slip-title-left">',
+          '      <span class="slip-icon-badge peach">',
+          '        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>',
+          '      </span>',
+          '      <span>Доступы и пароли</span>',
+          '    </div>',
+          '    <button class="btn-copy-pass-pill" onclick="window.MyTablesClients.copyPassword(\'' + client.id + '\')" title="Скопировать">Скопировать</button>',
+          '  </div>',
+          '  <div class="password-display-box">',
+          '    <span class="password-text" id="mob-pass-field">' + escapeHtml(displayedPass) + '</span>',
+          '    <button class="dossier-icon-btn" onclick="window.MyTablesClients.togglePasswordVisibility()" title="Показать/скрыть">' + passEye + '</button>',
+          '  </div>',
+          '</div>',
+          '<div class="dossier-paper-slip">',
+          '  <div class="slip-title-row">',
+          '    <div class="slip-title-left">',
+          '      <span class="slip-icon-badge blue">',
+          '        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>',
+          '      </span>',
+          '      <span>Описание задачи и договорённости</span>',
+          '    </div>',
+          '  </div>',
+          '  <div class="notes-display-box">',
+          escapeHtml(client.taskDesc || 'Описание задачи пока не заполнено'),
+          (client.notes ? '    <div style="margin-top:6px; font-weight:800; opacity:0.9;">📌 Заметка: ' + escapeHtml(client.notes) + '</div>' : ''),
+          '  </div>',
+          '</div>',
+          '<div class="mob-dossier-actions">',
+          '  <button class="mob-btn-action edit" onclick="window.MyTablesClients.openEditModal(\'' + client.id + '\')"><span>✎</span> Редактировать</button>',
+          '  <button class="mob-btn-action archive" onclick="window.MyTablesClients.openArchiveModal(\'' + client.id + '\')">',
+          '    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>',
+          '    В архив',
+          '  </button>',
+          '</div>'
+        ].join('');
+      }
+
+      if (deskDossier) {
+        deskDossier.innerHTML = [
+          '<div class="dossier-profile-card">',
+          '  <div class="dossier-profile-left">',
+          '    <div class="dossier-avatar-large" style="width:52px; height:52px; font-size:18px;">' + initials + '</div>',
+          '    <div class="dossier-profile-info">',
+          '      <span class="dossier-name" style="font-size:20px;">' + escapeHtml(client.name) + '</span>',
+          '      <span class="dossier-project-sub" style="font-size:13px;">' + escapeHtml(client.project) + '</span>',
+          '    </div>',
+          '  </div>',
+          '  <div class="dossier-header-actions">',
+          '    <span class="status-badge ' + client.status + '" style="font-size:12px; padding:6px 14px;">',
+          '      <span class="status-dot"></span>',
+          '      <span>' + stConfig.title + '</span>',
+          '    </span>',
+          '    <button class="dossier-icon-btn" style="width:36px; height:36px;" onclick="window.MyTablesClients.openEditModal(\'' + client.id + '\')" title="Редактировать клиента">',
+          '      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>',
+          '    </button>',
+          '    <button class="dossier-icon-btn" style="width:36px; height:36px; color:#58241B;" onclick="window.MyTablesClients.openArchiveModal(\'' + client.id + '\')" title="Отправить в архив">',
+          '      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>',
+          '    </button>',
+          '  </div>',
+          '</div>',
+          '<div class="desk-dossier-grid" style="margin-top: 4px;">',
+          '  <div class="dossier-paper-slip">',
+          '    <div class="slip-title-row">',
+          '      <div class="slip-title-left">',
+          '        <span class="slip-icon-badge mint">',
+          '          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>',
+          '        </span>',
+          '        <span>Контакты</span>',
+          '      </div>',
+          '    </div>',
+          '    <div class="contact-clean-box">',
+          '      <div style="margin-bottom: 6px;">',
+          '        <a href="tel:' + escapeHtml(cleanPhone) + '" class="contact-phone-big" title="Нажмите для вызова или копирования" onclick="window.MyTablesClients.copyText(\'' + escapeHtml(cleanPhone) + '\', \'Номер телефона\')">' + escapeHtml(cleanPhone) + '</a>',
+          '      </div>',
+          '      <div class="contact-sub-links">',
+          (client.telegram ? '        <a href="https://t.me/' + escapeHtml(client.telegram.replace('@', '')) + '" target="_blank" class="contact-sub-item">✈️ ' + escapeHtml(client.telegram) + '</a>' : ''),
+          (client.telegram && client.email ? '        <span class="contact-dot-sep">•</span>' : ''),
+          (client.email ? '        <a href="mailto:' + escapeHtml(client.email) + '" class="contact-sub-item">✉️ ' + escapeHtml(client.email) + '</a>' : ''),
+          '      </div>',
+          '    </div>',
+          '  </div>',
+          '  <div class="dossier-paper-slip">',
+          '    <div class="slip-title-row">',
+          '      <div class="slip-title-left">',
+          '        <span class="slip-icon-badge yellow">',
+          '          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>',
+          '        </span>',
+          '        <span>Ссылки и таблицы</span>',
+          '      </div>',
+          '    </div>',
+          '    <div class="links-list-container">',
+          renderLinksHtml(client.links),
+          '      <button class="btn-add-link-creamy" onclick="window.MyTablesClients.openAddLinkPrompt()" title="Прикрепить новую ссылку">',
+          '        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>',
+          '        <span style="font-size:14px; font-weight:900;">+</span>',
+          '        <span>Добавить ссылку</span>',
+          '      </button>',
+          '    </div>',
+          '  </div>',
+          '  <div class="dossier-paper-slip">',
+          '    <div class="slip-title-row">',
+          '      <div class="slip-title-left">',
+          '        <span class="slip-icon-badge blue">',
+          '          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>',
+          '        </span>',
+          '        <span>Описание задачи и объём работы</span>',
+          '      </div>',
+          '    </div>',
+          '    <div class="notes-display-box">',
+          escapeHtml(client.taskDesc || 'Описание задачи пока не заполнено'),
+          '    </div>',
+          '  </div>',
+          '  <div class="dossier-paper-slip">',
+          '    <div class="slip-title-row">',
+          '      <div class="slip-title-left">',
+          '        <span class="slip-icon-badge peach">',
+          '          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>',
+          '        </span>',
+          '        <span>Доступы и пароли</span>',
+          '      </div>',
+          '      <button class="btn-copy-pass-pill" onclick="window.MyTablesClients.copyPassword(\'' + client.id + '\')" title="Скопировать">Скопировать</button>',
+          '    </div>',
+          '    <div class="password-display-box">',
+          '      <span class="password-text" id="desk-pass-field">' + escapeHtml(displayedPass) + '</span>',
+          '      <button class="dossier-icon-btn" onclick="window.MyTablesClients.togglePasswordVisibility()" title="Показать/скрыть">' + passEye + '</button>',
+          '    </div>',
+          '  </div>',
+          '  <div class="dossier-paper-slip">',
+          '    <div class="slip-title-row">',
+          '      <div class="slip-title-left">',
+          '        <span class="slip-icon-badge blue">',
+          '          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="17" x2="12" y2="22"/><path d="M5 17h14v-2l-2-2V5a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v8l-2 2v2z"/></svg>',
+          '        </span>',
+          '        <span>Важные заметки</span>',
+          '      </div>',
+          '    </div>',
+          '    <div class="notes-display-box">',
+          escapeHtml(client.notes || 'Заметок нет'),
+          '    </div>',
+          '  </div>',
+          '</div>'
+        ].join('');
+      }
+    }
+
+    function openAddLinkPrompt() {
+      var client = clients.find(function (c) { return c.id === selectedClientId; });
+      if (!client) return;
+      var title = prompt('Введите название ссылки (например: CRM Битрикс24, Figma):', 'Figma макет');
+      if (!title) return;
+      var url = prompt('Введите URL ссылки:', 'https://figma.com/');
+      if (!url) return;
+      addClientLink(client.id, { title: title, url: url });
+      showToast('Ссылка успешно добавлена ♡');
+    }
+
+    function openEditLinkPrompt(index) {
+      var client = clients.find(function (c) { return c.id === selectedClientId; });
+      if (!client || !client.links || !client.links[index]) return;
+      var link = client.links[index];
+      var newTitle = prompt('Изменить название ссылки (оставьте пустым для удаления):', link.title);
+      if (newTitle === null) return;
+      if (newTitle.trim() === '') {
+        editClientLink(client.id, index, null);
+        showToast('Ссылка удалена ♡');
+        return;
+      }
+      var newUrl = prompt('Изменить URL ссылки:', link.url);
+      if (newUrl !== null) {
+        editClientLink(client.id, index, { title: newTitle, url: newUrl });
+        showToast('Ссылка обновлена ♡');
+      }
+    }
+
+    function toggleCustomSelect(containerId) {
+      if (typeof document === 'undefined') return;
+      var container = document.getElementById(containerId);
+      if (!container) return;
+      var isOpen = container.classList.contains('open');
+      var all = document.querySelectorAll('.custom-select');
+      for (var i = 0; i < all.length; i++) {
+        all[i].classList.remove('open');
+      }
+      if (!isOpen) {
+        container.classList.add('open');
+      }
+    }
+
+    function setSelectValue(containerId, value, text, dotColor) {
+      if (typeof document === 'undefined') return;
+      var container = document.getElementById(containerId);
+      if (!container) return;
+      var valSpan = container.querySelector('.custom-select-val');
+      if (valSpan) {
+        valSpan.innerHTML = '<span class="status-dot" style="background:' + dotColor + ';"></span><span>' + escapeHtml(text) + '</span>';
+      }
+      container.classList.remove('open');
+      container.setAttribute('data-value', value);
+    }
+
+    function selectModalColor(color) {
+      selectedModalColor = color;
+      if (typeof document === 'undefined') return;
+      var circles = document.querySelectorAll('.palette-circle');
+      for (var i = 0; i < circles.length; i++) {
+        var circle = circles[i];
+        if (circle.getAttribute('data-color') === color) {
+          circle.classList.add('selected');
+        } else {
+          circle.classList.remove('selected');
+        }
+      }
+    }
+
+    function openInteractiveModal(type, clientId) {
+      if (typeof document === 'undefined') return;
+      var overlay = document.getElementById('interactive-modal-overlay');
+      var title = document.getElementById('overlay-modal-title');
+      var body = document.getElementById('overlay-modal-body');
+      var actions = document.getElementById('overlay-modal-actions');
+      if (!overlay || !title || !body || !actions) return;
+
+      var targetId = clientId || selectedClientId;
+      var client = clients.find(function (c) { return c.id === targetId; }) || clients[0];
+
+      if (type === 'add') {
+        selectedModalColor = 'mint';
+        title.innerHTML = '<span style="color:#1E3F30;">+</span> Новый клиент ♡';
+        body.innerHTML = [
+          '<div class="field-group">',
+          '  <label class="field-label">Имя клиента / Организация *</label>',
+          '  <input type="text" id="add-client-name" class="field-input" placeholder="Например: Мария Соколова">',
+          '</div>',
+          '<div class="field-group">',
+          '  <label class="field-label">Номер телефона</label>',
+          '  <input type="tel" id="add-client-phone" class="field-input" placeholder="+7 999 123-45-67">',
+          '  <span class="field-hint">Для Google Таблиц телефон сохраняется с апострофом (\'+7...)</span>',
+          '</div>',
+          '<div class="field-group">',
+          '  <label class="field-label">Проект / Услуга</label>',
+          '  <input type="text" id="add-client-project" class="field-input" placeholder="Например: Дизайн сайта">',
+          '</div>',
+          '<div class="field-group">',
+          '  <label class="field-label">Статус клиента</label>',
+          '  <div class="custom-select" id="popup-select-status" data-value="work">',
+          '    <button type="button" class="custom-select-trigger" onclick="window.MyTablesClients.toggleCustomSelect(\'popup-select-status\')">',
+          '      <span class="custom-select-val">',
+          '        <span class="status-dot" style="background:#2D9C5E;"></span>',
+          '        <span>В работе (активный проект)</span>',
+          '      </span>',
+          '      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>',
+          '    </button>',
+          '    <div class="custom-select-dropdown">',
+          '      <div class="custom-select-option" onclick="window.MyTablesClients.setSelectValue(\'popup-select-status\', \'work\', \'В работе (активный проект)\', \'#2D9C5E\')"><span class="status-dot" style="background:#2D9C5E;"></span><span>В работе (активный проект)</span></div>',
+          '      <div class="custom-select-option" onclick="window.MyTablesClients.setSelectValue(\'popup-select-status\', \'waiting\', \'Ожидает (пауза / материалы)\', \'#D4A72C\')"><span class="status-dot" style="background:#D4A72C;"></span><span>Ожидает (пауза / материалы)</span></div>',
+          '      <div class="custom-select-option" onclick="window.MyTablesClients.setSelectValue(\'popup-select-status\', \'discuss\', \'Обсуждение (первые переговоры)\', \'#2B82D9\')"><span class="status-dot" style="background:#2B82D9;"></span><span>Обсуждение (первые переговоры)</span></div>',
+          '      <div class="custom-select-option" onclick="window.MyTablesClients.setSelectValue(\'popup-select-status\', \'done\', \'Завершён (проект сдан)\', \'#9B8A78\')"><span class="status-dot" style="background:#9B8A78;"></span><span>Завершён (проект сдан)</span></div>',
+          '    </div>',
+          '  </div>',
+          '</div>',
+          '<div class="field-group">',
+          '  <label class="field-label">Цвет карточки</label>',
+          '  <div class="palette-row">',
+          '    <button type="button" class="palette-circle selected" data-color="mint" style="background:#C8E2D2;" onclick="window.MyTablesClients.selectModalColor(\'mint\')" title="Мята"></button>',
+          '    <button type="button" class="palette-circle" data-color="peach" style="background:#FCD6CF;" onclick="window.MyTablesClients.selectModalColor(\'peach\')" title="Персик"></button>',
+          '    <button type="button" class="palette-circle" data-color="lavender" style="background:#DBCCE9;" onclick="window.MyTablesClients.selectModalColor(\'lavender\')" title="Лаванда"></button>',
+          '    <button type="button" class="palette-circle" data-color="blue" style="background:#D3E7F8;" onclick="window.MyTablesClients.selectModalColor(\'blue\')" title="Небо"></button>',
+          '    <button type="button" class="palette-circle" data-color="honey" style="background:#FDF1CC;" onclick="window.MyTablesClients.selectModalColor(\'honey\')" title="Сливки"></button>',
+          '    <button type="button" class="palette-circle" data-color="sand" style="background:#FAF2E7;" onclick="window.MyTablesClients.selectModalColor(\'sand\')" title="Песок"></button>',
+          '  </div>',
+          '</div>'
+        ].join('');
+        actions.innerHTML = [
+          '<button type="button" class="btn-action-modal cancel" onclick="window.MyTablesClients.closeModal()">Отмена</button>',
+          '<button type="button" class="btn-action-modal save" onclick="window.MyTablesClients.submitAddForm()">Сохранить клиента</button>'
+        ].join('');
+      } else if (type === 'edit') {
+        if (!client) return;
+        selectedModalColor = client.color || 'mint';
+        var curStatus = STATUS_CONFIG[client.status] || STATUS_CONFIG.discuss;
+        title.innerHTML = '<span>✎</span> Редактировать • ' + escapeHtml(client.name);
+        body.innerHTML = [
+          '<input type="hidden" id="edit-client-id" value="' + client.id + '">',
+          '<div class="field-group">',
+          '  <label class="field-label">Имя клиента *</label>',
+          '  <input type="text" id="edit-client-name" class="field-input" value="' + escapeHtml(client.name) + '">',
+          '</div>',
+          '<div class="field-group">',
+          '  <label class="field-label">Телефон</label>',
+          '  <input type="tel" id="edit-client-phone" class="field-input" value="' + escapeHtml(displayPhone(client.phone)) + '">',
+          '</div>',
+          '<div class="field-group">',
+          '  <label class="field-label">Проект</label>',
+          '  <input type="text" id="edit-client-project" class="field-input" value="' + escapeHtml(client.project) + '">',
+          '</div>',
+          '<div class="field-group">',
+          '  <label class="field-label">Статус</label>',
+          '  <div class="custom-select" id="popup-select-status" data-value="' + client.status + '">',
+          '    <button type="button" class="custom-select-trigger" onclick="window.MyTablesClients.toggleCustomSelect(\'popup-select-status\')">',
+          '      <span class="custom-select-val">',
+          '        <span class="status-dot" style="background:' + curStatus.dotColor + ';"></span>',
+          '        <span>' + curStatus.title + '</span>',
+          '      </span>',
+          '      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>',
+          '    </button>',
+          '    <div class="custom-select-dropdown">',
+          '      <div class="custom-select-option" onclick="window.MyTablesClients.setSelectValue(\'popup-select-status\', \'work\', \'В работе\', \'#2D9C5E\')"><span class="status-dot" style="background:#2D9C5E;"></span><span>В работе</span></div>',
+          '      <div class="custom-select-option" onclick="window.MyTablesClients.setSelectValue(\'popup-select-status\', \'waiting\', \'Ожидает\', \'#D4A72C\')"><span class="status-dot" style="background:#D4A72C;"></span><span>Ожидает</span></div>',
+          '      <div class="custom-select-option" onclick="window.MyTablesClients.setSelectValue(\'popup-select-status\', \'discuss\', \'Обсуждение\', \'#2B82D9\')"><span class="status-dot" style="background:#2B82D9;"></span><span>Обсуждение</span></div>',
+          '      <div class="custom-select-option" onclick="window.MyTablesClients.setSelectValue(\'popup-select-status\', \'done\', \'Завершён\', \'#9B8A78\')"><span class="status-dot" style="background:#9B8A78;"></span><span>Завершён</span></div>',
+          '    </div>',
+          '  </div>',
+          '</div>',
+          '<div class="field-group">',
+          '  <label class="field-label">Заметка</label>',
+          '  <textarea id="edit-client-notes" class="field-textarea">' + escapeHtml(client.notes) + '</textarea>',
+          '</div>'
+        ].join('');
+        actions.innerHTML = [
+          '<button type="button" class="btn-action-modal delete" onclick="window.MyTablesClients.openArchiveModal(\'' + client.id + '\')">Удалить</button>',
+          '<button type="button" class="btn-action-modal cancel" onclick="window.MyTablesClients.closeModal()">Отмена</button>',
+          '<button type="button" class="btn-action-modal save" onclick="window.MyTablesClients.submitEditForm()">Сохранить</button>'
+        ].join('');
+      } else if (type === 'archive') {
+        if (!client) return;
+        title.innerHTML = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg> Удаление клиента';
+        body.innerHTML = [
+          '<p style="font-size: 13.5px; font-weight: 700; color: #4D3118; line-height: 1.45;">',
+          '  Удалить клиента <b>«' + escapeHtml(client.name) + '»</b> из активного списка?',
+          '</p>',
+          '<p style="font-size: 11.5px; font-weight: 600; color: #726453; line-height: 1.4;">',
+          '  Клиент скроется из списка, а все данные и пароли сохранятся в архиве Google Таблиц.',
+          '</p>'
+        ].join('');
+        actions.innerHTML = [
+          '<button type="button" class="btn-action-modal cancel" onclick="window.MyTablesClients.closeModal()">Отмена</button>',
+          '<button type="button" class="btn-action-modal delete" onclick="window.MyTablesClients.confirmArchiveModal(\'' + client.id + '\')">Удалить</button>'
+        ].join('');
+      }
+
+      overlay.classList.add('active');
+    }
+
+    function closeModal() {
+      if (typeof document === 'undefined') return;
+      var overlay = document.getElementById('interactive-modal-overlay');
+      if (overlay) overlay.classList.remove('active');
+    }
+
+    function openAddModal() {
+      openInteractiveModal('add');
+    }
+
+    function openEditModal(clientId) {
+      openInteractiveModal('edit', clientId);
+    }
+
+    function openArchiveModal(clientId) {
+      openInteractiveModal('archive', clientId);
+    }
+
+    function submitAddForm() {
+      if (typeof document === 'undefined') return;
+      var nameInput = document.getElementById('add-client-name');
+      var phoneInput = document.getElementById('add-client-phone');
+      var projectInput = document.getElementById('add-client-project');
+      var selectContainer = document.getElementById('popup-select-status');
+
+      var name = nameInput ? nameInput.value : '';
+      var phone = phoneInput ? phoneInput.value : '';
+      var project = projectInput ? projectInput.value : '';
+      var status = (selectContainer && selectContainer.getAttribute('data-value')) || 'work';
+
+      var res = addClient({
+        name: name,
+        phone: phone,
+        project: project,
+        status: status,
+        color: selectedModalColor
+      });
+
+      if (!res) {
+        alert('Пожалуйста, укажите имя клиента ♡');
+        return;
+      }
+
+      closeModal();
+      showToast('Новый клиент успешно добавлен ♡');
+    }
+
+    function submitEditForm() {
+      if (typeof document === 'undefined') return;
+      var idInput = document.getElementById('edit-client-id');
+      var nameInput = document.getElementById('edit-client-name');
+      var phoneInput = document.getElementById('edit-client-phone');
+      var projectInput = document.getElementById('edit-client-project');
+      var notesInput = document.getElementById('edit-client-notes');
+      var selectContainer = document.getElementById('popup-select-status');
+
+      var id = idInput ? idInput.value : selectedClientId;
+      var name = nameInput ? nameInput.value : '';
+      var phone = phoneInput ? phoneInput.value : '';
+      var project = projectInput ? projectInput.value : '';
+      var notes = notesInput ? notesInput.value : '';
+      var status = (selectContainer && selectContainer.getAttribute('data-value')) || 'work';
+
+      if (!name || !name.trim()) {
+        alert('Имя клиента обязательно ♡');
+        return;
+      }
+
+      updateClient(id, {
+        name: name,
+        phone: phone,
+        project: project,
+        notes: notes,
+        status: status
+      });
+
+      closeModal();
+      showToast('Данные клиента обновлены ♡');
+    }
+
+    function confirmArchiveModal(clientId) {
+      var id = clientId || selectedClientId;
+      archiveClient(id);
+      closeModal();
+      showToast('Клиент перенесён в архив ♡');
+    }
+
+    function init() {
+      syncToMainScreen();
+      renderClients();
+
+      if (typeof document !== 'undefined') {
+        // Close select dropdowns on outside click
+        document.addEventListener('click', function (e) {
+          if (!e.target.closest || !e.target.closest('.custom-select')) {
+            var selects = document.querySelectorAll('.custom-select');
+            for (var i = 0; i < selects.length; i++) {
+              selects[i].classList.remove('open');
+            }
+          }
+        });
+      }
+    }
+
+    return {
+      validateClient: validateClient,
+      canonicalStatus: canonicalStatus,
+      normalizeClient: normalizeClient,
+      sanitizePhoneForStorage: sanitizePhoneForStorage,
+      displayPhone: displayPhone,
+      getCleanPhoneDigits: getCleanPhoneDigits,
+      getWhatsAppUrl: getWhatsAppUrl,
+      sortClients: sortClients,
+      filterClients: filterClients,
+      selectClient: selectClient,
+      getSelectedClientId: getSelectedClientId,
+      switchMobileView: switchMobileView,
+      setFilter: setFilter,
+      setClients: setClients,
+      setClientsFromSync: setClientsFromSync,
+      getClients: getActiveClients,
+      getActiveClients: getActiveClients,
+      getAllClients: getAllClients,
+      getActiveWorkCount: getActiveWorkCount,
+      addClient: addClient,
+      updateClient: updateClient,
+      archiveClient: archiveClient,
+      addClientLink: addClientLink,
+      editClientLink: editClientLink,
+      togglePasswordVisibility: togglePasswordVisibility,
+      openAddModal: openAddModal,
+      openEditModal: openEditModal,
+      openArchiveModal: openArchiveModal,
+      openInteractiveModal: openInteractiveModal,
+      closeModal: closeModal,
+      selectModalColor: selectModalColor,
+      toggleCustomSelect: toggleCustomSelect,
+      setSelectValue: setSelectValue,
+      submitAddForm: submitAddForm,
+      submitEditForm: submitEditForm,
+      confirmArchiveModal: confirmArchiveModal,
+      copyText: copyText,
+      copyPassword: copyPassword,
+      showToast: showToast,
+      openAddLinkPrompt: openAddLinkPrompt,
+      openEditLinkPrompt: openEditLinkPrompt,
+      renderClients: renderClients,
+      renderClientLists: renderClientLists,
+      renderDossiers: renderDossiers,
+      syncToMainScreen: syncToMainScreen,
+      updateCounters: updateCounters,
+      init: init
+    };
+  })();
+
+  window.MyTablesClients = MyTablesClients;
 
   // --- ОБРАБОТЧИК УДАЛЕНИЯ ЗАПИСИ ---
   window.handleDeleteRow = function (e, sheet, id, title) {
@@ -1558,6 +2854,12 @@
         return;
       }
     }
+    if (type === 'client') {
+      if (window.MyTablesClients && typeof window.MyTablesClients.openAddModal === 'function') {
+        window.MyTablesClients.openAddModal();
+        return;
+      }
+    }
     if (type === 'expense') {
       var expModal = document.getElementById('mytables-expense-modal');
       if (!expModal) {
@@ -1654,6 +2956,13 @@
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;');
+  }
+
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+      MyTablesIncome: typeof MyTablesIncome !== 'undefined' ? MyTablesIncome : null,
+      MyTablesClients: typeof MyTablesClients !== 'undefined' ? MyTablesClients : null
+    };
   }
 
 })();
