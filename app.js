@@ -115,7 +115,10 @@
 
     var incomeList = data.income || [];
     var expensesList = data.expenses || [];
-    var clientsList = data.clients || [];
+    var clientsList = (data.clients || []).filter(function (item) {
+      var str = (String(item.name || '') + ' ' + String(item['Имя клиента'] || '') + ' ' + String(item['Телефон'] || '') + ' ' + String(item['Проект'] || '')).toLowerCase();
+      return str.indexOf('автотест') === -1 && str.indexOf('#error') === -1;
+    });
 
     // Суммы доходов и расходов
     var totalIncome = incomeList.reduce(function (sum, item) {
@@ -522,7 +525,7 @@
             '    <span class="slip-sum">' + formatRub(pay.amount) + ' ₽</span>',
             '    <span class="slip-date">' + formatDayMonth(pay.date) + '</span>',
             '  </div>',
-            '  <button class="btn-slip-plus" onclick="event.stopPropagation(); window.MyTablesIncome.openAddPaymentModal(\'' + p.id + '\')" title="Внести платёж">+</button>',
+            '  <button class="btn-slip-plus btn-add-payment" onclick="event.stopPropagation(); window.MyTablesIncome.openAddPaymentModal(\'' + p.id + '\')" title="Внести платёж">+</button>',
             '</div>'
           ].join('');
         }).join('');
@@ -533,7 +536,7 @@
           '    <span class="slip-empty-text">Нет платежей</span>',
           '    <span class="slip-date">Нажмите, чтобы внести</span>',
           '  </div>',
-          '  <button class="btn-slip-plus" onclick="event.stopPropagation(); window.MyTablesIncome.openAddPaymentModal(\'' + p.id + '\')" title="Внести платёж">+</button>',
+          '  <button class="btn-slip-plus btn-add-payment" onclick="event.stopPropagation(); window.MyTablesIncome.openAddPaymentModal(\'' + p.id + '\')" title="Внести платёж">+</button>',
           '</div>'
         ].join('');
       }
@@ -548,7 +551,7 @@
         '    <div class="project-header-right">',
         '      <div class="project-total-pill" onclick="window.MyTablesIncome.openEditCostModal(\'' + p.id + '\')" title="Изменить стоимость">',
         '        <span class="project-total-val">' + formatRub(p.totalCost) + ' ₽</span>',
-        '        <button class="edit-pencil-btn" title="Редактировать сумму">✎</button>',
+        '        <button class="edit-pencil-btn" onclick="event.stopPropagation(); window.MyTablesIncome.openEditCostModal(\'' + p.id + '\')" title="Редактировать сумму">✎</button>',
         '      </div>',
         '      <button class="btn-archive-project" onclick="window.MyTablesIncome.openArchiveModal(\'' + p.id + '\')" title="В архив">',
         '        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">',
@@ -562,8 +565,9 @@
         '    </div>',
         '  </div>',
         '  <div class="payments-section">',
-        '    <div class="payments-section-header">',
+        '    <div class="payments-section-header" style="display: flex; justify-content: space-between; align-items: center;">',
         '      <span class="payments-section-title">Внесённые оплаты (' + projectPayments.length + ')</span>',
+        '      <button class="cat-add-btn btn-add-payment" onclick="event.stopPropagation(); window.MyTablesIncome.openAddPaymentModal(\'' + p.id + '\')" title="Внести платёж" style="width: 24px; height: 24px; min-width: 24px; min-height: 24px; font-size: 14px; font-weight: 900; line-height: 1; padding: 0; display: inline-flex; align-items: center; justify-content: center; border: none; border-radius: 50%; cursor: pointer;">+</button>',
         '    </div>',
         '    <div class="payments-list">',
         paymentsHtml,
@@ -597,7 +601,7 @@
       if (!overlay) {
         overlay = document.createElement('div');
         overlay.id = 'mytables-income-overlay';
-        overlay.style.cssText = 'position: fixed; inset: 0; background: rgba(45, 35, 25, 0.45); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 16px; box-sizing: border-box;';
+        overlay.style.cssText = 'position: fixed; inset: 0; background: rgba(45, 35, 25, 0.45); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 10000; padding: 16px; box-sizing: border-box; pointer-events: none;';
         overlay.onclick = function (e) {
           if (e.target.id === 'mytables-income-overlay') closeIncomeModal();
         };
@@ -609,7 +613,9 @@
     function closeIncomeModal() {
       var overlay = document.getElementById('mytables-income-overlay');
       if (overlay) {
+        overlay.classList.remove('active');
         overlay.style.display = 'none';
+        overlay.style.pointerEvents = 'none';
         overlay.innerHTML = '';
       }
     }
@@ -708,7 +714,9 @@
         }
       };
 
+      overlay.classList.add('active');
       overlay.style.display = 'flex';
+      overlay.style.pointerEvents = 'auto';
     }
 
     // 2. Модалка добавления платежа
@@ -759,7 +767,9 @@
         }
       };
 
+      overlay.classList.add('active');
       overlay.style.display = 'flex';
+      overlay.style.pointerEvents = 'auto';
       setTimeout(function () {
         var inp = document.getElementById('inc-pay-amount');
         if (inp) inp.focus();
@@ -820,7 +830,9 @@
         }
       };
 
+      overlay.classList.add('active');
       overlay.style.display = 'flex';
+      overlay.style.pointerEvents = 'auto';
     }
 
     // 4. Модалка изменения договорной стоимости проекта
@@ -859,7 +871,9 @@
         }
       };
 
+      overlay.classList.add('active');
       overlay.style.display = 'flex';
+      overlay.style.pointerEvents = 'auto';
       setTimeout(function () {
         var inp = document.getElementById('inc-proj-cost');
         if (inp) inp.focus();
@@ -907,7 +921,9 @@
         closeIncomeModal();
       };
 
+      overlay.classList.add('active');
       overlay.style.display = 'flex';
+      overlay.style.pointerEvents = 'auto';
     }
 
     return {
@@ -1069,6 +1085,26 @@
     var isPasswordRevealed = false;
     var selectedModalColor = 'mint';
 
+    function isTrashClient(c) {
+      if (!c) return true;
+      var str = (
+        String(c.name || '') + ' ' +
+        String(c['Имя клиента'] || '') + ' ' +
+        String(c.project || '') + ' ' +
+        String(c['Проект'] || '') + ' ' +
+        String(c.phone || '') + ' ' +
+        String(c['Телефон / Контакт'] || '') + ' ' +
+        String(c['Телефон'] || '') + ' ' +
+        String(c.notes || '') + ' ' +
+        String(c['Заметки'] || '') + ' ' +
+        String(c.id || '')
+      ).toLowerCase();
+      if (str.indexOf('автотест') !== -1) return true;
+      if (str.indexOf('#error') !== -1) return true;
+      if (str.indexOf('autotest') !== -1) return true;
+      return false;
+    }
+
     function loadClients() {
       if (typeof localStorage !== 'undefined') {
         try {
@@ -1076,12 +1112,15 @@
           if (saved) {
             var parsed = JSON.parse(saved);
             if (Array.isArray(parsed) && parsed.length > 0) {
-              return parsed.map(normalizeClient);
+              var clean = parsed.filter(function (c) { return !isTrashClient(c); });
+              if (clean.length > 0) {
+                return clean.map(normalizeClient);
+              }
             }
           }
         } catch (e) {}
       }
-      return initialClients.map(normalizeClient);
+      return initialClients.filter(function (c) { return !isTrashClient(c); }).map(normalizeClient);
     }
 
     var clients = loadClients();
@@ -1309,7 +1348,7 @@
     }
 
     function setClients(newClients) {
-      clients = (newClients || []).map(normalizeClient);
+      clients = (newClients || []).filter(function (c) { return !isTrashClient(c); }).map(normalizeClient);
       saveClients();
       var active = getActiveClients();
       if (active.length > 0) {
@@ -1326,8 +1365,11 @@
 
     function setClientsFromSync(syncClients) {
       if (Array.isArray(syncClients) && syncClients.length > 0) {
-        clients = syncClients.map(normalizeClient);
-        saveClients();
+        var clean = syncClients.filter(function (c) { return !isTrashClient(c); });
+        if (clean.length > 0) {
+          clients = clean.map(normalizeClient);
+          saveClients();
+        }
         var active = getActiveClients();
         if (active.length > 0) {
           var found = active.find(function (c) { return c.id === selectedClientId; });
@@ -2153,12 +2195,18 @@
       }
 
       overlay.classList.add('active');
+      overlay.style.display = 'flex';
+      overlay.style.pointerEvents = 'auto';
     }
 
     function closeModal() {
       if (typeof document === 'undefined') return;
       var overlay = document.getElementById('interactive-modal-overlay');
-      if (overlay) overlay.classList.remove('active');
+      if (overlay) {
+        overlay.classList.remove('active');
+        overlay.style.display = 'none';
+        overlay.style.pointerEvents = 'none';
+      }
     }
 
     function openAddModal() {
@@ -2336,8 +2384,8 @@
   // --- ПЕРЕКЛЮЧЕНИЕ СТАТУСА ОПЛАТЫ РАСХОДА («ОПЛАЧЕНО / ОПЛАТИТЬ») ---
   window.toggleExpenseItemStatus = function (event, btn) {
     if (event) {
-      event.preventDefault();
-      event.stopPropagation();
+      if (event.preventDefault) event.preventDefault();
+      if (event.stopPropagation) event.stopPropagation();
     }
     if (!btn) return;
 
@@ -2346,52 +2394,69 @@
     var title = titleEl ? titleEl.textContent.trim() : '';
     var willBePaid = !btn.classList.contains('paid');
 
+    // Немедленно обновляем саму нажатую кнопку
+    if (willBePaid) {
+      btn.classList.remove('unpaid');
+      btn.classList.add('paid');
+      btn.innerHTML = '<span class="status-dot"></span> Оплачено';
+    } else {
+      btn.classList.remove('paid');
+      btn.classList.add('unpaid');
+      btn.innerHTML = '<span class="status-dot"></span> Оплатить';
+    }
+
     // 1. Синхронизируем состояние кнопок (десктоп и мобильный)
-    var allSlips = document.querySelectorAll('.expense-paper-slip');
-    for (var s = 0; s < allSlips.length; s++) {
-      var sTitleEl = allSlips[s].querySelector('.expense-item-name');
-      if (sTitleEl && sTitleEl.textContent.trim().toLowerCase() === title.toLowerCase()) {
-        var pill = allSlips[s].querySelector('.status-pill');
-        if (pill) {
-          if (willBePaid) {
-            pill.classList.remove('unpaid');
-            pill.classList.add('paid');
-            pill.innerHTML = '<span class="status-dot"></span> Оплачено';
-          } else {
-            pill.classList.remove('paid');
-            pill.classList.add('unpaid');
-            pill.innerHTML = '<span class="status-dot"></span> Оплатить';
+    if (title) {
+      var allSlips = document.querySelectorAll('.expense-paper-slip');
+      for (var s = 0; s < allSlips.length; s++) {
+        var sTitleEl = allSlips[s].querySelector('.expense-item-name');
+        if (sTitleEl && sTitleEl.textContent.trim().toLowerCase() === title.toLowerCase()) {
+          var pill = allSlips[s].querySelector('.status-pill');
+          if (pill) {
+            if (willBePaid) {
+              pill.classList.remove('unpaid');
+              pill.classList.add('paid');
+              pill.innerHTML = '<span class="status-dot"></span> Оплачено';
+            } else {
+              pill.classList.remove('paid');
+              pill.classList.add('unpaid');
+              pill.innerHTML = '<span class="status-dot"></span> Оплатить';
+            }
           }
         }
       }
     }
 
     // 2. Обновляем paidMonths в calendar.js и реактивно пересчитываем сводку на Главном экране
-    if (window.MyTablesCalendar) {
-      var ym = (typeof window.MyTablesCalendar.getYearMonth === 'function')
-        ? window.MyTablesCalendar.getYearMonth()
-        : '2026-10';
-      var payments = (window.MyTablesCalendar.state && window.MyTablesCalendar.state.payments) || [];
-      for (var i = 0; i < payments.length; i++) {
-        var p = payments[i];
-        var pTitle = p.title || p['Название'] || p.name || '';
-        if (title && pTitle.toLowerCase() === title.toLowerCase()) {
-          if (!p.paidMonths) p.paidMonths = [];
-          var mIdx = p.paidMonths.indexOf(ym);
-          if (willBePaid && mIdx === -1) {
-            p.paidMonths.push(ym);
-          } else if (!willBePaid && mIdx !== -1) {
-            p.paidMonths.splice(mIdx, 1);
+    try {
+      if (window.MyTablesCalendar) {
+        var ym = (typeof window.MyTablesCalendar.getYearMonth === 'function')
+          ? window.MyTablesCalendar.getYearMonth()
+          : '2026-10';
+        var payments = (window.MyTablesCalendar.state && window.MyTablesCalendar.state.payments) || [];
+        for (var i = 0; i < payments.length; i++) {
+          var p = payments[i];
+          var pTitle = p.title || p['Название'] || p.name || '';
+          if (title && pTitle.toLowerCase() === title.toLowerCase()) {
+            if (!p.paidMonths) p.paidMonths = [];
+            var mIdx = p.paidMonths.indexOf(ym);
+            if (willBePaid && mIdx === -1) {
+              p.paidMonths.push(ym);
+            } else if (!willBePaid && mIdx !== -1) {
+              p.paidMonths.splice(mIdx, 1);
+            }
+            break;
           }
-          break;
+        }
+        if (typeof window.MyTablesCalendar.updateSummaryCards === 'function') {
+          window.MyTablesCalendar.updateSummaryCards();
+        }
+        if (typeof window.MyTablesCalendar.renderCalendar === 'function') {
+          window.MyTablesCalendar.renderCalendar();
         }
       }
-      if (typeof window.MyTablesCalendar.updateSummaryCards === 'function') {
-        window.MyTablesCalendar.updateSummaryCards();
-      }
-      if (typeof window.MyTablesCalendar.renderCalendar === 'function') {
-        window.MyTablesCalendar.renderCalendar();
-      }
+    } catch (err) {
+      console.warn('Calendar sync warning:', err);
     }
   };
 
@@ -2402,6 +2467,8 @@
       var expModal = document.createElement('div');
       expModal.id = 'mytables-expense-modal';
       expModal.className = 'mytables-modal-backdrop';
+      expModal.style.display = 'none';
+      expModal.style.pointerEvents = 'none';
       expModal.innerHTML = [
         '<div class="mytables-paper-modal" style="max-width: 440px; width: 100%; background: #FAF2E7; border-radius: 24px; padding: 22px 20px; box-shadow: 6px 14px 35px rgba(130, 105, 80, 0.28), -3px -3px 10px rgba(255, 255, 255, 0.9); border: none; text-align: left;">',
         '  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">',
@@ -2496,6 +2563,8 @@
         if (archBtn) archBtn.style.display = 'none';
         selectColorDot('#D3E7F8');
         expModal.classList.add('active');
+        expModal.style.display = 'flex';
+        expModal.style.pointerEvents = 'auto';
         document.getElementById('exp-in-title').focus();
       };
 
@@ -2542,6 +2611,8 @@
         if (archBtn) archBtn.style.display = 'inline-flex';
 
         expModal.classList.add('active');
+        expModal.style.display = 'flex';
+        expModal.style.pointerEvents = 'auto';
         document.getElementById('exp-in-amount').focus();
       };
 
@@ -2549,6 +2620,8 @@
         currentEditingSlip = null;
         currentEditingPayment = null;
         expModal.classList.remove('active');
+        expModal.style.display = 'none';
+        expModal.style.pointerEvents = 'none';
       };
       document.getElementById('exp-modal-close').addEventListener('click', closeExpModal);
       document.getElementById('exp-modal-cancel').addEventListener('click', closeExpModal);
@@ -2742,6 +2815,8 @@
       var modal = document.createElement('div');
       modal.id = 'mytables-add-modal';
       modal.className = 'mytables-modal-backdrop';
+      modal.style.display = 'none';
+      modal.style.pointerEvents = 'none';
       modal.innerHTML = [
         '<div class="mytables-paper-modal" style="max-width: 440px; width: 100%; background: #FAF2E7; border-radius: 24px; padding: 22px 20px; box-shadow: 6px 14px 35px rgba(130, 105, 80, 0.28), -3px -3px 10px rgba(255, 255, 255, 0.9); border: none; text-align: left;">',
         '  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">',
@@ -2784,7 +2859,11 @@
 
       document.body.appendChild(modal);
 
-      var closeModal = function () { modal.classList.remove('active'); };
+      var closeModal = function () {
+        modal.classList.remove('active');
+        modal.style.display = 'none';
+        modal.style.pointerEvents = 'none';
+      };
       document.getElementById('add-modal-close').addEventListener('click', closeModal);
       document.getElementById('add-modal-cancel').addEventListener('click', closeModal);
       modal.addEventListener('click', function (e) {
@@ -2904,6 +2983,8 @@
     document.getElementById('add-field-note').value = '';
 
     modal.classList.add('active');
+    modal.style.display = 'flex';
+    modal.style.pointerEvents = 'auto';
   };
 
   // Привязка кнопок "+" на странице

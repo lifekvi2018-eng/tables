@@ -65,12 +65,15 @@ async function runAllTests() {
     assert.strictEqual(typeof MyTablesSync.deleteRecord, 'function');
     assert.strictEqual(typeof MyTablesSync.login, 'function');
     assert.strictEqual(typeof MyTablesSync.logout, 'function');
+    assert.strictEqual(typeof MyTablesSync.checkPassword, 'function');
+    assert.strictEqual(typeof MyTablesSync.changePassword, 'function');
     assert.strictEqual(typeof MyTablesSync.isAuthenticated, 'function');
     assert.strictEqual(typeof MyTablesSync.isOnline, 'function');
   });
 
   await runTest('Конфигурация содержит утвержденный URL и email владелицы', () => {
     assert.strictEqual(MyTablesSync.CONFIG.AUTHORIZED_EMAIL, 'lifekvi2018@gmail.com');
+    assert.strictEqual(MyTablesSync.CONFIG.DEFAULT_PASSWORD, 'Anya2026');
     assert.strictEqual(
       MyTablesSync.CONFIG.SCRIPT_URL,
       'https://script.google.com/macros/s/AKfycbzU_3g5bISD-PKzCHuzk2kqc4hosbruIXd5r5dXPFYkJLqpYG9oxEZwG80zB2opjWI7/exec'
@@ -86,14 +89,28 @@ async function runAllTests() {
   });
 
   await runTest('Чужой email отклоняется с понятной ошибкой безопасности', () => {
-    const res = MyTablesSync.login('intruder@gmail.com');
+    const res = MyTablesSync.login('intruder@gmail.com', 'Anya2026');
     assert.strictEqual(res.success, false);
     assert.ok(res.error.includes('lifekvi2018@gmail.com'));
     assert.strictEqual(MyTablesSync.isAuthenticated(), false);
   });
 
-  await runTest('Почта владелицы lifekvi2018@gmail.com успешно авторизуется', () => {
-    const res = MyTablesSync.login('lifekvi2018@gmail.com');
+  await runTest('Неверный пароль владелицы строго отклоняется с сообщением «Неверный пароль доступа»', () => {
+    const res = MyTablesSync.login('lifekvi2018@gmail.com', 'WrongPass123');
+    assert.strictEqual(res.success, false);
+    assert.strictEqual(res.error, 'Неверный пароль доступа');
+    assert.strictEqual(MyTablesSync.isAuthenticated(), false);
+  });
+
+  await runTest('Пустой пароль владелицы строго отклоняется', () => {
+    const res = MyTablesSync.login('lifekvi2018@gmail.com', '');
+    assert.strictEqual(res.success, false);
+    assert.strictEqual(res.error, 'Неверный пароль доступа');
+    assert.strictEqual(MyTablesSync.isAuthenticated(), false);
+  });
+
+  await runTest('Почта владелицы lifekvi2018@gmail.com и мастер-пароль Anya2026 успешно авторизуются', () => {
+    const res = MyTablesSync.login('lifekvi2018@gmail.com', 'Anya2026');
     assert.strictEqual(res.success, true);
     assert.strictEqual(MyTablesSync.isAuthenticated(), true);
     const user = MyTablesSync.getCurrentUser();
@@ -101,6 +118,43 @@ async function runAllTests() {
     assert.strictEqual(user.email, 'lifekvi2018@gmail.com');
     assert.strictEqual(user.name, 'Аня');
     assert.strictEqual(user.avatar, 'А');
+  });
+
+  await runTest('Короткий мастер-PIN 2026 также успешно авторизует владелицу', () => {
+    MyTablesSync.logout();
+    const res = MyTablesSync.login('lifekvi2018@gmail.com', '2026');
+    assert.strictEqual(res.success, true);
+    assert.strictEqual(MyTablesSync.isAuthenticated(), true);
+  });
+
+  await runTest('Смена пароля через changePassword и успешный вход по новому паролю', () => {
+    // Попытка смены с неверным старым паролем
+    const badOld = MyTablesSync.changePassword('wrongOld', 'Secret9999');
+    assert.strictEqual(badOld.success, false);
+    assert.strictEqual(badOld.error, 'Старый пароль указан неверно');
+
+    // Попытка смены на слишком короткий пароль (< 4 символов)
+    const shortNew = MyTablesSync.changePassword('Anya2026', '123');
+    assert.strictEqual(shortNew.success, false);
+    assert.strictEqual(shortNew.error, 'Новый пароль должен содержать не менее 4 символов');
+
+    // Корректная смена
+    const goodChange = MyTablesSync.changePassword('Anya2026', 'Secret9999');
+    assert.strictEqual(goodChange.success, true);
+
+    MyTablesSync.logout();
+    // Старый пароль больше не должен подходить
+    const loginOld = MyTablesSync.login('lifekvi2018@gmail.com', 'Anya2026');
+    assert.strictEqual(loginOld.success, false);
+    assert.strictEqual(loginOld.error, 'Неверный пароль доступа');
+
+    // Новый пароль подходит
+    const loginNew = MyTablesSync.login('lifekvi2018@gmail.com', 'Secret9999');
+    assert.strictEqual(loginNew.success, true);
+    assert.strictEqual(MyTablesSync.isAuthenticated(), true);
+
+    // Сбрасываем пароль для чистоты других тестов
+    MyTablesSync._resetPasswordForTesting();
   });
 
   await runTest('Выход (logout) сбрасывает авторизацию', () => {

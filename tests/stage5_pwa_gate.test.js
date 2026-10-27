@@ -55,25 +55,36 @@ async function runStage5Tests() {
   console.log('======================================================\n');
 
   // Тест 1: test_google_gate_auth_strict_email
-  await runTest('test_google_gate_auth_strict_email: вход разрешён только для lifekvi2018@gmail.com, чужие отклоняются', () => {
+  await runTest('test_google_gate_auth_strict_email: вход разрешён только для lifekvi2018@gmail.com с верным паролем, чужие и неверный пароль отклоняются', () => {
     mockLocalStorage = {};
     mockSessionStorage = {};
     if (MyTablesSync.logout) MyTablesSync.logout();
 
     // Попытка входа с чужим email
-    const res1 = MyTablesSync.login('intruder@gmail.com');
+    const res1 = MyTablesSync.login('intruder@gmail.com', 'Anya2026');
     assert.strictEqual(res1.success, false, 'Чужой email не должен проходить');
     assert.ok(res1.error && res1.error.includes('lifekvi2018@gmail.com'), 'Должно быть указано сообщение с email владелицы');
     assert.strictEqual(MyTablesSync.isAuthenticated(), false, 'Не должен быть авторизован');
 
     // Попытка входа с пустым email
-    const res2 = MyTablesSync.login('');
+    const res2 = MyTablesSync.login('', 'Anya2026');
     assert.strictEqual(res2.success, false, 'Пустой email должен быть отклонен');
 
-    // Вход владелицы с разным регистром и пробелами
-    const res3 = MyTablesSync.login('  LifeKVI2018@gmail.com  ');
-    assert.strictEqual(res3.success, true, 'Вход владелицы должен быть успешен');
-    assert.strictEqual(res3.user.email, 'lifekvi2018@gmail.com', 'Email должен быть нормализован');
+    // Попытка входа с верным email, но неверным паролем
+    const res3 = MyTablesSync.login('lifekvi2018@gmail.com', 'wrong_pass');
+    assert.strictEqual(res3.success, false, 'Неверный пароль должен быть отклонен');
+    assert.strictEqual(res3.error, 'Неверный пароль доступа', 'Сообщение должно быть строго «Неверный пароль доступа»');
+    assert.strictEqual(MyTablesSync.isAuthenticated(), false);
+
+    // Попытка входа без пароля
+    const res4 = MyTablesSync.login('lifekvi2018@gmail.com', '');
+    assert.strictEqual(res4.success, false, 'Пустой пароль должен быть отклонен');
+    assert.strictEqual(res4.error, 'Неверный пароль доступа');
+
+    // Вход владелицы с разным регистром и пробелами и верным паролем Anya2026
+    const res5 = MyTablesSync.login('  LifeKVI2018@gmail.com  ', 'Anya2026');
+    assert.strictEqual(res5.success, true, 'Вход владелицы должен быть успешен');
+    assert.strictEqual(res5.user.email, 'lifekvi2018@gmail.com', 'Email должен быть нормализован');
     assert.strictEqual(MyTablesSync.isAuthenticated(), true, 'Статус авторизации должен быть true');
 
     const currentUser = MyTablesSync.getCurrentUser();
@@ -89,13 +100,18 @@ async function runStage5Tests() {
     if (MyTablesSync.logout) MyTablesSync.logout();
 
     const now = Date.now();
-    const res = MyTablesSync.login('lifekvi2018@gmail.com');
+    const res = MyTablesSync.login('lifekvi2018@gmail.com', 'Anya2026', true);
     assert.strictEqual(res.success, true);
     assert.ok(res.user.expiresAt, 'У пользователя должен быть установлен срок истечения expiresAt');
 
     const ttl = res.user.expiresAt - now;
     const thirtyDaysMs = 30 * 24 * 60 * 60 * 1000;
     assert.ok(Math.abs(ttl - thirtyDaysMs) < 5000, `Срок сессии должен составлять 30 дней (получено: ${ttl} мс)`);
+
+    // Проверяем сессию без запоминания (rememberMe = false)
+    const resSession = MyTablesSync.login('lifekvi2018@gmail.com', 'Anya2026', false);
+    assert.strictEqual(resSession.success, true);
+    assert.strictEqual(resSession.user.rememberMe, false);
 
     // Симуляция истечения срока сессии (пользователь из прошлого)
     const expiredUser = {
@@ -280,6 +296,12 @@ async function runStage5Tests() {
     };
     const mockGate = { id: 'mytables-auth-gate', style: gateStyle };
     const mockEmailInput = { id: 'mytables-auth-email', value: '' };
+    const mockPasswordInput = { id: 'mytables-auth-password', value: '', focus: () => {} };
+    const mockRememberInput = { id: 'mytables-auth-remember', checked: true };
+    const mockToggleBtn = { id: 'mytables-auth-toggle-pwd', addEventListener: () => {} };
+    const mockErrorBox = { id: 'mytables-auth-error', style: {}, textContent: '' };
+    const mockSubmitBtn = { id: 'mytables-auth-submit', addEventListener: () => {} };
+    const mockAuthForm = { id: 'mytables-auth-form', addEventListener: () => {} };
 
     // Подготовка мок-кнопок выхода
     let logoutClickListeners = [];
@@ -307,6 +329,12 @@ async function runStage5Tests() {
         getElementById: (id) => {
           if (id === 'mytables-auth-gate') return mockGate;
           if (id === 'mytables-auth-email') return mockEmailInput;
+          if (id === 'mytables-auth-password') return mockPasswordInput;
+          if (id === 'mytables-auth-remember') return mockRememberInput;
+          if (id === 'mytables-auth-toggle-pwd') return mockToggleBtn;
+          if (id === 'mytables-auth-error') return mockErrorBox;
+          if (id === 'mytables-auth-submit') return mockSubmitBtn;
+          if (id === 'mytables-auth-form') return mockAuthForm;
           if (id === 'mytables-sync-styles' || id === 'mytables-sync-badge') return { style: {} };
           return null;
         },
@@ -327,7 +355,7 @@ async function runStage5Tests() {
       assert.strictEqual(mockGate.style.getPropertyPriority('display'), 'important', 'hideAuthModal обязан использовать !important');
 
       // Авторизуем пользователя перед проверкой клика
-      MyTablesSync.login('lifekvi2018@gmail.com');
+      MyTablesSync.login('lifekvi2018@gmail.com', 'Anya2026');
       assert.strictEqual(MyTablesSync.isAuthenticated(), true);
 
       // Привязываем слушатели через initUI
@@ -373,7 +401,39 @@ async function runStage5Tests() {
     }, 'Инициализация sync.js в чистом VM контексте не должна выбрасывать ReferenceError');
   });
 
-  // Тест 10: test_regression_suite_all_stages
+  // Тест 10: test_password_protection_and_change_password
+  await runTest('test_password_protection_and_change_password: смена пароля, валидация длины и старого пароля, сброс', () => {
+    // Проверка методов
+    assert.strictEqual(typeof MyTablesSync.checkPassword, 'function');
+    assert.strictEqual(typeof MyTablesSync.changePassword, 'function');
+
+    // Дефолтный пароль
+    assert.strictEqual(MyTablesSync.checkPassword('Anya2026'), true);
+    assert.strictEqual(MyTablesSync.checkPassword('2026'), true);
+    assert.strictEqual(MyTablesSync.checkPassword('wrong'), false);
+
+    // Смена с неверным старым паролем
+    const errRes1 = MyTablesSync.changePassword('wrong', 'Secret2026');
+    assert.strictEqual(errRes1.success, false);
+    assert.strictEqual(errRes1.error, 'Старый пароль указан неверно');
+
+    // Смена с коротким паролем
+    const errRes2 = MyTablesSync.changePassword('Anya2026', '12');
+    assert.strictEqual(errRes2.success, false);
+    assert.strictEqual(errRes2.error, 'Новый пароль должен содержать не менее 4 символов');
+
+    // Успешная смена
+    const okRes = MyTablesSync.changePassword('Anya2026', 'AnyaNew2026');
+    assert.strictEqual(okRes.success, true);
+    assert.strictEqual(MyTablesSync.checkPassword('AnyaNew2026'), true);
+    assert.strictEqual(MyTablesSync.checkPassword('Anya2026'), false);
+
+    // Возврат дефолта
+    MyTablesSync._resetPasswordForTesting();
+    assert.strictEqual(MyTablesSync.checkPassword('Anya2026'), true);
+  });
+
+  // Тест 11: test_regression_suite_all_stages
   await runTest('test_regression_suite_all_stages: сквозная проверка всех предыдущих стейджей (0 регрессий)', () => {
     const suites = [
       'tests/stage1_calendar.test.js',

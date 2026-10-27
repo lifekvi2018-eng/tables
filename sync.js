@@ -22,7 +22,9 @@
   var CONFIG = {
     SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbzU_3g5bISD-PKzCHuzk2kqc4hosbruIXd5r5dXPFYkJLqpYG9oxEZwG80zB2opjWI7/exec',
     AUTHORIZED_EMAIL: 'lifekvi2018@gmail.com',
+    DEFAULT_PASSWORD: 'Anya2026',
     AUTH_STORAGE_KEY: 'my_tables_auth_user',
+    PASSWORD_STORAGE_KEY: 'my_tables_auth_pwd',
     CACHE_STORAGE_KEY: 'my_tables_cached_data',
     DELETED_STORAGE_KEY: 'my_tables_deleted_ids',
     TIMEOUT_MS: 15000
@@ -48,15 +50,25 @@
     clear: function () { _memStore = {}; }
   };
 
-  function getAuthStorage() {
+  function getAuthStorage(forceSessionOnly) {
     if (typeof window === 'undefined') {
       // Node.js окружение
+      if (forceSessionOnly && typeof sessionStorage !== 'undefined') {
+        try { return sessionStorage; } catch (e) {}
+      }
       if (typeof localStorage !== 'undefined') {
         try { return localStorage; } catch (e) {}
       }
       if (typeof sessionStorage !== 'undefined') {
         try { return sessionStorage; } catch (e) {}
       }
+      return memoryStorageAdapter;
+    }
+
+    if (forceSessionOnly) {
+      try {
+        if (window.sessionStorage) return window.sessionStorage;
+      } catch (e) {}
       return memoryStorageAdapter;
     }
 
@@ -185,21 +197,67 @@
   }
 
   // ==========================================================================
-  // АВТОРИЗАЦИЯ (GOOGLE GATE) — 30 ДНЕЙ И СТРОГО lifekvi2018@gmail.com
+  // АВТОРИЗАЦИЯ (GOOGLE GATE) — 30 ДНЕЙ И СТРОГО lifekvi2018@gmail.com + СЕКРЕТНЫЙ ПАРОЛЬ
   // ==========================================================================
 
   var SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 дней в миллисекундах
 
+  function getMasterPassword() {
+    var stored = storage.get(CONFIG.PASSWORD_STORAGE_KEY);
+    if (stored && typeof stored === 'string' && stored.trim().length > 0) {
+      return stored.trim();
+    }
+    return CONFIG.DEFAULT_PASSWORD;
+  }
+
+  function checkPassword(pass) {
+    if (typeof pass !== 'string') return false;
+    var input = pass.trim();
+    if (!input) return false;
+    var master = getMasterPassword();
+    if (input === master) return true;
+    // Резервный короткий мастер-PIN для быстрого ввода владелицей: 2026
+    if (master === 'Anya2026' && input === '2026') return true;
+    return false;
+  }
+
+  function changePassword(oldPass, newPass) {
+    if (!checkPassword(oldPass)) {
+      return { success: false, error: 'Старый пароль указан неверно' };
+    }
+    if (!newPass || typeof newPass !== 'string' || newPass.trim().length < 4) {
+      return { success: false, error: 'Новый пароль должен содержать не менее 4 символов' };
+    }
+    var cleanNew = newPass.trim();
+    storage.set(CONFIG.PASSWORD_STORAGE_KEY, cleanNew);
+    if (typeof localStorage !== 'undefined') {
+      try {
+        localStorage.setItem(CONFIG.PASSWORD_STORAGE_KEY, JSON.stringify(cleanNew));
+      } catch (e) {}
+    }
+    return { success: true, message: 'Пароль успешно обновлён' };
+  }
+
+  function _resetPasswordForTesting() {
+    storage.remove(CONFIG.PASSWORD_STORAGE_KEY);
+    if (typeof localStorage !== 'undefined') {
+      try { localStorage.removeItem(CONFIG.PASSWORD_STORAGE_KEY); } catch (e) {}
+    }
+  }
+
   function isAuthenticated() {
     var adapter = getAuthStorage();
     var raw = adapter.getItem(CONFIG.AUTH_STORAGE_KEY);
+    if (!raw && typeof sessionStorage !== 'undefined') {
+      try { raw = sessionStorage.getItem(CONFIG.AUTH_STORAGE_KEY); } catch (e) {}
+    }
     if (!raw) return false;
     try {
       var user = JSON.parse(raw);
       if (!user || !user.authorized || !user.email || user.email.toLowerCase() !== CONFIG.AUTHORIZED_EMAIL.toLowerCase()) {
         return false;
       }
-      // Автоинвалидация сессии при истечении 30 дней (DEF-5.3)
+      // Автоинвалидация сессии при истечении срока действия (DEF-5.3)
       if (user.expiresAt && Date.now() > user.expiresAt) {
         logout();
         return false;
@@ -215,28 +273,40 @@
     return storage.get(CONFIG.AUTH_STORAGE_KEY);
   }
 
-  function login(email) {
+  function login(email, password, rememberMe) {
     var cleanEmail = (email || '').trim().toLowerCase();
-    if (cleanEmail === CONFIG.AUTHORIZED_EMAIL.toLowerCase()) {
-      var now = Date.now();
-      var user = {
-        authorized: true,
-        email: cleanEmail,
-        name: 'Аня',
-        avatar: 'А',
-        loginTime: now,
-        expiresAt: now + SESSION_TTL_MS
-      };
-      var adapter = getAuthStorage();
-      adapter.setItem(CONFIG.AUTH_STORAGE_KEY, JSON.stringify(user));
-      hideAuthModal();
-      notifyListeners();
-      updateUserChips();
-      return { success: true, user: user };
-    } else {
+    if (cleanEmail !== CONFIG.AUTHORIZED_EMAIL.toLowerCase()) {
       var err = 'Доступ ограничен. Это личное приложение только для ' + CONFIG.AUTHORIZED_EMAIL;
       return { success: false, error: err };
     }
+
+    if (!password || !checkPassword(password)) {
+      return { success: false, error: 'Неверный пароль доступа' };
+    }
+
+    var isRemember = rememberMe !== false;
+    var now = Date.now();
+    var user = {
+      authorized: true,
+      email: cleanEmail,
+      name: 'Аня',
+      avatar: 'А',
+      loginTime: now,
+      rememberMe: isRemember,
+      expiresAt: isRemember ? (now + SESSION_TTL_MS) : (now + 24 * 60 * 60 * 1000)
+    };
+
+    var adapter = getAuthStorage(!isRemember);
+    adapter.setItem(CONFIG.AUTH_STORAGE_KEY, JSON.stringify(user));
+
+    if (!isRemember && typeof localStorage !== 'undefined') {
+      try { localStorage.removeItem(CONFIG.AUTH_STORAGE_KEY); } catch (e) {}
+    }
+
+    hideAuthModal();
+    notifyListeners();
+    updateUserChips();
+    return { success: true, user: user };
   }
 
   function logout() {
@@ -251,6 +321,15 @@
     _memStore = {};
     notifyListeners();
     updateUserChips();
+    if (typeof document !== 'undefined') {
+      var pwdInput = document.getElementById('mytables-auth-password');
+      if (pwdInput) pwdInput.value = '';
+      var errBox = document.getElementById('mytables-auth-error');
+      if (errBox) {
+        errBox.style.display = 'none';
+        errBox.textContent = '';
+      }
+    }
     showAuthModal();
   }
 
@@ -717,6 +796,15 @@
       if (emailInput && !emailInput.value) {
         emailInput.value = CONFIG.AUTHORIZED_EMAIL;
       }
+      var pwdInput = document.getElementById('mytables-auth-password');
+      if (pwdInput) {
+        pwdInput.value = '';
+      }
+      var errBox = document.getElementById('mytables-auth-error');
+      if (errBox) {
+        errBox.style.display = 'none';
+        errBox.textContent = '';
+      }
     }
   }
 
@@ -727,6 +815,94 @@
       gate.style.setProperty('display', 'none', 'important');
     }
     updateUserChips();
+  }
+
+  function showChangePasswordModal() {
+    if (typeof document === 'undefined') return;
+    var modal = document.getElementById('mytables-pwd-modal');
+    if (modal) {
+      modal.classList.add('active');
+      modal.style.display = 'flex';
+      var cur = document.getElementById('mytables-pwd-current');
+      if (cur) { cur.value = ''; cur.focus(); }
+      var nw = document.getElementById('mytables-pwd-new');
+      if (nw) nw.value = '';
+      var cnf = document.getElementById('mytables-pwd-confirm');
+      if (cnf) cnf.value = '';
+      var err = document.getElementById('mytables-pwd-error');
+      if (err) { err.style.display = 'none'; err.textContent = ''; }
+      var succ = document.getElementById('mytables-pwd-success');
+      if (succ) { succ.style.display = 'none'; succ.textContent = ''; }
+    }
+  }
+
+  function hideChangePasswordModal() {
+    if (typeof document === 'undefined') return;
+    var modal = document.getElementById('mytables-pwd-modal');
+    if (modal) {
+      modal.classList.remove('active');
+      modal.style.display = 'none';
+    }
+  }
+
+  function handlePasswordChangeSubmit() {
+    if (typeof document === 'undefined') return;
+    var cur = document.getElementById('mytables-pwd-current');
+    var nw = document.getElementById('mytables-pwd-new');
+    var cnf = document.getElementById('mytables-pwd-confirm');
+    var err = document.getElementById('mytables-pwd-error');
+    var succ = document.getElementById('mytables-pwd-success');
+
+    var currentVal = cur ? cur.value : '';
+    var newVal = nw ? nw.value : '';
+    var confirmVal = cnf ? cnf.value : '';
+
+    if (!checkPassword(currentVal)) {
+      if (err) {
+        err.textContent = 'Текущий пароль указан неверно';
+        err.style.display = 'block';
+      }
+      if (succ) succ.style.display = 'none';
+      if (cur) cur.focus();
+      return;
+    }
+
+    if (!newVal || newVal.length < 4) {
+      if (err) {
+        err.textContent = 'Новый пароль должен содержать не менее 4 символов';
+        err.style.display = 'block';
+      }
+      if (succ) succ.style.display = 'none';
+      if (nw) nw.focus();
+      return;
+    }
+
+    if (newVal !== confirmVal) {
+      if (err) {
+        err.textContent = 'Новые пароли не совпадают';
+        err.style.display = 'block';
+      }
+      if (succ) succ.style.display = 'none';
+      if (cnf) cnf.focus();
+      return;
+    }
+
+    var res = changePassword(currentVal, newVal);
+    if (res.success) {
+      if (err) err.style.display = 'none';
+      if (succ) {
+        succ.textContent = 'Пароль успешно изменён! ✓';
+        succ.style.display = 'block';
+      }
+      setTimeout(function () {
+        hideChangePasswordModal();
+      }, 1000);
+    } else {
+      if (err) {
+        err.textContent = res.error || 'Ошибка смены пароля';
+        err.style.display = 'block';
+      }
+    }
   }
 
   function updateBadgeUI() {
@@ -783,6 +959,18 @@
         });
       }
     }
+
+    // Слушатели кнопок «Сменить пароль»
+    var pwdBtns = document.querySelectorAll('.mytables-change-pwd-btn');
+    for (var m = 0; m < pwdBtns.length; m++) {
+      if (!pwdBtns[m]._hasPwdModalListener) {
+        pwdBtns[m]._hasPwdModalListener = true;
+        pwdBtns[m].addEventListener('click', function (e) {
+          if (e && e.preventDefault) e.preventDefault();
+          showChangePasswordModal();
+        });
+      }
+    }
   }
 
   // --- ИНИЦИАЛИЗАЦИЯ СТИЛЕЙ И РАЗМЕТКИ В БРАУЗЕРЕ ---
@@ -833,6 +1021,21 @@
         '  background: #FDF1C2; color: #5A3A00; border: none;',
         '  box-shadow: 0 4px 14px rgba(185, 160, 100, 0.2), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95);',
         '}',
+        '@media (max-width: 900px) {',
+        '  .mytables-sync-badge {',
+        '    position: fixed !important;',
+        '    top: 12px !important;',
+        '    right: 56px !important;',
+        '    bottom: auto !important;',
+        '    left: auto !important;',
+        '    padding: 4px 10px !important;',
+        '    font-size: 11px !important;',
+        '    font-weight: 800 !important;',
+        '    border-radius: 999px !important;',
+        '    z-index: 90 !important;',
+        '    box-shadow: 0 2px 8px rgba(110, 85, 60, 0.16) !important;',
+        '  }',
+        '}',
         '.sync-spinner {',
         '  width: 14px; height: 14px; border: none;',
         '  animation: sync-spin 0.8s linear infinite; display: inline-flex; align-items: center; justify-content: center;',
@@ -845,8 +1048,9 @@
         '  backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);',
         '  z-index: 10000; display: none; align-items: center; justify-content: center;',
         '  padding: 16px; opacity: 0; transition: opacity 0.2s ease;',
+        '  pointer-events: none;',
         '}',
-        '.mytables-modal-backdrop.active { display: flex; opacity: 1; }',
+        '.mytables-modal-backdrop.active { display: flex; opacity: 1; pointer-events: auto; }',
         '.mytables-paper-modal {',
         '  background: #FAF2E7; border: none; border-radius: 28px;',
         '  padding: 24px 22px; max-width: 400px; width: 100%;',
@@ -922,10 +1126,42 @@
         '  width: 100%; padding: 13px 16px; border-radius: 14px;',
         '  border: none; background: #FAF2E7;',
         '  font-family: "Manrope", sans-serif; font-size: 13px; font-weight: 700;',
-        '  color: #2D251E; margin-bottom: 14px; outline: none;',
+        '  color: #2D251E; margin-bottom: 12px; outline: none;',
         '  box-shadow: inset 1px 1.5px 3px rgba(140, 115, 90, 0.15), -1px -1px 3px rgba(255, 255, 255, 0.95);',
+        '  box-sizing: border-box;',
         '}',
         '.auth-email-input:focus { box-shadow: inset 1px 1.5px 4px rgba(110, 85, 60, 0.22), -1px -1px 3px rgba(255, 255, 255, 0.95); }',
+        '.auth-password-wrapper {',
+        '  position: relative; width: 100%; margin-bottom: 12px;',
+        '  display: flex; align-items: center;',
+        '}',
+        '.auth-password-input {',
+        '  width: 100%; padding: 13px 46px 13px 16px; border-radius: 14px;',
+        '  border: none; background: #FAF2E7;',
+        '  font-family: "Manrope", sans-serif; font-size: 13px; font-weight: 700;',
+        '  color: #2D251E; outline: none;',
+        '  box-shadow: inset 1px 1.5px 3px rgba(140, 115, 90, 0.15), -1px -1px 3px rgba(255, 255, 255, 0.95);',
+        '  box-sizing: border-box;',
+        '}',
+        '.auth-password-input:focus { box-shadow: inset 1px 1.5px 4px rgba(110, 85, 60, 0.22), -1px -1px 3px rgba(255, 255, 255, 0.95); }',
+        '.auth-pwd-toggle-btn {',
+        '  position: absolute; right: 2px; top: 50%; transform: translateY(-50%);',
+        '  width: 44px; height: 44px; background: transparent; border: none; cursor: pointer;',
+        '  display: flex; align-items: center; justify-content: center; color: #5B481D; padding: 0;',
+        '  border-radius: 12px; transition: opacity 0.15s ease;',
+        '}',
+        '.auth-pwd-toggle-btn:hover { opacity: 0.8; }',
+        '.auth-remember-row {',
+        '  display: flex; align-items: center; gap: 8px; margin-bottom: 16px; padding: 0 4px;',
+        '  cursor: pointer; user-select: none;',
+        '}',
+        '.auth-remember-checkbox {',
+        '  width: 18px; height: 18px; cursor: pointer; accent-color: #3B7A57;',
+        '  border-radius: 6px; border: none;',
+        '}',
+        '.auth-remember-text {',
+        '  font-size: 12px; font-weight: 700; color: #726453; line-height: 1.2;',
+        '}',
         '.auth-login-btn {',
         '  width: 100%; padding: 14px 20px; border-radius: 14px;',
         '  background: #C8E2D2; color: #1E3F30; font-size: 14px; font-weight: 800;',
@@ -1013,7 +1249,7 @@
         '  <div class="auth-app-title">Мои таблицы ♡</div>',
         '  <div class="auth-app-subtitle">Личный финансовый органайзер</div>',
         '  <div class="auth-guard-box">',
-        '    🔒 Личное защищенное пространство.<br>Вход доступен исключительно для владелицы.',
+        '    🔒 Личное защищенное пространство.<br>Вход доступен исключительно по паролю владелицы.',
         '  </div>',
         '  <div class="auth-profile-card">',
         '    <div class="auth-profile-avatar">А</div>',
@@ -1021,10 +1257,20 @@
         '      <div class="auth-profile-name">Аня (Владелица)</div>',
         '      <div class="auth-profile-email">lifekvi2018@gmail.com</div>',
         '    </div>',
-        '    <div class="auth-profile-tag">Доступ открыт</div>',
+        '    <div class="auth-profile-tag">Защищено паролем</div>',
         '  </div>',
         '  <form id="mytables-auth-form">',
         '    <input type="email" id="mytables-auth-email" class="auth-email-input" placeholder="lifekvi2018@gmail.com" value="' + CONFIG.AUTHORIZED_EMAIL + '" required>',
+        '    <div class="auth-password-wrapper">',
+        '      <input type="password" id="mytables-auth-password" class="auth-password-input" placeholder="Введите ваш секретный пароль" autocomplete="current-password" required>',
+        '      <button type="button" id="mytables-auth-toggle-pwd" class="auth-pwd-toggle-btn" title="Показать/скрыть пароль" aria-label="Показать/скрыть пароль">',
+        '        <svg id="mytables-auth-eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5B481D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>',
+        '      </button>',
+        '    </div>',
+        '    <label class="auth-remember-row" for="mytables-auth-remember">',
+        '      <input type="checkbox" id="mytables-auth-remember" class="auth-remember-checkbox" checked>',
+        '      <span class="auth-remember-text">Запомнить меня на 30 дней</span>',
+        '    </label>',
         '    <button type="submit" id="mytables-auth-submit" class="auth-login-btn">',
         '      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>',
         '      Войти как Аня',
@@ -1038,15 +1284,41 @@
 
       var authForm = document.getElementById('mytables-auth-form');
       var authEmail = document.getElementById('mytables-auth-email');
+      var authPassword = document.getElementById('mytables-auth-password');
+      var authRemember = document.getElementById('mytables-auth-remember');
+      var authTogglePwd = document.getElementById('mytables-auth-toggle-pwd');
       var authError = document.getElementById('mytables-auth-error');
       var authBtn = document.getElementById('mytables-auth-submit');
+
+      if (authTogglePwd && authPassword) {
+        authTogglePwd.addEventListener('click', function () {
+          var isPass = authPassword.type === 'password';
+          authPassword.type = isPass ? 'text' : 'password';
+          var eyeSvg = document.getElementById('mytables-auth-eye-icon');
+          if (eyeSvg) {
+            if (isPass) {
+              eyeSvg.innerHTML = '<path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" y1="2" x2="22" y2="22"/>';
+            } else {
+              eyeSvg.innerHTML = '<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>';
+            }
+          }
+        });
+      }
 
       function handleLoginAction(e) {
         if (e && e.preventDefault) e.preventDefault();
         var email = (authEmail && authEmail.value) || CONFIG.AUTHORIZED_EMAIL;
-        var res = login(email);
+        var password = (authPassword && authPassword.value) || '';
+        var remember = authRemember ? authRemember.checked : true;
+        var res = login(email, password, remember);
         if (res.success) {
-          if (authError) authError.style.display = 'none';
+          if (authError) {
+            authError.style.display = 'none';
+            authError.textContent = '';
+          }
+          if (authPassword) {
+            authPassword.value = '';
+          }
           hideAuthModal();
           if (typeof root !== 'undefined' && root && typeof root.onAuthSuccess === 'function') {
             root.onAuthSuccess(res.user);
@@ -1055,6 +1327,9 @@
           if (authError) {
             authError.textContent = res.error;
             authError.style.display = 'block';
+          }
+          if (authPassword) {
+            authPassword.focus();
           }
         }
       }
@@ -1065,6 +1340,67 @@
       if (authBtn) {
         authBtn.addEventListener('click', handleLoginAction);
       }
+    }
+
+    // Модальное окно смены пароля
+    if (!document.getElementById('mytables-pwd-modal')) {
+      var pwdModal = document.createElement('div');
+      pwdModal.id = 'mytables-pwd-modal';
+      pwdModal.className = 'mytables-modal-backdrop';
+      pwdModal.innerHTML = [
+        '<div class="mytables-paper-modal" role="dialog" aria-modal="true" style="max-width: 380px;">',
+        '  <div class="modal-icon-circle" style="background: #DCEEFE; color: #113F6B;">',
+        '    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>',
+        '  </div>',
+        '  <div class="modal-title">Смена пароля</div>',
+        '  <div class="modal-text" style="margin-bottom: 14px;">Задайте новый секретный пароль для защиты ваших таблиц.</div>',
+        '  <form id="mytables-pwd-form" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; text-align: left;">',
+        '    <div>',
+        '      <label style="font-size: 11px; font-weight: 800; color: #726453; margin-bottom: 4px; display: block;">Текущий пароль</label>',
+        '      <input type="password" id="mytables-pwd-current" class="auth-password-input" placeholder="Введите текущий пароль" style="padding: 11px 14px; font-size: 13px;" required>',
+        '    </div>',
+        '    <div>',
+        '      <label style="font-size: 11px; font-weight: 800; color: #726453; margin-bottom: 4px; display: block;">Новый пароль</label>',
+        '      <input type="password" id="mytables-pwd-new" class="auth-password-input" placeholder="Новый пароль (от 4 символов)" style="padding: 11px 14px; font-size: 13px;" required>',
+        '    </div>',
+        '    <div>',
+        '      <label style="font-size: 11px; font-weight: 800; color: #726453; margin-bottom: 4px; display: block;">Повторите новый пароль</label>',
+        '      <input type="password" id="mytables-pwd-confirm" class="auth-password-input" placeholder="Повторите новый пароль" style="padding: 11px 14px; font-size: 13px;" required>',
+        '    </div>',
+        '    <div id="mytables-pwd-error" class="auth-error-box" style="margin-top: 4px;"></div>',
+        '    <div id="mytables-pwd-success" class="auth-error-box" style="margin-top: 4px; background: #C8E2D2; color: #1E3F30; display: none;">Пароль успешно сохранён! ✓</div>',
+        '  </form>',
+        '  <div class="modal-actions">',
+        '    <button type="button" class="modal-btn modal-btn-cancel" id="mytables-pwd-cancel">Отмена</button>',
+        '    <button type="button" class="modal-btn" id="mytables-pwd-save" style="background: #C8E2D2; color: #1E3F30; box-shadow: 2px 3px 8px rgba(35, 70, 50, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.9);">Сохранить</button>',
+        '  </div>',
+        '</div>'
+      ].join('');
+
+      document.body.appendChild(pwdModal);
+
+      var pwdCancel = document.getElementById('mytables-pwd-cancel');
+      if (pwdCancel) {
+        pwdCancel.addEventListener('click', function () {
+          hideChangePasswordModal();
+        });
+      }
+      var pwdSave = document.getElementById('mytables-pwd-save');
+      if (pwdSave) {
+        pwdSave.addEventListener('click', function () {
+          handlePasswordChangeSubmit();
+        });
+      }
+      var pwdForm = document.getElementById('mytables-pwd-form');
+      if (pwdForm) {
+        pwdForm.addEventListener('submit', function (e) {
+          if (e && e.preventDefault) e.preventDefault();
+          handlePasswordChangeSubmit();
+        });
+      }
+      pwdModal.addEventListener('click', function (e) {
+        if (e.target === pwdModal) hideChangePasswordModal();
+      });
     }
 
     // Слушатели сети
@@ -1116,6 +1452,11 @@
     getCurrentUser: getCurrentUser,
     login: login,
     logout: logout,
+    checkPassword: checkPassword,
+    changePassword: changePassword,
+    showChangePasswordModal: showChangePasswordModal,
+    hideChangePasswordModal: hideChangePasswordModal,
+    _resetPasswordForTesting: _resetPasswordForTesting,
     getAllData: getAllData,
     saveIncome: saveIncome,
     saveExpense: saveExpense,
