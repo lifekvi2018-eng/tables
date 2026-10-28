@@ -73,7 +73,7 @@ async function runAllTests() {
 
   await runTest('Конфигурация содержит утвержденный URL и email владелицы', () => {
     assert.strictEqual(MyTablesSync.CONFIG.AUTHORIZED_EMAIL, 'lifekvi2018@gmail.com');
-    assert.strictEqual(MyTablesSync.CONFIG.DEFAULT_PASSWORD, 'Anya2026');
+    assert.strictEqual(MyTablesSync.CONFIG.DEFAULT_PASSWORD, 'lifekvi2018@gmail.com');
     assert.strictEqual(
       MyTablesSync.CONFIG.SCRIPT_URL,
       'https://script.google.com/macros/s/AKfycbzU_3g5bISD-PKzCHuzk2kqc4hosbruIXd5r5dXPFYkJLqpYG9oxEZwG80zB2opjWI7/exec'

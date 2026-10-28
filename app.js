@@ -1097,9 +1097,36 @@
       return s;
     }
 
+    function formatPhone(phone) {
+      if (!phone) return '';
+      var s = String(phone).replace(/^'/, '').trim();
+      if (s.indexOf('-') !== -1) return s;
+      var digits = s.replace(/\D/g, '');
+      if (digits.length === 11) {
+        return '+7 ' + digits.slice(1, 4) + ' ' + digits.slice(4, 7) + ' ' + digits.slice(7, 9) + ' ' + digits.slice(9, 11);
+      }
+      if (digits.length === 10) {
+        return '+7 ' + digits.slice(0, 3) + ' ' + digits.slice(3, 6) + ' ' + digits.slice(6, 8) + ' ' + digits.slice(8, 10);
+      }
+      return s;
+    }
+
     function displayPhone(phone) {
       if (!phone) return '';
-      return String(phone).replace(/^'/, '').trim();
+      var s = String(phone).replace(/^'/, '').trim();
+      if (s.indexOf('-') !== -1) return s;
+      return formatPhone(s);
+    }
+
+    function getRawCallPhone(phone) {
+      if (!phone) return '';
+      var digits = String(phone || '').replace(/\D/g, '');
+      if (digits.length === 11 && (digits.indexOf('8') === 0 || digits.indexOf('7') === 0)) {
+        digits = '7' + digits.slice(1);
+      } else if (digits.length === 10 && digits.indexOf('9') === 0) {
+        digits = '7' + digits;
+      }
+      return digits ? ('+' + digits) : displayPhone(phone);
     }
 
     function getCleanPhoneDigits(phone) {
@@ -1130,6 +1157,7 @@
       var telegram = raw.telegram || raw['Telegram'] || raw['Телеграм'] || '';
       var taskDesc = raw.taskDesc || raw['Описание задачи'] || raw['Описание'] || '';
       var passwords = raw.passwords || raw['Пароли'] || raw['Доступы'] || '';
+      var passwordUrl = raw.passwordUrl || raw.passwordsUrl || raw['Ссылка на сайт с паролями'] || raw['Ссылка на пароли'] || '';
 
       var links = [];
       if (Array.isArray(raw.links)) {
@@ -1163,6 +1191,7 @@
         telegram: String(telegram),
         taskDesc: String(taskDesc),
         passwords: String(passwords),
+        passwordUrl: String(passwordUrl || ''),
         links: links,
         isArchived: Boolean(isArchived)
       };
@@ -1393,6 +1422,7 @@
       if (data.telegram !== undefined) target.telegram = data.telegram;
       if (data.taskDesc !== undefined) target.taskDesc = data.taskDesc;
       if (data.passwords !== undefined) target.passwords = data.passwords;
+      if (data.passwordUrl !== undefined) target.passwordUrl = data.passwordUrl;
       if (data.links !== undefined) target.links = data.links;
       if (data.isArchived !== undefined) target.isArchived = Boolean(data.isArchived);
 
@@ -1771,7 +1801,7 @@
           '  </div>',
           '  <div class="contact-clean-box">',
           '    <div style="margin-bottom: 6px;">',
-          '      <a href="tel:' + escapeHtml(cleanPhone) + '" class="contact-phone-big" title="Нажмите для вызова или копирования" onclick="window.MyTablesClients.copyText(\'' + escapeHtml(cleanPhone) + '\', \'Номер телефона\')">' + escapeHtml(cleanPhone) + '</a>',
+          '      <a href="tel:' + escapeHtml(getRawCallPhone(client.phone)) + '" class="contact-phone-big" title="Нажмите для вызова или копирования" onclick="window.MyTablesClients.copyText(\'' + escapeHtml(getRawCallPhone(client.phone)) + '\', \'Номер телефона\')">' + escapeHtml(cleanPhone) + '</a>',
           '    </div>',
           '    <div class="contact-sub-links">',
           (client.telegram ? '      <a href="https://t.me/' + escapeHtml(client.telegram.replace('@', '')) + '" target="_blank" class="contact-sub-item">✈️ ' + escapeHtml(client.telegram) + '</a>' : ''),
@@ -1806,12 +1836,16 @@
           '      </span>',
           '      <span>Доступы и пароли</span>',
           '    </div>',
-          '    <button class="btn-copy-pass-pill" onclick="window.MyTablesClients.copyPassword(\'' + client.id + '\')" title="Скопировать">Скопировать</button>',
+          '    <div style="display: flex; align-items: center; gap: 6px;">',
+          '      <button class="btn-add-pass-pill" onclick="window.MyTablesClients.openPasswordsModal()" title="Добавить или изменить пароль" style="background:#FDF1CC; color:#5B481D; border:none; outline:none; border-radius:12px; padding:4px 10px; font-size:14px; font-weight:900; cursor:pointer; box-shadow:1.5px 2.5px 5px rgba(120,95,70,0.16); transition:transform 0.12s ease;">+</button>',
+          '      <button class="btn-copy-pass-pill" onclick="window.MyTablesClients.copyPassword(\'' + client.id + '\')" title="Скопировать">Скопировать</button>',
+          '    </div>',
           '  </div>',
           '  <div class="password-display-box">',
           '    <span class="password-text" id="mob-pass-field">' + escapeHtml(displayedPass) + '</span>',
           '    <button class="dossier-icon-btn" onclick="window.MyTablesClients.togglePasswordVisibility()" title="Показать/скрыть">' + passEye + '</button>',
           '  </div>',
+          (client.passwordUrl ? '  <div style="margin-top: 8px;"><a href="' + escapeHtml(client.passwordUrl) + '" target="_blank" rel="noopener noreferrer" class="btn-passwords-site" style="display:inline-flex; align-items:center; gap:6px; padding:7px 14px; background:#FDF1CC; color:#5B481D; border-radius:12px; font-size:12px; font-weight:800; text-decoration:none; border:none; box-shadow:2px 3px 6px rgba(160,125,85,0.18);"><span>🔐</span> <span>Перейти к паролям</span> <span style="font-size:10px;">↗</span></a></div>' : ''),
           '</div>',
           '<div class="dossier-paper-slip">',
           '  <div class="slip-title-row">',
@@ -1920,12 +1954,16 @@
           '        </span>',
           '        <span>Доступы и пароли</span>',
           '      </div>',
-          '      <button class="btn-copy-pass-pill" onclick="window.MyTablesClients.copyPassword(\'' + client.id + '\')" title="Скопировать">Скопировать</button>',
+          '      <div style="display: flex; align-items: center; gap: 6px;">',
+          '        <button class="btn-add-pass-pill" onclick="window.MyTablesClients.openPasswordsModal()" title="Добавить или изменить пароль" style="background:#FDF1CC; color:#5B481D; border:none; outline:none; border-radius:12px; padding:4px 10px; font-size:14px; font-weight:900; cursor:pointer; box-shadow:1.5px 2.5px 5px rgba(120,95,70,0.16); transition:transform 0.12s ease;">+</button>',
+          '        <button class="btn-copy-pass-pill" onclick="window.MyTablesClients.copyPassword(\'' + client.id + '\')" title="Скопировать">Скопировать</button>',
+          '      </div>',
           '    </div>',
           '    <div class="password-display-box">',
           '      <span class="password-text" id="desk-pass-field">' + escapeHtml(displayedPass) + '</span>',
           '      <button class="dossier-icon-btn" onclick="window.MyTablesClients.togglePasswordVisibility()" title="Показать/скрыть">' + passEye + '</button>',
           '    </div>',
+          (client.passwordUrl ? '    <div style="margin-top: 8px;"><a href="' + escapeHtml(client.passwordUrl) + '" target="_blank" rel="noopener noreferrer" class="btn-passwords-site" style="display:inline-flex; align-items:center; gap:6px; padding:7px 14px; background:#FDF1CC; color:#5B481D; border-radius:12px; font-size:12px; font-weight:800; text-decoration:none; border:none; box-shadow:2px 3px 6px rgba(160,125,85,0.18);"><span>🔐</span> <span>Перейти к паролям</span> <span style="font-size:10px;">↗</span></a></div>' : ''),
           '  </div>',
           '  <div class="dossier-paper-slip">',
           '    <div class="slip-title-row">',
@@ -1945,33 +1983,218 @@
       }
     }
 
+    var currentEditingLinkIndex = null;
+
+    function injectLinkModal() {
+      if (typeof document === 'undefined') return;
+      if (document.getElementById('mytables-link-modal')) return;
+      var modal = document.createElement('div');
+      modal.id = 'mytables-link-modal';
+      modal.className = 'mytables-modal-backdrop';
+      modal.style.display = 'none';
+      modal.style.pointerEvents = 'none';
+      modal.innerHTML = [
+        '<div class="mytables-paper-modal" style="max-width: 440px; width: 100%; background: #FAF2E7; border-radius: 24px; padding: 22px 20px; box-shadow: 6px 14px 35px rgba(130, 105, 80, 0.28), -3px -3px 10px rgba(255, 255, 255, 0.9); border: none; text-align: left;">',
+        '  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">',
+        '    <div style="font-size: 18px; font-weight: 900; color: #2F261D;" id="link-modal-heading">',
+        '      <span>+ Ссылка клиента</span> <span style="color: #E27D60;">♡</span>',
+        '    </div>',
+        '    <button type="button" id="link-modal-close" style="background: none; border: none; font-size: 20px; font-weight: 800; cursor: pointer; color: #8C784C; outline: none;">✕</button>',
+        '  </div>',
+        '  <form id="link-modal-form" onsubmit="return false;">',
+        '    <div style="background: #FCE8D5; border-radius: 18px; padding: 16px; box-shadow: 3px 5px 14px rgba(170, 130, 95, 0.2), -2px -2px 6px rgba(255, 255, 255, 0.85); margin-bottom: 16px; border: none;">',
+        '      <div style="margin-bottom: 12px;">',
+        '        <label style="font-size: 11px; font-weight: 800; color: #6D3E14; display: block; margin-bottom: 5px;">Название ссылки</label>',
+        '        <input type="text" id="link-in-title" placeholder="CRM Битрикс24, Figma макет" style="width: 100%; box-sizing: border-box; background: #FAF4EB; border: none; outline: none; border-radius: 12px; padding: 11px 14px; font-size: 13px; font-weight: 700; color: #2F261D; box-shadow: inset 1.5px 2px 4px rgba(130, 100, 70, 0.15); font-family: inherit;" required>',
+        '      </div>',
+        '      <div>',
+        '        <label style="font-size: 11px; font-weight: 800; color: #6D3E14; display: block; margin-bottom: 5px;">Адрес ссылки (URL)</label>',
+        '        <input type="url" id="link-in-url" placeholder="https://..." style="width: 100%; box-sizing: border-box; background: #FAF4EB; border: none; outline: none; border-radius: 12px; padding: 11px 14px; font-size: 13px; font-weight: 700; color: #2F261D; box-shadow: inset 1.5px 2px 4px rgba(130, 100, 70, 0.15); font-family: inherit;" required>',
+        '      </div>',
+        '    </div>',
+        '    <div style="display: flex; gap: 10px; align-items: center; justify-content: stretch;">',
+        '      <button type="button" id="link-modal-delete" style="display: none; flex: 1; min-height: 44px; background: #FCD6CF; color: #58241B; border: none; outline: none; border-radius: 14px; padding: 12px 10px; font-size: 13px; font-weight: 800; cursor: pointer; box-shadow: 2.5px 4px 10px rgba(180, 100, 90, 0.22); transition: all 0.15s ease;">Удалить</button>',
+        '      <button type="button" id="link-modal-cancel" style="flex: 1; min-height: 44px; background: #FDF1CC; color: #5B481D; border: none; outline: none; border-radius: 14px; padding: 12px 10px; font-size: 13px; font-weight: 800; cursor: pointer; box-shadow: 2.5px 4px 10px rgba(160, 125, 85, 0.22); transition: all 0.15s ease;">Отмена</button>',
+        '      <button type="submit" id="link-modal-submit" style="flex: 1; min-height: 44px; background: #C8E2D2; color: #1E3F30; border: none; outline: none; border-radius: 14px; padding: 12px 10px; font-size: 13px; font-weight: 900; cursor: pointer; box-shadow: 2.5px 4px 10px rgba(70, 130, 95, 0.25); transition: all 0.15s ease;">Сохранить</button>',
+        '    </div>',
+        '  </form>',
+        '</div>'
+      ].join('');
+      document.body.appendChild(modal);
+
+      var close = function () {
+        currentEditingLinkIndex = null;
+        modal.classList.remove('active');
+        modal.style.display = 'none';
+        modal.style.pointerEvents = 'none';
+      };
+      var closeBtn = document.getElementById('link-modal-close');
+      if (closeBtn) closeBtn.addEventListener('click', close);
+      var cancelBtn = document.getElementById('link-modal-cancel');
+      if (cancelBtn) cancelBtn.addEventListener('click', close);
+      modal.addEventListener('click', function (e) {
+        if (e.target === modal) close();
+      });
+
+      var delBtn = document.getElementById('link-modal-delete');
+      if (delBtn) {
+        delBtn.addEventListener('click', function () {
+          var client = clients.find(function (c) { return c.id === selectedClientId; });
+          if (client && currentEditingLinkIndex !== null) {
+            editClientLink(client.id, currentEditingLinkIndex, null);
+            showToast('Ссылка удалена ♡');
+          }
+          close();
+        });
+      }
+
+      var formEl = document.getElementById('link-modal-form');
+      if (formEl) {
+        formEl.addEventListener('submit', function (e) {
+          e.preventDefault();
+          var client = clients.find(function (c) { return c.id === selectedClientId; });
+          if (!client) return;
+          var title = (document.getElementById('link-in-title').value || '').trim();
+          var url = (document.getElementById('link-in-url').value || '').trim();
+          if (!title || !url) return;
+
+          if (currentEditingLinkIndex !== null) {
+            editClientLink(client.id, currentEditingLinkIndex, { title: title, url: url });
+            showToast('Ссылка обновлена ♡');
+          } else {
+            addClientLink(client.id, { title: title, url: url });
+            showToast('Ссылка успешно добавлена ♡');
+          }
+          close();
+        });
+      }
+    }
+
     function openAddLinkPrompt() {
-      var client = clients.find(function (c) { return c.id === selectedClientId; });
-      if (!client) return;
-      var title = prompt('Введите название ссылки (например: CRM Битрикс24, Figma):', 'Figma макет');
-      if (!title) return;
-      var url = prompt('Введите URL ссылки:', 'https://figma.com/');
-      if (!url) return;
-      addClientLink(client.id, { title: title, url: url });
-      showToast('Ссылка успешно добавлена ♡');
+      injectLinkModal();
+      currentEditingLinkIndex = null;
+      var modal = document.getElementById('mytables-link-modal');
+      var heading = document.getElementById('link-modal-heading');
+      if (heading) heading.innerHTML = '<span>+ Ссылка клиента</span> <span style="color: #E27D60;">♡</span>';
+      var inTitle = document.getElementById('link-in-title');
+      if (inTitle) inTitle.value = '';
+      var inUrl = document.getElementById('link-in-url');
+      if (inUrl) inUrl.value = '';
+      var delBtn = document.getElementById('link-modal-delete');
+      if (delBtn) delBtn.style.display = 'none';
+      if (modal) {
+        modal.classList.add('active');
+        modal.style.display = 'flex';
+        modal.style.pointerEvents = 'auto';
+      }
+      if (inTitle && typeof inTitle.focus === 'function') inTitle.focus();
     }
 
     function openEditLinkPrompt(index) {
+      injectLinkModal();
       var client = clients.find(function (c) { return c.id === selectedClientId; });
       if (!client || !client.links || !client.links[index]) return;
       var link = client.links[index];
-      var newTitle = prompt('Изменить название ссылки (оставьте пустым для удаления):', link.title);
-      if (newTitle === null) return;
-      if (newTitle.trim() === '') {
-        editClientLink(client.id, index, null);
-        showToast('Ссылка удалена ♡');
-        return;
+      currentEditingLinkIndex = index;
+      var modal = document.getElementById('mytables-link-modal');
+      var heading = document.getElementById('link-modal-heading');
+      if (heading) heading.innerHTML = '<span>✎ Ссылка клиента</span> <span style="color: #E27D60;">♡</span>';
+      var inTitle = document.getElementById('link-in-title');
+      if (inTitle) inTitle.value = link.title || '';
+      var inUrl = document.getElementById('link-in-url');
+      if (inUrl) inUrl.value = link.url || '';
+      var delBtn = document.getElementById('link-modal-delete');
+      if (delBtn) delBtn.style.display = 'inline-flex';
+      if (modal) {
+        modal.classList.add('active');
+        modal.style.display = 'flex';
+        modal.style.pointerEvents = 'auto';
       }
-      var newUrl = prompt('Изменить URL ссылки:', link.url);
-      if (newUrl !== null) {
-        editClientLink(client.id, index, { title: newTitle, url: newUrl });
-        showToast('Ссылка обновлена ♡');
+      if (inTitle && typeof inTitle.focus === 'function') inTitle.focus();
+    }
+
+    function injectPasswordsModal() {
+      if (typeof document === 'undefined') return;
+      if (document.getElementById('mytables-passwords-modal')) return;
+      var modal = document.createElement('div');
+      modal.id = 'mytables-passwords-modal';
+      modal.className = 'mytables-modal-backdrop';
+      modal.style.display = 'none';
+      modal.style.pointerEvents = 'none';
+      modal.innerHTML = [
+        '<div class="mytables-paper-modal" style="max-width: 440px; width: 100%; background: #FAF2E7; border-radius: 24px; padding: 22px 20px; box-shadow: 6px 14px 35px rgba(130, 105, 80, 0.28), -3px -3px 10px rgba(255, 255, 255, 0.9); border: none; text-align: left;">',
+        '  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">',
+        '    <div style="font-size: 18px; font-weight: 900; color: #2F261D;">',
+        '      <span>Доступы и пароли</span> <span style="color: #E27D60;">♡</span>',
+        '    </div>',
+        '    <button type="button" id="pass-modal-close" style="background: none; border: none; font-size: 20px; font-weight: 800; cursor: pointer; color: #8C784C; outline: none;">✕</button>',
+        '  </div>',
+        '  <form id="pass-modal-form" onsubmit="return false;">',
+        '    <div style="background: #FCE8D5; border-radius: 18px; padding: 16px; box-shadow: 3px 5px 14px rgba(170, 130, 95, 0.2), -2px -2px 6px rgba(255, 255, 255, 0.85); margin-bottom: 16px; border: none;">',
+        '      <div style="margin-bottom: 12px;">',
+        '        <label style="font-size: 11px; font-weight: 800; color: #6D3E14; display: block; margin-bottom: 5px;">Логин / Пароль клиента</label>',
+        '        <input type="text" id="pass-in-credentials" placeholder="admin / pass123" style="width: 100%; box-sizing: border-box; background: #FAF4EB; border: none; outline: none; border-radius: 12px; padding: 11px 14px; font-size: 13px; font-weight: 700; color: #2F261D; box-shadow: inset 1.5px 2px 4px rgba(130, 100, 70, 0.15); font-family: inherit;">',
+        '      </div>',
+        '      <div>',
+        '        <label style="font-size: 11px; font-weight: 800; color: #6D3E14; display: block; margin-bottom: 5px;">Ссылка на сервис/сайт с паролями</label>',
+        '        <input type="url" id="pass-in-url" placeholder="https://passwords.google.com/..." style="width: 100%; box-sizing: border-box; background: #FAF4EB; border: none; outline: none; border-radius: 12px; padding: 11px 14px; font-size: 13px; font-weight: 700; color: #2F261D; box-shadow: inset 1.5px 2px 4px rgba(130, 100, 70, 0.15); font-family: inherit;">',
+        '      </div>',
+        '    </div>',
+        '    <div style="display: flex; gap: 10px; align-items: center; justify-content: stretch;">',
+        '      <button type="button" id="pass-modal-cancel" style="flex: 1; min-height: 44px; background: #FDF1CC; color: #5B481D; border: none; outline: none; border-radius: 14px; padding: 12px 10px; font-size: 13px; font-weight: 800; cursor: pointer; box-shadow: 2.5px 4px 10px rgba(160, 125, 85, 0.22); transition: all 0.15s ease;">Отмена</button>',
+        '      <button type="submit" id="pass-modal-submit" style="flex: 1; min-height: 44px; background: #C8E2D2; color: #1E3F30; border: none; outline: none; border-radius: 14px; padding: 12px 10px; font-size: 13px; font-weight: 900; cursor: pointer; box-shadow: 2.5px 4px 10px rgba(70, 130, 95, 0.25); transition: all 0.15s ease;">Сохранить</button>',
+        '    </div>',
+        '  </form>',
+        '</div>'
+      ].join('');
+      document.body.appendChild(modal);
+
+      var close = function () {
+        modal.classList.remove('active');
+        modal.style.display = 'none';
+        modal.style.pointerEvents = 'none';
+      };
+      var closeBtn = document.getElementById('pass-modal-close');
+      if (closeBtn) closeBtn.addEventListener('click', close);
+      var cancelBtn = document.getElementById('pass-modal-cancel');
+      if (cancelBtn) cancelBtn.addEventListener('click', close);
+      modal.addEventListener('click', function (e) {
+        if (e.target === modal) close();
+      });
+
+      var formEl = document.getElementById('pass-modal-form');
+      if (formEl) {
+        formEl.addEventListener('submit', function (e) {
+          e.preventDefault();
+          var client = clients.find(function (c) { return c.id === selectedClientId; });
+          if (!client) return;
+          var inCred = document.getElementById('pass-in-credentials');
+          var inUrl = document.getElementById('pass-in-url');
+          var credentials = (inCred ? inCred.value : '').trim();
+          var url = (inUrl ? inUrl.value : '').trim();
+
+          updateClient(client.id, { passwords: credentials, passwordUrl: url });
+          showToast('Доступы обновлены ♡');
+          close();
+        });
       }
+    }
+
+    function openPasswordsModal() {
+      injectPasswordsModal();
+      var client = clients.find(function (c) { return c.id === selectedClientId; });
+      if (!client) return;
+      var modal = document.getElementById('mytables-passwords-modal');
+      var inCred = document.getElementById('pass-in-credentials');
+      if (inCred) inCred.value = client.passwords || '';
+      var inUrl = document.getElementById('pass-in-url');
+      if (inUrl) inUrl.value = client.passwordUrl || '';
+      if (modal) {
+        modal.classList.add('active');
+        modal.style.display = 'flex';
+        modal.style.pointerEvents = 'auto';
+      }
+      if (inCred && typeof inCred.focus === 'function') inCred.focus();
     }
 
     function toggleCustomSelect(containerId) {
@@ -2143,6 +2366,36 @@
       overlay.classList.add('active');
       overlay.style.display = 'flex';
       overlay.style.pointerEvents = 'auto';
+
+      if (type === 'add') {
+        attachPhoneFormatter('add-client-phone');
+      } else if (type === 'edit') {
+        attachPhoneFormatter('edit-client-phone');
+      }
+    }
+
+    function attachPhoneFormatter(inputId) {
+      if (typeof document === 'undefined') return;
+      var inputEl = document.getElementById(inputId);
+      if (!inputEl || inputEl._phoneFormatterAttached) return;
+      inputEl._phoneFormatterAttached = true;
+      inputEl.addEventListener('input', function () {
+        var raw = this.value;
+        var digits = raw.replace(/\D/g, '');
+        if (!digits) {
+          this.value = '';
+          return;
+        }
+        if (digits[0] === '7' || digits[0] === '8') {
+          digits = digits.slice(1);
+        }
+        var res = '+7';
+        if (digits.length > 0) res += ' ' + digits.slice(0, 3);
+        if (digits.length > 3) res += ' ' + digits.slice(3, 6);
+        if (digits.length > 6) res += ' ' + digits.slice(6, 8);
+        if (digits.length > 8) res += ' ' + digits.slice(8, 10);
+        this.value = res;
+      });
     }
 
     function closeModal() {
@@ -2295,6 +2548,10 @@
       showToast: showToast,
       openAddLinkPrompt: openAddLinkPrompt,
       openEditLinkPrompt: openEditLinkPrompt,
+      openPasswordsModal: openPasswordsModal,
+      formatPhone: formatPhone,
+      displayPhone: displayPhone,
+      getRawCallPhone: getRawCallPhone,
       renderClients: renderClients,
       renderClientLists: renderClientLists,
       renderDossiers: renderDossiers,
@@ -2407,10 +2664,337 @@
   };
 
   // --- МОДАЛЬНЫЕ ОКНА ДОБАВЛЕНИЯ ЗАПИСЕЙ (ЗОЛОТОЙ СТАНДАРТ АНИ) ---
-  function openAddExpenseModal() {
+  var currentTargetCategory = null;
+  var customExpenseCategories = [];
+
+  try {
+    if (typeof localStorage !== 'undefined') {
+      var savedCats = localStorage.getItem('mytables_custom_expense_categories');
+      if (savedCats) customExpenseCategories = JSON.parse(savedCats);
+    }
+  } catch (e) {}
+
+  var EXPENSE_BASE_CATEGORIES = {
+    'ai': { name: 'ИИ сервисы', color: '#FCE8D5', badge: 'AI' },
+    'internet': { name: 'Интернет и связь', color: '#C8E2D2', badge: 'NET' },
+    'vpn': { name: 'VPN', color: '#D3E7F8', badge: 'VPN' }
+  };
+
+  function getCategoryMeta(catId) {
+    if (EXPENSE_BASE_CATEGORIES[catId]) return EXPENSE_BASE_CATEGORIES[catId];
+    for (var i = 0; i < customExpenseCategories.length; i++) {
+      if (customExpenseCategories[i].id === catId) return customExpenseCategories[i];
+    }
+    return { name: catId, color: '#FCE8D5', badge: catId ? catId.slice(0, 2).toUpperCase() : '♡' };
+  }
+
+  function renderRecentExpensesOnMain() {
+    if (typeof document === 'undefined') return;
+    var deskExpenseContainer = document.getElementById('desk-expense-items');
+    if (!deskExpenseContainer) return;
+
+    var payments = [];
+    if (window.MyTablesCalendar && window.MyTablesCalendar.state && window.MyTablesCalendar.state.payments) {
+      payments = window.MyTablesCalendar.state.payments.filter(function (p) { return !p.isArchived; });
+    }
+    if (!payments.length && window.allData && window.allData.expenses) {
+      payments = window.allData.expenses.filter(function (p) { return !p.isArchived; });
+    }
+
+    if (payments.length > 0) {
+      var recentExpenses = payments.slice(-4).reverse();
+      deskExpenseContainer.innerHTML = recentExpenses.map(function (item, idx) {
+        var title = item.title || item['Название / Где'] || item['Категория'] || 'Расход';
+        var sum = formatRub(item.currentRate || item.amount || item['Сумма'] || 0);
+        var day = item.dayOfMonth || item.day || 15;
+        var date = '• ' + day + ' число';
+        var id = item.id || item.ID || ('exp_' + idx);
+        var dotColor = item.color || PALETTE_COLORS[(idx + 2) % PALETTE_COLORS.length];
+        return [
+          '<div class="sub-item-expense" data-id="' + id + '" onclick="switchAppTab(\'expenses\')" style="cursor: pointer;">',
+          '  <div style="display: flex; align-items: center; gap: 8px;">',
+          '    <div style="width: 10px; height: 10px; border-radius: 50%; background: ' + dotColor + ';"></div>',
+          '    <div>',
+          '      <div style="font-weight: 800; color: #58241B;">' + escapeHtml(title) + '</div>',
+          '      <div style="font-size: 10px; color: #8A4C42;">' + escapeHtml(date) + '</div>',
+          '    </div>',
+          '  </div>',
+          '  <div style="display: flex; align-items: center; gap: 4px;">',
+          '    <span style="font-weight: 900; color: #6E2F26;">' + sum + '</span>',
+          '    <span class="sub-arrow-expense"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></span>',
+          '  </div>',
+          '</div>'
+        ].join('');
+      }).join('');
+    } else {
+      deskExpenseContainer.innerHTML = '<div style="font-size: 11px; font-weight: 600; color: #8A4C42; padding: 12px 8px; text-align: center; opacity: 0.85;">Пока нет платежей ♡</div>';
+    }
+  }
+  window.renderRecentExpensesOnMain = renderRecentExpensesOnMain;
+
+  function injectCategoryModal() {
+    if (typeof document === 'undefined') return;
+    if (document.getElementById('mytables-category-modal')) return;
+
+    var catModal = document.createElement('div');
+    catModal.id = 'mytables-category-modal';
+    catModal.className = 'mytables-modal-backdrop';
+    catModal.style.display = 'none';
+    catModal.style.pointerEvents = 'none';
+    catModal.innerHTML = [
+      '<div class="mytables-paper-modal" style="max-width: 440px; width: 100%; background: #FAF2E7; border-radius: 24px; padding: 22px 20px; box-shadow: 6px 14px 35px rgba(130, 105, 80, 0.28), -3px -3px 10px rgba(255, 255, 255, 0.9); border: none; text-align: left;">',
+      '  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">',
+      '    <div style="font-size: 18px; font-weight: 900; color: #2F261D; display: flex; align-items: center; gap: 6px;">',
+      '      <span>+ Новая категория</span> <span style="color: #E27D60;">♡</span>',
+      '    </div>',
+      '    <button type="button" id="cat-modal-close" style="background: none; border: none; font-size: 20px; font-weight: 800; cursor: pointer; color: #8C784C; outline: none;">✕</button>',
+      '  </div>',
+      '  <form id="cat-modal-form" onsubmit="return false;">',
+      '    <div style="background: #FCE8D5; border-radius: 18px; padding: 16px; box-shadow: 3px 5px 14px rgba(170, 130, 95, 0.2), -2px -2px 6px rgba(255, 255, 255, 0.85); margin-bottom: 16px; border: none;">',
+      '      <div style="margin-bottom: 12px;">',
+      '        <label style="font-size: 11px; font-weight: 800; color: #6D3E14; display: block; margin-bottom: 5px;">Название категории</label>',
+      '        <input type="text" id="cat-in-name" placeholder="Например: Подписки, Серверы, Офис" style="width: 100%; box-sizing: border-box; background: #FAF4EB; border: none; outline: none; border-radius: 12px; padding: 11px 14px; font-size: 13px; font-weight: 700; color: #2F261D; box-shadow: inset 1.5px 2px 4px rgba(130, 100, 70, 0.15); font-family: inherit;" required>',
+      '      </div>',
+      '      <div style="margin-bottom: 14px;">',
+      '        <label style="font-size: 11px; font-weight: 800; color: #6D3E14; display: block; margin-bottom: 7px;">Цвет карточки</label>',
+      '        <div id="cat-color-dots-row" style="display: flex; gap: 12px; align-items: center;">',
+      '          <button type="button" class="cat-color-opt active" data-color="#FCE8D5" style="width: 32px; height: 32px; border-radius: 50%; background: #FCE8D5; border: none; cursor: pointer; box-shadow: 2px 4px 8px rgba(120, 90, 60, 0.28); transform: scale(1.12); outline: none; display: flex; align-items: center; justify-content: center; padding: 0;"><svg class="exp-check-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#3D2B1F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>',
+      '          <button type="button" class="cat-color-opt" data-color="#C8E2D2" style="width: 32px; height: 32px; border-radius: 50%; background: #C8E2D2; border: none; cursor: pointer; box-shadow: 1px 2px 4px rgba(120, 90, 60, 0.15); outline: none; display: flex; align-items: center; justify-content: center; padding: 0;"></button>',
+      '          <button type="button" class="cat-color-opt" data-color="#D3E7F8" style="width: 32px; height: 32px; border-radius: 50%; background: #D3E7F8; border: none; cursor: pointer; box-shadow: 1px 2px 4px rgba(120, 90, 60, 0.15); outline: none; display: flex; align-items: center; justify-content: center; padding: 0;"></button>',
+      '          <button type="button" class="cat-color-opt" data-color="#FDF1CC" style="width: 32px; height: 32px; border-radius: 50%; background: #FDF1CC; border: none; cursor: pointer; box-shadow: 1px 2px 4px rgba(120, 90, 60, 0.15); outline: none; display: flex; align-items: center; justify-content: center; padding: 0;"></button>',
+      '          <button type="button" class="cat-color-opt" data-color="#FCD6CF" style="width: 32px; height: 32px; border-radius: 50%; background: #FCD6CF; border: none; cursor: pointer; box-shadow: 1px 2px 4px rgba(120, 90, 60, 0.15); outline: none; display: flex; align-items: center; justify-content: center; padding: 0;"></button>',
+      '          <button type="button" class="cat-color-opt" data-color="#DBCCE9" style="width: 32px; height: 32px; border-radius: 50%; background: #DBCCE9; border: none; cursor: pointer; box-shadow: 1px 2px 4px rgba(120, 90, 60, 0.15); outline: none; display: flex; align-items: center; justify-content: center; padding: 0;"></button>',
+      '        </div>',
+      '      </div>',
+      '      <div style="border-top: 1px dashed rgba(180, 135, 95, 0.25); padding-top: 12px; margin-top: 12px;">',
+      '        <div style="font-size: 11px; font-weight: 800; color: #6D3E14; margin-bottom: 8px;">Первый платёж (необязательно)</div>',
+      '        <div style="margin-bottom: 8px;">',
+      '          <input type="text" id="cat-in-first-title" placeholder="Название услуги (например: Notion, Figma)" style="width: 100%; box-sizing: border-box; background: #FAF4EB; border: none; outline: none; border-radius: 12px; padding: 9px 12px; font-size: 12px; font-weight: 700; color: #2F261D; box-shadow: inset 1.5px 2px 4px rgba(130, 100, 70, 0.15); font-family: inherit;">',
+      '        </div>',
+      '        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">',
+      '          <input type="number" id="cat-in-first-day" min="1" max="31" placeholder="Число (1-31)" style="width: 100%; box-sizing: border-box; background: #FAF4EB; border: none; outline: none; border-radius: 12px; padding: 9px 12px; font-size: 12px; font-weight: 700; color: #2F261D; box-shadow: inset 1.5px 2px 4px rgba(130, 100, 70, 0.15); font-family: inherit;">',
+      '          <input type="number" id="cat-in-first-amount" min="1" placeholder="Сумма ₽" style="width: 100%; box-sizing: border-box; background: #FAF4EB; border: none; outline: none; border-radius: 12px; padding: 9px 12px; font-size: 12px; font-weight: 700; color: #2F261D; box-shadow: inset 1.5px 2px 4px rgba(130, 100, 70, 0.15); font-family: inherit;">',
+      '        </div>',
+      '      </div>',
+      '    </div>',
+      '    <div style="display: flex; gap: 10px; align-items: center; justify-content: stretch;">',
+      '      <button type="button" id="cat-modal-cancel" style="flex: 1; min-height: 44px; background: #FDF1CC; color: #5B481D; border: none; outline: none; border-radius: 14px; padding: 12px 10px; font-size: 13px; font-weight: 800; cursor: pointer; box-shadow: 2.5px 4px 10px rgba(160, 125, 85, 0.22); transition: all 0.15s ease;">Отмена</button>',
+      '      <button type="submit" id="cat-modal-submit" style="flex: 1; min-height: 44px; background: #C8E2D2; color: #1E3F30; border: none; outline: none; border-radius: 14px; padding: 12px 10px; font-size: 13px; font-weight: 900; cursor: pointer; box-shadow: 2.5px 4px 10px rgba(70, 130, 95, 0.25); transition: all 0.15s ease;">Сохранить</button>',
+      '    </div>',
+      '  </form>',
+      '</div>'
+    ].join('');
+    document.body.appendChild(catModal);
+
+    var selectedCatColor = '#FCE8D5';
+    var checkSvg = '<svg class="exp-check-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#3D2B1F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+    var catColorBtns = catModal.querySelectorAll('.cat-color-opt');
+
+    function selectCatColor(color) {
+      selectedCatColor = color || '#FCE8D5';
+      for (var i = 0; i < catColorBtns.length; i++) {
+        var btnColor = catColorBtns[i].getAttribute('data-color');
+        if (btnColor && btnColor.toLowerCase() === selectedCatColor.toLowerCase()) {
+          catColorBtns[i].classList.add('active');
+          catColorBtns[i].innerHTML = checkSvg;
+          catColorBtns[i].style.boxShadow = '2px 3.5px 7px rgba(120, 90, 60, 0.22), -1.5px -1.5px 3.5px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.9)';
+          catColorBtns[i].style.transform = 'scale(1.12)';
+        } else {
+          catColorBtns[i].classList.remove('active');
+          catColorBtns[i].innerHTML = '';
+          catColorBtns[i].style.boxShadow = '1.5px 2.5px 5px rgba(120, 90, 60, 0.14), -1px -1px 2.5px rgba(255, 255, 255, 0.9)';
+          catColorBtns[i].style.transform = 'scale(1)';
+        }
+      }
+    }
+
+    for (var ci = 0; ci < catColorBtns.length; ci++) {
+      catColorBtns[ci].addEventListener('click', function () {
+        selectCatColor(this.getAttribute('data-color'));
+      });
+    }
+
+    var closeCat = function () {
+      catModal.classList.remove('active');
+      catModal.style.display = 'none';
+      catModal.style.pointerEvents = 'none';
+    };
+    var closeBtn = document.getElementById('cat-modal-close');
+    if (closeBtn) closeBtn.addEventListener('click', closeCat);
+    var cancelBtn = document.getElementById('cat-modal-cancel');
+    if (cancelBtn) cancelBtn.addEventListener('click', closeCat);
+    catModal.addEventListener('click', function (e) {
+      if (e.target === catModal) closeCat();
+    });
+
+    var formEl = document.getElementById('cat-modal-form');
+    if (formEl) {
+      formEl.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var nameInput = document.getElementById('cat-in-name');
+        var catName = (nameInput ? nameInput.value : '').trim();
+        if (!catName) {
+          alert('Пожалуйста, введите название категории');
+          return;
+        }
+
+        var catId = 'cat_' + Date.now();
+        var badge = catName.slice(0, 2).toUpperCase();
+        var newCatObj = {
+          id: catId,
+          name: catName,
+          color: selectedCatColor,
+          badge: badge
+        };
+
+        customExpenseCategories.push(newCatObj);
+        try {
+          if (typeof localStorage !== 'undefined') {
+            localStorage.setItem('mytables_custom_expense_categories', JSON.stringify(customExpenseCategories));
+          }
+        } catch (err) {}
+
+        // Рендерим новую карточку категории на десктопе и мобильном
+        spawnCategoryCard(newCatObj);
+
+        // Проверяем первый платёж
+        var firstTitle = (document.getElementById('cat-in-first-title') ? document.getElementById('cat-in-first-title').value : '').trim();
+        var firstDay = parseInt(document.getElementById('cat-in-first-day') ? document.getElementById('cat-in-first-day').value : '15', 10) || 15;
+        var firstAmount = Number(document.getElementById('cat-in-first-amount') ? document.getElementById('cat-in-first-amount').value : 0) || 0;
+
+        if (firstTitle && firstAmount > 0) {
+          var slipHtml = [
+            '<div class="expense-paper-slip">',
+            '  <div class="expense-item-left">',
+            '    <div class="service-logo-circle" style="color: ' + selectedCatColor + ';">',
+            '      <span style="font-weight:900; font-size:13px; color:#2F261D;">' + escapeHtml(firstTitle.charAt(0).toUpperCase()) + '</span>',
+            '    </div>',
+            '    <div class="expense-item-info">',
+            '      <span class="expense-item-name">' + escapeHtml(firstTitle) + '</span>',
+            '      <div class="expense-item-sub">',
+            '        <span class="expense-item-price">' + formatRub(firstAmount) + '</span>',
+            '        <span class="expense-item-date">• ' + firstDay + ' число</span>',
+            '      </div>',
+            '    </div>',
+            '  </div>',
+            '  <div class="expense-item-right">',
+            '    <button class="status-pill unpaid" onclick="window.toggleExpenseItemStatus(event, this)"><span class="status-dot"></span> Оплатить</button>',
+            '  </div>',
+            '</div>'
+          ].join('');
+
+          var deskCard = document.querySelector('#desk-view-expenses .expense-cat-card[data-category="' + catId + '"]');
+          if (deskCard) {
+            var list = deskCard.querySelector('.cat-items-list');
+            if (list) {
+              var ep = list.querySelector('.cat-empty-prompt');
+              if (ep) ep.remove();
+              list.insertAdjacentHTML('beforeend', slipHtml);
+            }
+          }
+          var mobCard = document.querySelector('#mob-view-expenses .expense-cat-card[data-category="' + catId + '"]');
+          if (mobCard) {
+            var mList = mobCard.querySelector('.cat-items-list');
+            if (mList) {
+              var mep = mList.querySelector('.cat-empty-prompt');
+              if (mep) mep.remove();
+              mList.insertAdjacentHTML('beforeend', slipHtml);
+            }
+          }
+
+          if (window.MyTablesCalendar && window.MyTablesCalendar.state) {
+            if (!window.MyTablesCalendar.state.payments) window.MyTablesCalendar.state.payments = [];
+            window.MyTablesCalendar.state.payments.push({
+              id: 'exp_' + Date.now(),
+              title: firstTitle,
+              name: firstTitle,
+              dayOfMonth: firstDay,
+              day: firstDay,
+              currentRate: firstAmount,
+              amount: firstAmount,
+              shopUrl: '#',
+              color: selectedCatColor,
+              category: catId,
+              paidMonths: [],
+              isArchived: false
+            });
+            if (typeof window.MyTablesCalendar.updateSummaryCards === 'function') {
+              window.MyTablesCalendar.updateSummaryCards();
+            }
+            if (typeof window.MyTablesCalendar.renderCalendar === 'function') {
+              window.MyTablesCalendar.renderCalendar();
+            }
+          }
+          renderRecentExpensesOnMain();
+        }
+
+        closeCat();
+      });
+    }
+  }
+
+  function spawnCategoryCard(cat) {
+    if (typeof document === 'undefined') return;
+    var colorClass = (cat.color === '#FCE8D5' || cat.color === '#FCD6CF') ? 'pink' : ((cat.color === '#C8E2D2') ? 'mint' : ((cat.color === '#D3E7F8') ? 'blue' : ''));
+    var customBg = (!colorClass && cat.color) ? ('background: ' + cat.color + ';') : '';
+
+    var cardHtml = [
+      '<div class="expense-cat-card ' + colorClass + '" data-category="' + cat.id + '" style="' + customBg + '">',
+      '  <div class="cat-card-header">',
+      '    <div class="cat-title-left">',
+      '      <div class="cat-badge-icon">' + escapeHtml(cat.badge || '♡') + '</div>',
+      '      <span class="cat-name">' + escapeHtml(cat.name) + '</span>',
+      '    </div>',
+      '    <button class="cat-add-btn" title="Добавить подписку" onclick="window.openAddExpenseModal ? window.openAddExpenseModal(\'' + cat.id + '\', \'' + cat.color + '\') : null">',
+      '      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>',
+      '    </button>',
+      '  </div>',
+      '  <div class="cat-items-list">',
+      '    <div class="cat-empty-prompt" style="padding: 12px 14px; text-align: center; color: #7A6E5F; font-size: 12px; font-weight: 700;">Пока нет платежей ♡</div>',
+      '  </div>',
+      '</div>'
+    ].join('');
+
+    var deskGrid = document.querySelector('#desk-view-expenses .desk-categories-grid');
+    if (deskGrid && !deskGrid.querySelector('.expense-cat-card[data-category="' + cat.id + '"]')) {
+      deskGrid.insertAdjacentHTML('beforeend', cardHtml);
+    }
+    var mobList = document.querySelector('#mob-view-expenses .expenses-scroll-list');
+    if (mobList && !mobList.querySelector('.expense-cat-card[data-category="' + cat.id + '"]')) {
+      mobList.insertAdjacentHTML('beforeend', cardHtml);
+    }
+  }
+
+  function openAddExpenseCategoryModal() {
+    injectCategoryModal();
+    var catModal = document.getElementById('mytables-category-modal');
+    var inName = document.getElementById('cat-in-name');
+    if (inName) inName.value = '';
+    var inFirstTitle = document.getElementById('cat-in-first-title');
+    if (inFirstTitle) inFirstTitle.value = '';
+    var inFirstDay = document.getElementById('cat-in-first-day');
+    if (inFirstDay) inFirstDay.value = '';
+    var inFirstAmount = document.getElementById('cat-in-first-amount');
+    if (inFirstAmount) inFirstAmount.value = '';
+
+    if (catModal) {
+      catModal.classList.add('active');
+      catModal.style.display = 'flex';
+      catModal.style.pointerEvents = 'auto';
+    }
+    if (inName && typeof inName.focus === 'function') inName.focus();
+  }
+  window.openAddExpenseCategoryModal = openAddExpenseCategoryModal;
+  root.openAddExpenseCategoryModal = openAddExpenseCategoryModal;
+
+  function openAddExpenseModal(targetCat, targetColor) {
+    if (!targetCat) {
+      openAddExpenseCategoryModal();
+      return;
+    }
     injectAddModal();
     if (typeof window._realOpenAddExpenseModal === 'function') {
-      window._realOpenAddExpenseModal();
+      window._realOpenAddExpenseModal(targetCat, targetColor);
     }
   }
   window.openAddExpenseModal = openAddExpenseModal;
@@ -2514,18 +3098,34 @@
       var currentEditingSlip = null;
       var currentEditingPayment = null;
 
-      window._realOpenAddExpenseModal = function () {
+      window._realOpenAddExpenseModal = function (targetCat, targetColor) {
         currentEditingSlip = null;
         currentEditingPayment = null;
+        currentTargetCategory = targetCat || null;
+
+        var meta = targetCat ? getCategoryMeta(targetCat) : null;
+        var chosenColor = targetColor || (meta ? meta.color : '#D3E7F8');
+
         var modalTitle = expModal.querySelector('.mytables-paper-modal > div:first-child span:first-child');
-        if (modalTitle) modalTitle.textContent = '+ Новый расход';
+        if (modalTitle) {
+          modalTitle.textContent = meta ? ('+ Новый расход: ' + meta.name + ' ♡') : '+ Новый расход';
+        }
+
         document.getElementById('exp-in-title').value = '';
         document.getElementById('exp-in-day').value = new Date().getDate();
         document.getElementById('exp-in-amount').value = '';
         document.getElementById('exp-in-url').value = '';
+
         var archBtn = document.getElementById('exp-modal-archive');
         if (archBtn) archBtn.style.display = 'none';
-        selectColorDot('#D3E7F8');
+
+        // При добавлении расхода в конкретную категорию скрываем палитру (цвет назначается автоматически)
+        var dotsRow = document.getElementById('exp-color-dots-row');
+        if (dotsRow && dotsRow.parentElement) {
+          dotsRow.parentElement.style.display = targetCat ? 'none' : 'block';
+        }
+
+        selectColorDot(chosenColor);
         expModal.classList.add('active');
         expModal.style.display = 'flex';
         expModal.style.pointerEvents = 'auto';
@@ -2552,7 +3152,7 @@
 
         if (p) {
           name = p.title || title;
-          day = p.dayOfMonth || 15;
+          day = p.dayOfMonth || p.day || 15;
           amount = p.currentRate || p.amount || 1500;
           url = p.shopUrl || '';
           color = p.color || '#D3E7F8';
@@ -2570,6 +3170,12 @@
         document.getElementById('exp-in-day').value = day;
         document.getElementById('exp-in-amount').value = amount;
         document.getElementById('exp-in-url').value = url;
+
+        // Показываем палитру при редактировании
+        var dotsRow = document.getElementById('exp-color-dots-row');
+        if (dotsRow && dotsRow.parentElement) {
+          dotsRow.parentElement.style.display = 'block';
+        }
 
         selectColorDot(color);
 
@@ -2613,15 +3219,28 @@
               allSlips[si].remove();
             }
           }
+
+          // Проверяем все категории на опустение и восстанавливаем плашку «Пока нет платежей ♡»
+          var allCatLists = document.querySelectorAll('#desk-view-expenses .cat-items-list, #mob-view-expenses .cat-items-list');
+          for (var cli = 0; cli < allCatLists.length; cli++) {
+            var listEl = allCatLists[cli];
+            var slipsLeft = listEl.querySelectorAll('.expense-paper-slip');
+            if (slipsLeft.length === 0 && !listEl.querySelector('.cat-empty-prompt')) {
+              listEl.innerHTML = '<div class="cat-empty-prompt" style="padding: 12px 14px; text-align: center; color: #7A6E5F; font-size: 12px; font-weight: 700;">Пока нет платежей ♡</div>';
+            }
+          }
+
           if (currentEditingPayment) {
             currentEditingPayment.isArchived = true;
           }
+
           if (window.MyTablesCalendar && typeof window.MyTablesCalendar.updateSummaryCards === 'function') {
             window.MyTablesCalendar.updateSummaryCards();
           }
           if (window.MyTablesCalendar && typeof window.MyTablesCalendar.renderCalendar === 'function') {
             window.MyTablesCalendar.renderCalendar();
           }
+          renderRecentExpensesOnMain();
           closeExpModal();
         });
       }
@@ -2661,7 +3280,7 @@
               var sPrice = allSlips[sIdx].querySelector('.expense-item-price');
               if (sPrice) sPrice.textContent = formatRub(amount);
               var sDate = allSlips[sIdx].querySelector('.expense-item-date');
-              if (sDate) sDate.textContent = '• ' + day + ' мар';
+              if (sDate) sDate.textContent = '• ' + day + ' число';
               var sLogo = allSlips[sIdx].querySelector('.service-logo-circle');
               if (sLogo && selectedExpenseColor) {
                 sLogo.style.color = selectedExpenseColor;
@@ -2672,6 +3291,7 @@
             currentEditingPayment.title = title;
             currentEditingPayment.currentRate = amount;
             currentEditingPayment.dayOfMonth = day;
+            currentEditingPayment.day = day;
             if (url) currentEditingPayment.shopUrl = url;
             currentEditingPayment.color = selectedExpenseColor;
           }
@@ -2681,6 +3301,7 @@
           if (window.MyTablesCalendar && typeof window.MyTablesCalendar.renderCalendar === 'function') {
             window.MyTablesCalendar.renderCalendar();
           }
+          renderRecentExpensesOnMain();
           submitBtn.textContent = 'Сохранено ✓';
           setTimeout(function () {
             submitBtn.textContent = 'Сохранить';
@@ -2690,20 +3311,29 @@
           return;
         }
 
-        // Автоопределение категории
-        var cat = 'other';
-        var tLower = title.toLowerCase();
-        if (tLower.indexOf('vpn') !== -1) cat = 'vpn';
-        else if (tLower.indexOf('интернет') !== -1 || tLower.indexOf('телефон') !== -1 || tLower.indexOf('связь') !== -1 || tLower.indexOf('мегафон') !== -1 || tLower.indexOf('мтс') !== -1 || tLower.indexOf('билайн') !== -1 || tLower.indexOf('т-мобайл') !== -1) cat = 'internet';
-        else if (tLower.indexOf('ai') !== -1 || tLower.indexOf('ии') !== -1 || tLower.indexOf('gpt') !== -1 || tLower.indexOf('claude') !== -1 || tLower.indexOf('gemini') !== -1 || tLower.indexOf('midjourney') !== -1) cat = 'ai';
+        // Категория платежа
+        var cat = currentTargetCategory || 'other';
+        if (cat === 'other') {
+          var tLower = title.toLowerCase();
+          if (tLower.indexOf('vpn') !== -1) cat = 'vpn';
+          else if (tLower.indexOf('интернет') !== -1 || tLower.indexOf('телефон') !== -1 || tLower.indexOf('связь') !== -1 || tLower.indexOf('мегафон') !== -1 || tLower.indexOf('мтс') !== -1 || tLower.indexOf('билайн') !== -1 || tLower.indexOf('т-мобайл') !== -1) cat = 'internet';
+          else if (tLower.indexOf('ai') !== -1 || tLower.indexOf('ии') !== -1 || tLower.indexOf('gpt') !== -1 || tLower.indexOf('claude') !== -1 || tLower.indexOf('gemini') !== -1 || tLower.indexOf('midjourney') !== -1) cat = 'ai';
+        }
 
         var newExpense = {
+          id: 'exp_' + Date.now(),
           title: title,
+          name: title,
           day: day,
+          dayOfMonth: day,
           amount: amount,
+          currentRate: amount,
           url: url || '#',
+          shopUrl: url || '#',
           color: selectedExpenseColor,
-          category: cat
+          category: cat,
+          paidMonths: [],
+          isArchived: false
         };
 
         // Добавляем новую плашечку на экран (десктоп и мобильный)
@@ -2730,15 +3360,39 @@
         // Находим целевой список карточек (десктоп и мобилка)
         var targetColIndex = (cat === 'ai') ? 0 : (cat === 'internet' ? 1 : (cat === 'vpn' ? 2 : 0));
         var deskCards = document.querySelectorAll('#desk-view-expenses .expense-cat-card');
-        if (deskCards && deskCards[targetColIndex]) {
-          var deskList = deskCards[targetColIndex].querySelector('.cat-items-list');
-          if (deskList) deskList.insertAdjacentHTML('beforeend', slipHtml);
+        var deskTargetCard = document.querySelector('#desk-view-expenses .expense-cat-card[data-category="' + cat + '"]') || (deskCards ? deskCards[targetColIndex] : null);
+        if (deskTargetCard) {
+          var deskList = deskTargetCard.querySelector('.cat-items-list');
+          if (deskList) {
+            var ep = deskList.querySelector('.cat-empty-prompt');
+            if (ep) ep.remove();
+            deskList.insertAdjacentHTML('beforeend', slipHtml);
+          }
         }
+
         var mobCards = document.querySelectorAll('#mob-view-expenses .expense-cat-card');
-        if (mobCards && mobCards[targetColIndex]) {
-          var mobList = mobCards[targetColIndex].querySelector('.cat-items-list');
-          if (mobList) mobList.insertAdjacentHTML('beforeend', slipHtml);
+        var mobTargetCard = document.querySelector('#mob-view-expenses .expense-cat-card[data-category="' + cat + '"]') || (mobCards ? mobCards[targetColIndex] : null);
+        if (mobTargetCard) {
+          var mobList = mobTargetCard.querySelector('.cat-items-list');
+          if (mobList) {
+            var mep = mobList.querySelector('.cat-empty-prompt');
+            if (mep) mep.remove();
+            mobList.insertAdjacentHTML('beforeend', slipHtml);
+          }
         }
+
+        // Добавляем в календарь и кэш
+        if (window.MyTablesCalendar && window.MyTablesCalendar.state) {
+          if (!window.MyTablesCalendar.state.payments) window.MyTablesCalendar.state.payments = [];
+          window.MyTablesCalendar.state.payments.push(newExpense);
+          if (typeof window.MyTablesCalendar.updateSummaryCards === 'function') {
+            window.MyTablesCalendar.updateSummaryCards();
+          }
+          if (typeof window.MyTablesCalendar.renderCalendar === 'function') {
+            window.MyTablesCalendar.renderCalendar();
+          }
+        }
+        renderRecentExpensesOnMain();
 
         // Сохраняем в синхронизацию
         var syncPromise = (window.MyTablesSync && typeof window.MyTablesSync.saveExpense === 'function')
@@ -2749,27 +3403,6 @@
           submitBtn.textContent = 'Сохранить';
           submitBtn.disabled = false;
           closeExpModal();
-          if (window.MyTablesCalendar && window.MyTablesCalendar.state) {
-            if (!window.MyTablesCalendar.state.payments) window.MyTablesCalendar.state.payments = [];
-            window.MyTablesCalendar.state.payments.push({
-              id: 'exp_' + Date.now(),
-              title: title,
-              dayOfMonth: day,
-              currentRate: amount,
-              amount: amount,
-              shopUrl: url || '#',
-              color: selectedExpenseColor,
-              category: cat,
-              paidMonths: [],
-              isArchived: false
-            });
-            if (typeof window.MyTablesCalendar.updateSummaryCards === 'function') {
-              window.MyTablesCalendar.updateSummaryCards();
-            }
-            if (typeof window.MyTablesCalendar.renderCalendar === 'function') {
-              window.MyTablesCalendar.renderCalendar();
-            }
-          }
         }).catch(function (err) {
           submitBtn.textContent = 'Сохранить';
           submitBtn.disabled = false;

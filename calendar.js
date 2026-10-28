@@ -54,7 +54,7 @@
 
   // Нормализация структуры платежа из разных источников (Google Sheets или объект)
   function normalizePayment(item, idx) {
-    var day = Number(item.dayOfMonth || item['День месяца'] || 0);
+    var day = Number(item.dayOfMonth || item['День месяца'] || item.day || 0);
     if (!day && item['Дата']) {
       var dMatch = String(item['Дата']).match(/(?:^\d{4}-\d{2}-|\.)(\d{1,2})/);
       if (dMatch) day = parseInt(dMatch[1], 10);
@@ -176,7 +176,7 @@
   // 8. Расчет сводных метрик
   function calcSummaryMetrics(data, yearMonth) {
     var incomeList = (data && data.income) || [];
-    var expensesList = (data && data.expenses) || [];
+    var expensesList = (data && data.expenses && data.expenses.length ? data.expenses : (state && state.payments)) || [];
     var clientsList = (data && data.clients) || [];
 
     // Доходы: только за указанный месяц

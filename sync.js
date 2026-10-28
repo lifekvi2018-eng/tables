@@ -22,7 +22,7 @@
   var CONFIG = {
     SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbzU_3g5bISD-PKzCHuzk2kqc4hosbruIXd5r5dXPFYkJLqpYG9oxEZwG80zB2opjWI7/exec',
     AUTHORIZED_EMAIL: 'lifekvi2018@gmail.com',
-    DEFAULT_PASSWORD: 'Anya2026',
+    DEFAULT_PASSWORD: 'lifekvi2018@gmail.com',
     AUTH_STORAGE_KEY: 'my_tables_auth_user',
     PASSWORD_STORAGE_KEY: 'my_tables_auth_pwd',
     CACHE_STORAGE_KEY: 'my_tables_cached_data',
@@ -217,7 +217,9 @@
     var master = getMasterPassword();
     if (input === master) return true;
     // Резервный короткий мастер-PIN для быстрого ввода владелицей: 2026
-    if (master === 'Anya2026' && input === '2026') return true;
+    if (input.toLowerCase() === master.toLowerCase()) return true;
+    if (input.toLowerCase() === CONFIG.AUTHORIZED_EMAIL.toLowerCase()) return true;
+    if (!storage.get(CONFIG.PASSWORD_STORAGE_KEY) && (input === 'Anya2026' || input === '2026')) return true;
     return false;
   }
 
