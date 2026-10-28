@@ -5704,9 +5704,9 @@
     <span id="toast-text">Действие выполнено</span>
   </div>
 
-  <script src="sync.js?v=11"></script>
-  <script src="calendar.js?v=11"></script>
-  <script src="app.js?v=11"></script>
+  <script src="sync.js?v=12"></script>
+  <script src="calendar.js?v=12"></script>
+  <script src="app.js?v=12"></script>
 
   <script>
     // ПЕРЕКЛЮЧЕНИЕ МОБИЛЬНОГО ВИДА КЛИЕНТОВ (СПИСОК / АНКЕТА)
@@ -5775,8 +5775,12 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
 
       // 6. Обновление рендеринга для клиентов
-      if (tabName === 'clients' && window.MyTablesClients && typeof window.MyTablesClients.renderClients === 'function') {
-        window.MyTablesClients.renderClients();
+      if (tabName === 'clients') {
+        if (window.allData && Array.isArray(window.allData.clients) && window.MyTablesClients && typeof window.MyTablesClients.setClientsFromSync === 'function') {
+          window.MyTablesClients.setClientsFromSync(window.allData.clients);
+        } else if (window.MyTablesClients && typeof window.MyTablesClients.renderClients === 'function') {
+          window.MyTablesClients.renderClients();
+        }
       }
 
       // 7. Обновление рендеринга для расходов
@@ -5824,6 +5828,9 @@
       window.addEventListener('load', function () {
         navigator.serviceWorker.register('./sw.js')
           .then(function (reg) {
+            if (typeof reg.update === 'function') {
+              reg.update();
+            }
             console.log('PWA ServiceWorker registered with scope:', reg.scope);
           })
           .catch(function (err) {

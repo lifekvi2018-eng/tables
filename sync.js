@@ -439,6 +439,17 @@
           state.cachedData = cleanData;
           storage.set(CONFIG.CACHE_STORAGE_KEY, cleanData);
 
+          if (typeof window !== 'undefined') {
+            window.allData = cleanData;
+            if (typeof window.updateCurrentScreen === 'function') {
+              try {
+                window.updateCurrentScreen(cleanData);
+              } catch (e) {
+                console.warn('updateCurrentScreen error:', e);
+              }
+            }
+          }
+
           setStatus('saved', 'Синхронизировано с Google ✓');
           return { success: true, data: cleanData };
         } else {
@@ -1291,7 +1302,7 @@
         '<span id="mytables-sync-text">Синхронизировано ✓</span>'
       ].join('');
       badge.addEventListener('click', function () {
-        getAllData();
+        syncNow();
       });
       document.body.appendChild(badge);
     }

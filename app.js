@@ -1012,8 +1012,7 @@
       if (syncIncome.length === 0) {
         projects = [];
         payments = [];
-        saveProjects();
-        savePayments();
+        persist();
         renderIncome();
         syncToMainScreen();
         return;
@@ -1116,14 +1115,14 @@
   function renderExpensesCategories(expensesList) {
     if (typeof document === 'undefined') return;
 
-    if (!expensesList || !Array.isArray(expensesList) || expensesList.length === 0) {
-      if (window.MyTablesCalendar && window.MyTablesCalendar.state && Array.isArray(window.MyTablesCalendar.state.payments) && window.MyTablesCalendar.state.payments.length > 0) {
-        expensesList = window.MyTablesCalendar.state.payments;
-      } else if (window.allData && Array.isArray(window.allData.expenses) && window.allData.expenses.length > 0) {
+    if (!expensesList || !Array.isArray(expensesList)) {
+      if (window.allData && Array.isArray(window.allData.expenses)) {
         expensesList = window.allData.expenses;
+      } else if (window.MyTablesCalendar && window.MyTablesCalendar.state && Array.isArray(window.MyTablesCalendar.state.payments)) {
+        expensesList = window.MyTablesCalendar.state.payments;
       } else if (window.MyTablesSync && typeof window.MyTablesSync.getCachedData === 'function') {
         var cData = window.MyTablesSync.getCachedData();
-        if (cData && Array.isArray(cData.expenses) && cData.expenses.length > 0) {
+        if (cData && Array.isArray(cData.expenses)) {
           expensesList = cData.expenses;
         }
       }
