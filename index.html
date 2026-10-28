@@ -5704,9 +5704,9 @@
     <span id="toast-text">Действие выполнено</span>
   </div>
 
-  <script src="sync.js?v=7"></script>
-  <script src="calendar.js?v=7"></script>
-  <script src="app.js?v=7"></script>
+  <script src="sync.js?v=9"></script>
+  <script src="calendar.js?v=9"></script>
+  <script src="app.js?v=9"></script>
 
   <script>
     // ПЕРЕКЛЮЧЕНИЕ МОБИЛЬНОГО ВИДА КЛИЕНТОВ (СПИСОК / АНКЕТА)
@@ -5777,6 +5777,11 @@
       // 6. Обновление рендеринга для клиентов
       if (tabName === 'clients' && window.MyTablesClients && typeof window.MyTablesClients.renderClients === 'function') {
         window.MyTablesClients.renderClients();
+      }
+
+      // 7. Обновление рендеринга для расходов
+      if (tabName === 'expenses' && typeof window.updateExpensesScreen === 'function') {
+        window.updateExpensesScreen();
       }
 
       // 7. Подгружаем свежие данные для открытого экрана

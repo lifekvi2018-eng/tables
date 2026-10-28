@@ -69,16 +69,24 @@
     if (!day || isNaN(day) || day < 1 || day > 31) {
       var rawDate = String(item['Дата'] || item.date || '').trim();
       if (rawDate) {
-        var isoMatch = rawDate.match(/^\d{4}-\d{2}-(\d{1,2})/);
-        if (isoMatch) {
-          day = parseInt(isoMatch[1], 10);
-        } else {
-          var dotMatch = rawDate.match(/^(\d{1,2})\.\d{1,2}\.\d{4}/);
-          if (dotMatch) {
-            day = parseInt(dotMatch[1], 10);
+        if (rawDate.indexOf('T') !== -1) {
+          var parsedDate = new Date(rawDate);
+          if (!isNaN(parsedDate.getTime())) {
+            day = parsedDate.getDate();
+          }
+        }
+        if (!day || isNaN(day) || day < 1 || day > 31) {
+          var isoMatch = rawDate.match(/^\d{4}-\d{2}-(\d{1,2})/);
+          if (isoMatch) {
+            day = parseInt(isoMatch[1], 10);
           } else {
-            var anyMatch = rawDate.match(/(?:^\d{4}-\d{2}-|\.)(\d{1,2})/);
-            if (anyMatch) day = parseInt(anyMatch[1], 10);
+            var dotMatch = rawDate.match(/^(\d{1,2})\.\d{1,2}\.\d{4}/);
+            if (dotMatch) {
+              day = parseInt(dotMatch[1], 10);
+            } else {
+              var anyMatch = rawDate.match(/(?:^\d{4}-\d{2}-|\.)(\d{1,2})/);
+              if (anyMatch) day = parseInt(anyMatch[1], 10);
+            }
           }
         }
       }

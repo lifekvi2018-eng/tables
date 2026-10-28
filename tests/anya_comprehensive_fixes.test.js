@@ -303,13 +303,13 @@ runTest('10.2. Точная дата расхода с ведущим нулем
   assert.strictEqual(p2.dayOfMonth, 5, 'При dayOfMonth: 5 платеж попадает строго на 5 число');
 
   // Кэш-бастинг в index.html
-  assert(html.includes('sync.js?v=7'), 'index.html содержит sync.js?v=7');
-  assert(html.includes('calendar.js?v=7'), 'index.html содержит calendar.js?v=7');
-  assert(html.includes('app.js?v=7'), 'index.html содержит app.js?v=7');
+  assert(/sync\.js\?v=\d+/.test(html), 'index.html содержит sync.js с версией');
+  assert(/calendar\.js\?v=\d+/.test(html), 'index.html содержит calendar.js с версией');
+  assert(/app\.js\?v=\d+/.test(html), 'index.html содержит app.js с версией');
 
   // sw.js версии v7 и Network-First
   const swCode = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
-  assert(swCode.includes('mytables-app-shell-v7'), 'sw.js содержит CACHE_NAME v7');
+  assert(/mytables-app-shell-v\d+/.test(swCode), 'sw.js содержит CACHE_NAME');
   assert(swCode.includes('Network-First'), 'sw.js документирует стратегию Network-First');
 });
 

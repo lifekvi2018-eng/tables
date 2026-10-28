@@ -96,10 +96,23 @@
 
   // Загрузка живых данных и обновление текущего экрана
   function loadLiveData() {
+    // 1. Быстро отображаем сохраненные данные из кэша (мгновенный отклик)
+    if (typeof MyTablesSync !== 'undefined' && typeof MyTablesSync.getCachedData === 'function') {
+      var cached = MyTablesSync.getCachedData();
+      if (cached) {
+        window.allData = cached;
+        updateCurrentScreen(cached);
+      }
+    }
+
+    // 2. Подгружаем актуальные данные из Google Таблиц
     MyTablesSync.getAllData().then(function (res) {
       if (res && res.data) {
+        window.allData = res.data;
         updateCurrentScreen(res.data);
       }
+    }).catch(function (err) {
+      console.warn('Sync getAllData warning:', err);
     });
   }
 
@@ -994,15 +1007,181 @@
   }
 
   // --- ОБНОВЛЕНИЕ ЭКРАНА РАСХОДОВ ---
+  
+  // --- ОТРИСОВКА ПЛАТЕЖЕЙ В КАТЕГОРИЯХ ЭКРАНА РАСХОДОВ ---
+  function renderExpensesCategories(expensesList) {
+    if (typeof document === 'undefined') return;
+
+    if (!expensesList || !Array.isArray(expensesList) || expensesList.length === 0) {
+      if (window.MyTablesCalendar && window.MyTablesCalendar.state && Array.isArray(window.MyTablesCalendar.state.payments) && window.MyTablesCalendar.state.payments.length > 0) {
+        expensesList = window.MyTablesCalendar.state.payments;
+      } else if (window.allData && Array.isArray(window.allData.expenses) && window.allData.expenses.length > 0) {
+        expensesList = window.allData.expenses;
+      } else if (window.MyTablesSync && typeof window.MyTablesSync.getCachedData === 'function') {
+        var cData = window.MyTablesSync.getCachedData();
+        if (cData && Array.isArray(cData.expenses) && cData.expenses.length > 0) {
+          expensesList = cData.expenses;
+        }
+      }
+    }
+    expensesList = expensesList || [];
+
+    // Восстанавливаем сохраненные кастомные категории, если они еще не вставлены в DOM
+    if (Array.isArray(customExpenseCategories) && customExpenseCategories.length > 0 && typeof spawnCategoryCard === 'function') {
+      for (var k = 0; k < customExpenseCategories.length; k++) {
+        var catObj = customExpenseCategories[k];
+        var existingDesk = document.querySelector('#desk-view-expenses .expense-cat-card[data-category="' + catObj.id + '"]');
+        if (!existingDesk) {
+          spawnCategoryCard(catObj);
+        }
+      }
+    }
+
+    // Базовые категории
+    var catBuckets = {
+      ai: [],
+      internet: [],
+      vpn: []
+    };
+    var customBuckets = {};
+
+    for (var i = 0; i < expensesList.length; i++) {
+      var item = expensesList[i];
+      if (item.isArchived) continue;
+      var title = item.title || item['Название / Где'] || item['Название'] || 'Платёж';
+      var cat = (item.category || item['Категория'] || '').toLowerCase();
+      var tLower = title.toLowerCase();
+
+      var bucket = 'other';
+      if (cat === 'ai' || cat.indexOf('ии') !== -1 || cat.indexOf('ai') !== -1 || tLower.indexOf('gpt') !== -1 || tLower.indexOf('claude') !== -1 || tLower.indexOf('gemini') !== -1) {
+        bucket = 'ai';
+      } else if (cat === 'internet' || cat.indexOf('интернет') !== -1 || cat.indexOf('связь') !== -1 || tLower.indexOf('интернет') !== -1 || tLower.indexOf('телефон') !== -1) {
+        bucket = 'internet';
+      } else if (cat === 'vpn' || tLower.indexOf('vpn') !== -1) {
+        bucket = 'vpn';
+      } else if (item.category) {
+        bucket = item.category;
+      }
+
+      if (catBuckets[bucket]) {
+        catBuckets[bucket].push(item);
+      } else {
+        if (!customBuckets[bucket]) customBuckets[bucket] = [];
+        customBuckets[bucket].push(item);
+      }
+    }
+
+    function renderSlipHtml(p) {
+      var title = p.title || p['Название / Где'] || p['Название'] || 'Платёж';
+      var amount = Number(p.amount || p['Сумма'] || p.currentRate || 0);
+      var day = p.day || p.dayOfMonth || p['День месяца'];
+      if (!day) {
+        var rawDate = String(p['Дата'] || p.date || '');
+        if (rawDate) {
+          if (rawDate.indexOf('T') !== -1) {
+            var pd = new Date(rawDate);
+            if (!isNaN(pd.getTime())) day = pd.getDate();
+          }
+          if (!day) {
+            var m = rawDate.match(/(?:^\d{4}-\d{2}-|\.)(\d{1,2})/);
+            if (m) day = parseInt(m[1], 10);
+          }
+        }
+      }
+      day = day || 1;
+      var color = p.color || '#D3E7F8';
+      var isPaid = p.isPaid === true || p.status === 'paid';
+      var dayText = day ? ('• ' + day + ' число') : '';
+
+      return [
+        '<div class="expense-paper-slip" data-title="' + escapeHtml(title) + '" onclick="window.openEditExpenseModal ? window.openEditExpenseModal(\'' + escapeHtml(title) + '\', this) : null">',
+        '  <div class="expense-item-left">',
+        '    <div class="service-logo-circle" style="color: ' + color + ';">',
+        '      <span style="font-weight:900; font-size:13px; color:#2F261D;">' + escapeHtml(title.charAt(0).toUpperCase()) + '</span>',
+        '    </div>',
+        '    <div class="expense-item-info">',
+        '      <span class="expense-item-name">' + escapeHtml(title) + '</span>',
+        '      <div class="expense-item-sub">',
+        '        <span class="expense-item-price">' + formatRub(amount) + '</span>',
+        '        <span class="expense-item-date">' + dayText + '</span>',
+        '      </div>',
+        '    </div>',
+        '  </div>',
+        '  <div class="expense-item-right">',
+        '    <button class="status-pill ' + (isPaid ? 'paid' : 'unpaid') + '" onclick="window.toggleExpenseItemStatus(event, this)"><span class="status-dot"></span> ' + (isPaid ? 'Оплачено' : 'Оплатить') + '</button>',
+        '  </div>',
+        '</div>'
+      ].join('');
+    }
+
+    function updateCardList(cardEl, items) {
+      if (!cardEl) return;
+      var listEl = cardEl.querySelector('.cat-items-list');
+      if (!listEl) return;
+
+      if (!items || items.length === 0) {
+        listEl.innerHTML = '<div class="cat-empty-prompt" style="padding: 12px 14px; text-align: center; color: #7A6E5F; font-size: 12px; font-weight: 700;">Пока нет платежей ♡</div>';
+      } else {
+        var html = '';
+        for (var j = 0; j < items.length; j++) {
+          html += renderSlipHtml(items[j]);
+        }
+        listEl.innerHTML = html;
+      }
+    }
+
+    // 1. Обновляем базовые карточки десктопа и мобильного
+    var baseCats = ['ai', 'internet', 'vpn'];
+    for (var b = 0; b < baseCats.length; b++) {
+      var cKey = baseCats[b];
+      var deskCard = document.querySelector('#desk-view-expenses .expense-cat-card[data-category="' + cKey + '"]');
+      var mobCard = document.querySelector('#mob-view-expenses .expense-cat-card[data-category="' + cKey + '"]');
+      updateCardList(deskCard, catBuckets[cKey]);
+      updateCardList(mobCard, catBuckets[cKey]);
+    }
+
+    // 2. Обновляем кастомные категории
+    for (var customId in customBuckets) {
+      var deskCustomCard = document.querySelector('#desk-view-expenses .expense-cat-card[data-category="' + customId + '"]');
+      var mobCustomCard = document.querySelector('#mob-view-expenses .expense-cat-card[data-category="' + customId + '"]');
+      updateCardList(deskCustomCard, customBuckets[customId]);
+      updateCardList(mobCustomCard, customBuckets[customId]);
+    }
+  }
+  window.renderExpensesCategories = renderExpensesCategories;
+
   function updateExpensesScreen(data) {
-    var expensesList = data.expenses || [];
+    var expensesList = (data && data.expenses) || null;
+    if (!expensesList || !expensesList.length) {
+      if (window.MyTablesCalendar && window.MyTablesCalendar.state && Array.isArray(window.MyTablesCalendar.state.payments) && window.MyTablesCalendar.state.payments.length > 0) {
+        expensesList = window.MyTablesCalendar.state.payments;
+      } else if (window.allData && Array.isArray(window.allData.expenses) && window.allData.expenses.length > 0) {
+        expensesList = window.allData.expenses;
+      } else if (window.MyTablesSync && typeof window.MyTablesSync.getCachedData === 'function') {
+        var cData = window.MyTablesSync.getCachedData();
+        if (cData && Array.isArray(cData.expenses) && cData.expenses.length > 0) {
+          expensesList = cData.expenses;
+        }
+      }
+    }
+    expensesList = expensesList || [];
+
     var totalExpense = expensesList.reduce(function (sum, item) {
       return sum + (Number(item['Сумма'] || item.amount || item['Текущий_Тариф'] || item.currentRate || 0));
     }, 0);
 
     var totalPill = document.getElementById('expense-total-val');
     if (totalPill && totalExpense > 0) totalPill.textContent = formatRub(totalExpense);
+
+    var deskRem = document.getElementById('desk-expenses-rem');
+    if (deskRem) deskRem.textContent = formatRub(totalExpense);
+    var mobRem = document.getElementById('mob-expense-sum');
+    if (mobRem) mobRem.textContent = formatRub(totalExpense);
+
+    // Рендерим платежи в категории на десктопе и мобильном
+    renderExpensesCategories(expensesList);
   }
+  window.updateExpensesScreen = updateExpensesScreen;
 
   // --- ОБНОВЛЕНИЕ ЭКРАНА КЛИЕНТОВ ---
   function updateClientsScreen(data) {
@@ -1160,13 +1339,23 @@
       var passwordUrl = raw.passwordUrl || raw.passwordsUrl || raw['Ссылка на сайт с паролями'] || raw['Ссылка на пароли'] || '';
 
       var links = [];
-      if (Array.isArray(raw.links)) {
+      if (Array.isArray(raw.links) && raw.links.length > 0) {
         links = raw.links;
       } else if (typeof raw.links === 'string' && raw.links.trim()) {
-        try {
-          links = JSON.parse(raw.links);
-        } catch (e) {
-          links = [];
+        try { links = JSON.parse(raw.links); } catch (e) { links = []; }
+      } else if (raw['Ссылка на материалы'] && typeof raw['Ссылка на материалы'] === 'string' && raw['Ссылка на материалы'].trim()) {
+        var mat = raw['Ссылка на материалы'].trim();
+        if (mat.indexOf('[') === 0) {
+          try { links = JSON.parse(mat); } catch (e) { links = []; }
+        } else if (mat.indexOf('http') === 0 || mat.indexOf('.') !== -1) {
+          links = [{ title: 'CRM / Ссылка', url: mat }];
+        }
+      }
+      // Сохраняем локальные ссылки клиента, если из Google они не вернулись
+      if ((!links || links.length === 0) && typeof clients !== 'undefined' && Array.isArray(clients)) {
+        var existingLocal = clients.find(function (c) { return String(c.id) === String(id); });
+        if (existingLocal && Array.isArray(existingLocal.links) && existingLocal.links.length > 0) {
+          links = existingLocal.links;
         }
       }
 
@@ -1500,6 +1689,9 @@
       });
       saveClients();
       renderDossiers();
+      if (typeof window.MyTablesSync !== 'undefined' && typeof window.MyTablesSync.saveClient === 'function') {
+        window.MyTablesSync.saveClient(client).catch(function(e){ console.warn(e); });
+      }
       return client;
     }
 
@@ -1517,6 +1709,9 @@
       }
       saveClients();
       renderDossiers();
+      if (typeof window.MyTablesSync !== 'undefined' && typeof window.MyTablesSync.saveClient === 'function') {
+        window.MyTablesSync.saveClient(client).catch(function(e){ console.warn(e); });
+      }
       return client;
     }
 
@@ -2009,7 +2204,7 @@
         '      </div>',
         '      <div>',
         '        <label style="font-size: 11px; font-weight: 800; color: #6D3E14; display: block; margin-bottom: 5px;">Адрес ссылки (URL)</label>',
-        '        <input type="url" id="link-in-url" placeholder="https://..." style="width: 100%; box-sizing: border-box; background: #FAF4EB; border: none; outline: none; border-radius: 12px; padding: 11px 14px; font-size: 13px; font-weight: 700; color: #2F261D; box-shadow: inset 1.5px 2px 4px rgba(130, 100, 70, 0.15); font-family: inherit;" required>',
+        '        <input type="text" id="link-in-url" placeholder="https://..." style="width: 100%; box-sizing: border-box; background: #FAF4EB; border: none; outline: none; border-radius: 12px; padding: 11px 14px; font-size: 13px; font-weight: 700; color: #2F261D; box-shadow: inset 1.5px 2px 4px rgba(130, 100, 70, 0.15); font-family: inherit;" required>',
         '      </div>',
         '    </div>',
         '    <div style="display: flex; gap: 10px; align-items: center; justify-content: stretch;">',
@@ -2057,6 +2252,9 @@
           var title = (document.getElementById('link-in-title').value || '').trim();
           var url = (document.getElementById('link-in-url').value || '').trim();
           if (!title || !url) return;
+          if (!url.match(/^[a-zA-Z]+:\/\//)) {
+            url = 'https://' + url;
+          }
 
           if (currentEditingLinkIndex !== null) {
             editClientLink(client.id, currentEditingLinkIndex, { title: title, url: url });
@@ -3316,6 +3514,11 @@
             currentEditingPayment.Дата = editDateStr;
             if (url) currentEditingPayment.shopUrl = url;
             currentEditingPayment.color = selectedExpenseColor;
+            currentEditingPayment.isUpdate = true;
+
+            if (window.MyTablesSync && typeof window.MyTablesSync.saveExpense === 'function') {
+              window.MyTablesSync.saveExpense(currentEditingPayment).catch(function () {});
+            }
           }
           if (window.MyTablesCalendar && typeof window.MyTablesCalendar.updateSummaryCards === 'function') {
             window.MyTablesCalendar.updateSummaryCards();
@@ -3324,6 +3527,9 @@
             window.MyTablesCalendar.renderCalendar();
           }
           renderRecentExpensesOnMain();
+          if (typeof updateExpensesScreen === 'function') {
+            updateExpensesScreen();
+          }
           submitBtn.textContent = 'Сохранено ✓';
           setTimeout(function () {
             submitBtn.textContent = 'Сохранить';
@@ -3426,6 +3632,9 @@
           }
         }
         renderRecentExpensesOnMain();
+        if (typeof updateExpensesScreen === 'function') {
+          updateExpensesScreen();
+        }
 
         // Сохраняем в синхронизацию
         var syncPromise = (window.MyTablesSync && typeof window.MyTablesSync.saveExpense === 'function')

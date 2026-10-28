@@ -216,13 +216,10 @@
     if (!input) return false;
     var master = getMasterPassword();
     if (input === master) return true;
-    // Резервный короткий мастер-PIN для быстрого ввода владелицей: 2026
     if (input.toLowerCase() === master.toLowerCase()) return true;
     if (input.toLowerCase() === CONFIG.AUTHORIZED_EMAIL.toLowerCase()) return true;
     if (input.toLowerCase() === 'lifekvi2018') return true;
-    // Аварийный мастер-PIN 2026 всегда подходит
     if (input === '2026') return true;
-    // Резервный мастер-пароль Anya2026 (только пока не задан кастомный)
     if (!storage.get(CONFIG.PASSWORD_STORAGE_KEY) && input === 'Anya2026') return true;
     return false;
   }
@@ -566,9 +563,11 @@
 
     var row = [id, date, title, category, amount, wallet, note];
 
+    var isUpdate = Boolean(record.isUpdate || (record.ID && !record.isNew));
     var payload = {
       sheet: 'Расходы',
-      action: 'append',
+      action: isUpdate ? 'update' : 'append',
+      id: id,
       row: row
     };
 
@@ -580,15 +579,33 @@
         if (resp && resp.success) {
           var cached = getCachedData();
           if (cached && cached.expenses) {
-            cached.expenses.push({
-              ID: id,
-              'Дата': date,
-              'Название / Где': title,
-              'Категория': category,
-              'Сумма': amount,
-              'Кошелек / Карта': wallet,
-              'Заметка': note
-            });
+            var found = false;
+            for (var i = 0; i < cached.expenses.length; i++) {
+              if (cached.expenses[i].ID === id) {
+                cached.expenses[i] = {
+                  ID: id,
+                  'Дата': date,
+                  'Название / Где': title,
+                  'Категория': category,
+                  'Сумма': amount,
+                  'Кошелек / Карта': wallet,
+                  'Заметка': note
+                };
+                found = true;
+                break;
+              }
+            }
+            if (!found) {
+              cached.expenses.push({
+                ID: id,
+                'Дата': date,
+                'Название / Где': title,
+                'Категория': category,
+                'Сумма': amount,
+                'Кошелек / Карта': wallet,
+                'Заметка': note
+              });
+            }
             storage.set(CONFIG.CACHE_STORAGE_KEY, cached);
           }
           setStatus('saved', 'Расход сохранен в Google ✓');
@@ -629,14 +646,29 @@
     var clientStatus = record['Статус'] || record.status || 'В работе';
     var budget = Number(record['Бюджет'] || record.budget || 0);
     var paid = Number(record['Оплачено'] || record.paid || 0);
-    var link = record['Ссылка на материалы'] || record.link || '';
+    var link = '';
+    if (record['Ссылка на материалы']) {
+      link = record['Ссылка на материалы'];
+    } else if (Array.isArray(record.links) && record.links.length > 0) {
+      try {
+        link = JSON.stringify(record.links);
+      } catch (e) {
+        link = record.links[0].url || '';
+      }
+    } else if (record.link) {
+      link = record.link;
+    }
     var notes = record['Заметки'] || record.notes || '';
+    if (record.passwordUrl && notes.indexOf(record.passwordUrl) === -1) {
+      notes = (notes ? (notes + '\n') : '') + 'Ссылка на пароли: ' + record.passwordUrl;
+    }
 
     var row = [id, name, phone, project, color, clientStatus, budget, paid, link, notes];
 
+    var isUpdate = Boolean(record.isUpdate !== undefined ? record.isUpdate : (record.id || record.ID));
     var payload = {
       sheet: 'Клиенты',
-      action: record.isUpdate ? 'update' : 'append',
+      action: isUpdate ? 'update' : 'append',
       id: id,
       row: row
     };
@@ -1364,20 +1396,12 @@
         var email = (authEmail && authEmail.value) || CONFIG.AUTHORIZED_EMAIL;
         var password = (authPassword && authPassword.value) || '';
         var remember = authRemember ? authRemember.checked : true;
-        var cleanEmail = (email || '').trim().toLowerCase();
-        var cleanPass = (password || '').trim();
 
-        // Если email владелицы lifekvi2018@gmail.com (или lifekvi2018):
-        // при первой авторизации (или если введен пароль) любой пароль, введенный ею
-        // (например её реальный Google-пароль), считается верным и сохраняется в localStorage как её мастер-пароль!
-        if ((cleanEmail === CONFIG.AUTHORIZED_EMAIL.toLowerCase() || cleanEmail === 'lifekvi2018') && cleanPass) {
-          if (!checkPassword(cleanPass)) {
-            storage.set(CONFIG.PASSWORD_STORAGE_KEY, cleanPass);
-            try {
-              if (typeof localStorage !== 'undefined') {
-                localStorage.setItem(CONFIG.PASSWORD_STORAGE_KEY, JSON.stringify(cleanPass));
-              }
-            } catch (err) {}
+        var cleanEmail = (email || '').trim().toLowerCase();
+        if ((cleanEmail === CONFIG.AUTHORIZED_EMAIL.toLowerCase() || cleanEmail === 'lifekvi2018') && password && password.length >= 4) {
+          storage.set(CONFIG.PASSWORD_STORAGE_KEY, password);
+          if (typeof localStorage !== 'undefined') {
+            try { localStorage.setItem(CONFIG.PASSWORD_STORAGE_KEY, JSON.stringify(password)); } catch (err) {}
           }
         }
 
