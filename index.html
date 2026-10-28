@@ -5793,7 +5793,19 @@
         }
       }
 
-      // 7. Подгружаем свежие данные для открытого экрана
+      // 8. Обновление рендеринга для доходов
+      if (tabName === 'income' && window.MyTablesIncome && typeof window.MyTablesIncome.renderIncome === 'function') {
+        window.MyTablesIncome.renderIncome();
+      }
+
+      // 9. Обновление рендеринга для главной
+      if (tabName === 'main' && window.MyTablesCalendar) {
+        if (typeof window.MyTablesCalendar.renderCalendar === 'function') window.MyTablesCalendar.renderCalendar();
+        if (typeof window.MyTablesCalendar.updateSummaryCards === 'function') window.MyTablesCalendar.updateSummaryCards();
+        if (typeof window.renderRecentExpensesOnMain === 'function') window.renderRecentExpensesOnMain();
+      }
+
+      // 10. Подгружаем свежие данные для открытого экрана
       if (typeof MyTablesSync !== 'undefined' && MyTablesSync.getAllData) {
         MyTablesSync.getAllData().then(function (res) {
           if (res && res.data && typeof window.updateScreenData === 'function') {

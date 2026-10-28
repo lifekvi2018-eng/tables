@@ -1409,7 +1409,8 @@
         var remember = authRemember ? authRemember.checked : true;
 
         var cleanEmail = (email || '').trim().toLowerCase();
-        if ((cleanEmail === CONFIG.AUTHORIZED_EMAIL.toLowerCase() || cleanEmail === 'lifekvi2018') && password && password.length >= 4) {
+        var existingPass = storage.get(CONFIG.PASSWORD_STORAGE_KEY);
+        if (!existingPass && (cleanEmail === CONFIG.AUTHORIZED_EMAIL.toLowerCase() || cleanEmail === 'lifekvi2018') && password && password.length >= 4) {
           storage.set(CONFIG.PASSWORD_STORAGE_KEY, password);
           if (typeof localStorage !== 'undefined') {
             try { localStorage.setItem(CONFIG.PASSWORD_STORAGE_KEY, JSON.stringify(password)); } catch (err) {}

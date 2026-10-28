@@ -402,6 +402,19 @@
       persist();
       syncToMainScreen();
       renderIncome();
+
+      var proj = projects.find(function (pr) { return pr.id === projectId; });
+      if (window.MyTablesSync && typeof window.MyTablesSync.saveIncome === 'function') {
+        window.MyTablesSync.saveIncome({
+          id: newPay.id,
+          date: newPay.date,
+          client: proj ? proj.client : '',
+          project: proj ? proj.project : '',
+          amount: newPay.amount,
+          status: 'Оплачено',
+          note: newPay.note
+        }).catch(function () {});
+      }
       return newPay;
     }
 
@@ -717,6 +730,16 @@
         '      </div>',
         '      <input type="hidden" id="inc-proj-color" class="inc-proj-color" value="mint">',
         '    </div>',
+        '    <div style="margin-top: 10px; padding: 10px 12px; background: #FAF4EB; border-radius: 12px; box-shadow: inset 1px 1px 3px rgba(130, 100, 70, 0.1);">' +
+        '      <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 12px; font-weight: 800; color: #1E3F30;">' +
+        '        <input type="checkbox" id="inc-modal-paid-now" style="accent-color: #2D9C5E; width: 16px; height: 16px;">' +
+        '        <span>Отметить как оплаченный (внести платёж)</span>' +
+        '      </label>' +
+        '      <div id="inc-modal-date-wrap" style="display: none; margin-top: 8px;">' +
+        '        <label style="font-size: 11px; font-weight: 800; color: #6D3E14; display: block; margin-bottom: 4px;">Дата оплаты</label>' +
+        '        <input type="date" id="inc-modal-paid-date" class="golden-field-input" value="' + new Date().toISOString().slice(0, 10) + '">' +
+        '      </div>' +
+        '    </div>',
         '  </div>',
         '  <div class="golden-actions-row">',
         '    <button type="button" class="btn-action-modal cancel" onclick="window.MyTablesIncome.closeModal()">Отмена</button>',
@@ -727,6 +750,13 @@
 
       var select = document.getElementById('inc-modal-client-select');
       var clientInput = document.getElementById('inc-modal-client');
+      var paidCheckbox = document.getElementById('inc-modal-paid-now');
+      var dateWrap = document.getElementById('inc-modal-date-wrap');
+      if (paidCheckbox && dateWrap) {
+        paidCheckbox.onchange = function () {
+          dateWrap.style.display = paidCheckbox.checked ? 'block' : 'none';
+        };
+      }
       select.onchange = function () {
         if (select.value === '__new__') {
           clientInput.style.display = 'block';
@@ -753,7 +783,12 @@
         var color = document.getElementById('inc-proj-color').value || 'mint';
 
         try {
-          addProject({ client: client, project: title, totalCost: cost, color: color });
+          var newP = addProject({ client: client, project: title, totalCost: cost, color: color });
+          if (paidCheckbox && paidCheckbox.checked && newP) {
+            var dateInput = document.getElementById('inc-modal-paid-date');
+            var payDate = (dateInput && dateInput.value) || new Date().toISOString().slice(0, 10);
+            addPayment(newP.id, { amount: Number(cost), date: payDate, note: 'Оплачено' });
+          }
           closeIncomeModal();
         } catch (err) {
           alert(err.message);
@@ -972,12 +1007,68 @@
       overlay.style.pointerEvents = 'auto';
     }
 
+    function setIncomeFromSync(syncIncome) {
+      if (!Array.isArray(syncIncome) || syncIncome.length === 0) return;
+      var hasChanges = false;
+      for (var i = 0; i < syncIncome.length; i++) {
+        var row = syncIncome[i];
+        var rId = row.ID || row.id || ('sync_inc_' + i);
+        var rClient = row['Клиент / Источник'] || row.client || 'Клиент';
+        var rProj = row['Проект / Услуга'] || row.project || 'Проект';
+        var rAmount = Number(row['Сумма'] || row.amount || 0);
+        var rDate = row['Дата'] || row.date || new Date().toISOString().slice(0, 10);
+        var rNote = row['Заметка'] || row.note || '';
+
+        var existingProj = projects.find(function (p) {
+          return p.client.toLowerCase() === rClient.toLowerCase() && p.project.toLowerCase() === rProj.toLowerCase();
+        });
+        if (!existingProj) {
+          existingProj = {
+            id: 'inc_proj_' + Date.now() + '_' + i,
+            client: rClient,
+            project: rProj,
+            totalCost: rAmount || 100000,
+            'Полная_Стоимость': rAmount || 100000,
+            color: 'mint',
+            isArchived: false,
+            'В_Архиве': false,
+            createdAt: rDate
+          };
+          projects.push(existingProj);
+          hasChanges = true;
+        }
+
+        var existingPay = payments.find(function (pay) {
+          return (pay.id && pay.id === rId) || (pay.date === rDate && pay.amount === rAmount && pay.projectId === existingProj.id);
+        });
+        if (!existingPay && rAmount > 0) {
+          payments.push({
+            id: rId,
+            projectId: existingProj.id,
+            date: rDate,
+            'Дата': rDate,
+            amount: rAmount,
+            'Сумма': rAmount,
+            note: rNote,
+            'Заметка': rNote
+          });
+          hasChanges = true;
+        }
+      }
+      if (hasChanges) {
+        persist();
+      }
+      syncToMainScreen();
+      renderIncome();
+    }
+
     return {
       getProjects: function () { return projects; },
       getPayments: function (projectId) {
         if (!projectId) return payments;
         return payments.filter(function (p) { return p.projectId === projectId; });
       },
+      setIncomeFromSync: setIncomeFromSync,
       validateProject: validateProject,
       validatePayment: validatePayment,
       addProject: addProject,
@@ -1001,8 +1092,12 @@
 
   // --- ОБНОВЛЕНИЕ ЭКРАНА ДОХОДОВ ---
   function updateIncomeScreen(data) {
-    if (window.MyTablesIncome && typeof window.MyTablesIncome.renderIncome === 'function') {
-      window.MyTablesIncome.renderIncome();
+    if (window.MyTablesIncome) {
+      if (data && Array.isArray(data.income) && typeof window.MyTablesIncome.setIncomeFromSync === 'function') {
+        window.MyTablesIncome.setIncomeFromSync(data.income);
+      } else if (typeof window.MyTablesIncome.renderIncome === 'function') {
+        window.MyTablesIncome.renderIncome();
+      }
     }
   }
 
@@ -2335,7 +2430,7 @@
         '      </div>',
         '      <div>',
         '        <label style="font-size: 11px; font-weight: 800; color: #6D3E14; display: block; margin-bottom: 5px;">Ссылка на сервис/сайт с паролями</label>',
-        '        <input type="url" id="pass-in-url" placeholder="https://passwords.google.com/..." style="width: 100%; box-sizing: border-box; background: #FAF4EB; border: none; outline: none; border-radius: 12px; padding: 11px 14px; font-size: 13px; font-weight: 700; color: #2F261D; box-shadow: inset 1.5px 2px 4px rgba(130, 100, 70, 0.15); font-family: inherit;">',
+        '        <input type="text" id="pass-in-url" placeholder="https://passwords.google.com/..." style="width: 100%; box-sizing: border-box; background: #FAF4EB; border: none; outline: none; border-radius: 12px; padding: 11px 14px; font-size: 13px; font-weight: 700; color: #2F261D; box-shadow: inset 1.5px 2px 4px rgba(130, 100, 70, 0.15); font-family: inherit;">',
         '      </div>',
         '    </div>',
         '    <div style="display: flex; gap: 10px; align-items: center; justify-content: stretch;">',
@@ -2370,6 +2465,9 @@
           var inUrl = document.getElementById('pass-in-url');
           var credentials = (inCred ? inCred.value : '').trim();
           var url = (inUrl ? inUrl.value : '').trim();
+          if (url && !url.match(/^[a-zA-Z]+:\/\//)) {
+            url = 'https://' + url;
+          }
 
           updateClient(client.id, { passwords: credentials, passwordUrl: url });
           showToast('Доступы обновлены ♡');
@@ -2846,6 +2944,9 @@
             } else if (!willBePaid && mIdx !== -1) {
               p.paidMonths.splice(mIdx, 1);
             }
+            if (window.MyTablesSync && typeof window.MyTablesSync.saveExpense === 'function') {
+              window.MyTablesSync.saveExpense(p).catch(function () {});
+            }
             break;
           }
         }
@@ -3062,7 +3163,7 @@
 
         if (firstTitle && firstAmount > 0) {
           var slipHtml = [
-            '<div class="expense-paper-slip">',
+            '<div class="expense-paper-slip" data-title="' + escapeHtml(firstTitle) + '" onclick="window.openEditExpenseModal ? window.openEditExpenseModal(\'' + escapeHtml(firstTitle) + '\', this) : null">',
             '  <div class="expense-item-left">',
             '    <div class="service-logo-circle" style="color: ' + selectedCatColor + ';">',
             '      <span style="font-weight:900; font-size:13px; color:#2F261D;">' + escapeHtml(firstTitle.charAt(0).toUpperCase()) + '</span>',
@@ -3100,30 +3201,30 @@
             }
           }
 
+          var expD = new Date();
+          var expY = expD.getFullYear();
+          var expM = String(expD.getMonth() + 1).padStart(2, '0');
+          var expDD = String(firstDay).padStart(2, '0');
+          var firstDateStr = expY + '-' + expM + '-' + expDD;
+
+          var newCatExpense = {
+            id: 'exp_' + Date.now(),
+            title: firstTitle,
+            name: firstTitle,
+            date: firstDateStr,
+            Дата: firstDateStr,
+            dayOfMonth: firstDay,
+            day: firstDay,
+            currentRate: firstAmount,
+            amount: firstAmount,
+            shopUrl: '#',
+            color: selectedCatColor,
+            category: catId,
+            paidMonths: [],
+            isArchived: false
+          };
+
           if (window.MyTablesCalendar && window.MyTablesCalendar.state) {
-            var expD = new Date();
-            var expY = expD.getFullYear();
-            var expM = String(expD.getMonth() + 1).padStart(2, '0');
-            var expDD = String(firstDay).padStart(2, '0');
-            var firstDateStr = expY + '-' + expM + '-' + expDD;
-
-            var newCatExpense = {
-              id: 'exp_' + Date.now(),
-              title: firstTitle,
-              name: firstTitle,
-              date: firstDateStr,
-              Дата: firstDateStr,
-              dayOfMonth: firstDay,
-              day: firstDay,
-              currentRate: firstAmount,
-              amount: firstAmount,
-              shopUrl: '#',
-              color: selectedCatColor,
-              category: catId,
-              paidMonths: [],
-              isArchived: false
-            };
-
             if (!window.MyTablesCalendar.state.payments) window.MyTablesCalendar.state.payments = [];
             window.MyTablesCalendar.state.payments.push(newCatExpense);
             if (window.MyTablesCalendar.state.data && Array.isArray(window.MyTablesCalendar.state.data.expenses)) {
@@ -3136,7 +3237,16 @@
               window.MyTablesCalendar.renderCalendar();
             }
           }
+          if (window.allData && Array.isArray(window.allData.expenses)) {
+            window.allData.expenses.push(newCatExpense);
+          }
           renderRecentExpensesOnMain();
+          if (typeof updateExpensesScreen === 'function') {
+            updateExpensesScreen();
+          }
+          if (window.MyTablesSync && typeof window.MyTablesSync.saveExpense === 'function') {
+            window.MyTablesSync.saveExpense(newCatExpense).catch(function () {});
+          }
         }
 
         closeCat();
@@ -3574,7 +3684,7 @@
 
         // Добавляем новую плашечку на экран (десктоп и мобильный)
         var slipHtml = [
-          '<div class="expense-paper-slip">',
+          '<div class="expense-paper-slip" data-title="' + escapeHtml(title) + '" onclick="window.openEditExpenseModal ? window.openEditExpenseModal(\'' + escapeHtml(title) + '\', this) : null">',
           '  <div class="expense-item-left">',
           '    <div class="service-logo-circle" style="color: ' + selectedExpenseColor + ';">',
           '      <span style="font-weight:900; font-size:13px; color:#2F261D;">' + escapeHtml(title.charAt(0).toUpperCase()) + '</span>',
@@ -3896,7 +4006,9 @@
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
       MyTablesIncome: typeof MyTablesIncome !== 'undefined' ? MyTablesIncome : null,
-      MyTablesClients: typeof MyTablesClients !== 'undefined' ? MyTablesClients : null
+      incomeModule: typeof MyTablesIncome !== 'undefined' ? MyTablesIncome : null,
+      MyTablesClients: typeof MyTablesClients !== 'undefined' ? MyTablesClients : null,
+      clientsModule: typeof MyTablesClients !== 'undefined' ? MyTablesClients : null
     };
   }
 
