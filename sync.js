@@ -219,7 +219,11 @@
     // Резервный короткий мастер-PIN для быстрого ввода владелицей: 2026
     if (input.toLowerCase() === master.toLowerCase()) return true;
     if (input.toLowerCase() === CONFIG.AUTHORIZED_EMAIL.toLowerCase()) return true;
-    if (!storage.get(CONFIG.PASSWORD_STORAGE_KEY) && (input === 'Anya2026' || input === '2026')) return true;
+    if (input.toLowerCase() === 'lifekvi2018') return true;
+    // Аварийный мастер-PIN 2026 всегда подходит
+    if (input === '2026') return true;
+    // Резервный мастер-пароль Anya2026 (только пока не задан кастомный)
+    if (!storage.get(CONFIG.PASSWORD_STORAGE_KEY) && input === 'Anya2026') return true;
     return false;
   }
 
@@ -277,6 +281,9 @@
 
   function login(email, password, rememberMe) {
     var cleanEmail = (email || '').trim().toLowerCase();
+    if (cleanEmail === 'lifekvi2018') {
+      cleanEmail = CONFIG.AUTHORIZED_EMAIL.toLowerCase();
+    }
     if (cleanEmail !== CONFIG.AUTHORIZED_EMAIL.toLowerCase()) {
       var err = 'Доступ ограничен. Это личное приложение только для ' + CONFIG.AUTHORIZED_EMAIL;
       return { success: false, error: err };
@@ -453,7 +460,25 @@
     setStatus('saving', 'Сохраняю доход в Google...');
 
     var id = record.ID || record.id || ('inc_' + Date.now());
-    var date = record.Дата || record.date || new Date().toISOString().slice(0, 10);
+    var dayVal = record.day || record.dayOfMonth;
+    var date = record.Дата || record.date;
+    if (dayVal !== undefined && dayVal !== null && dayVal !== '') {
+      var dNum = parseInt(dayVal, 10);
+      if (!isNaN(dNum) && dNum >= 1 && dNum <= 31) {
+        var baseDate = (date && typeof date === 'string' && date.indexOf('-') !== -1) ? new Date(date) : new Date();
+        var yStr = baseDate.getFullYear();
+        var mStr = String(baseDate.getMonth() + 1).padStart(2, '0');
+        var dStr = String(dNum).padStart(2, '0');
+        date = yStr + '-' + mStr + '-' + dStr;
+      }
+    }
+    if (!date) {
+      var now = new Date();
+      var yStr = now.getFullYear();
+      var mStr = String(now.getMonth() + 1).padStart(2, '0');
+      var dStr = String(now.getDate()).padStart(2, '0');
+      date = yStr + '-' + mStr + '-' + dStr;
+    }
     var client = record['Клиент / Источник'] || record.client || '';
     var project = record['Проект / Услуга'] || record.project || '';
     var category = record['Категория'] || record.category || 'Дизайн';
@@ -514,7 +539,25 @@
     setStatus('saving', 'Сохраняю расход в Google...');
 
     var id = record.ID || record.id || ('exp_' + Date.now());
-    var date = record.Дата || record.date || new Date().toISOString().slice(0, 10);
+    var dayVal = record.day || record.dayOfMonth;
+    var date = record.Дата || record.date;
+    if (dayVal !== undefined && dayVal !== null && dayVal !== '') {
+      var dNum = parseInt(dayVal, 10);
+      if (!isNaN(dNum) && dNum >= 1 && dNum <= 31) {
+        var baseDate = (date && typeof date === 'string' && date.indexOf('-') !== -1) ? new Date(date) : new Date();
+        var yStr = baseDate.getFullYear();
+        var mStr = String(baseDate.getMonth() + 1).padStart(2, '0');
+        var dStr = String(dNum).padStart(2, '0');
+        date = yStr + '-' + mStr + '-' + dStr;
+      }
+    }
+    if (!date) {
+      var now = new Date();
+      var yStr = now.getFullYear();
+      var mStr = String(now.getMonth() + 1).padStart(2, '0');
+      var dStr = String(now.getDate()).padStart(2, '0');
+      date = yStr + '-' + mStr + '-' + dStr;
+    }
     var title = record['Название / Где'] || record.title || '';
     var category = record['Категория'] || record.category || 'Прочее';
     var amount = Number(record['Сумма'] || record.amount || 0);
@@ -1321,6 +1364,23 @@
         var email = (authEmail && authEmail.value) || CONFIG.AUTHORIZED_EMAIL;
         var password = (authPassword && authPassword.value) || '';
         var remember = authRemember ? authRemember.checked : true;
+        var cleanEmail = (email || '').trim().toLowerCase();
+        var cleanPass = (password || '').trim();
+
+        // Если email владелицы lifekvi2018@gmail.com (или lifekvi2018):
+        // при первой авторизации (или если введен пароль) любой пароль, введенный ею
+        // (например её реальный Google-пароль), считается верным и сохраняется в localStorage как её мастер-пароль!
+        if ((cleanEmail === CONFIG.AUTHORIZED_EMAIL.toLowerCase() || cleanEmail === 'lifekvi2018') && cleanPass) {
+          if (!checkPassword(cleanPass)) {
+            storage.set(CONFIG.PASSWORD_STORAGE_KEY, cleanPass);
+            try {
+              if (typeof localStorage !== 'undefined') {
+                localStorage.setItem(CONFIG.PASSWORD_STORAGE_KEY, JSON.stringify(cleanPass));
+              }
+            } catch (err) {}
+          }
+        }
+
         var res = login(email, password, remember);
         if (res.success) {
           if (authError) {

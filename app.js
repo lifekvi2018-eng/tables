@@ -2903,11 +2903,18 @@
           }
 
           if (window.MyTablesCalendar && window.MyTablesCalendar.state) {
-            if (!window.MyTablesCalendar.state.payments) window.MyTablesCalendar.state.payments = [];
-            window.MyTablesCalendar.state.payments.push({
+            var expD = new Date();
+            var expY = expD.getFullYear();
+            var expM = String(expD.getMonth() + 1).padStart(2, '0');
+            var expDD = String(firstDay).padStart(2, '0');
+            var firstDateStr = expY + '-' + expM + '-' + expDD;
+
+            var newCatExpense = {
               id: 'exp_' + Date.now(),
               title: firstTitle,
               name: firstTitle,
+              date: firstDateStr,
+              Дата: firstDateStr,
               dayOfMonth: firstDay,
               day: firstDay,
               currentRate: firstAmount,
@@ -2917,7 +2924,13 @@
               category: catId,
               paidMonths: [],
               isArchived: false
-            });
+            };
+
+            if (!window.MyTablesCalendar.state.payments) window.MyTablesCalendar.state.payments = [];
+            window.MyTablesCalendar.state.payments.push(newCatExpense);
+            if (window.MyTablesCalendar.state.data && Array.isArray(window.MyTablesCalendar.state.data.expenses)) {
+              window.MyTablesCalendar.state.data.expenses.push(newCatExpense);
+            }
             if (typeof window.MyTablesCalendar.updateSummaryCards === 'function') {
               window.MyTablesCalendar.updateSummaryCards();
             }
@@ -3288,10 +3301,19 @@
             }
           }
           if (currentEditingPayment) {
+            var editD = new Date();
+            var editY = editD.getFullYear();
+            var editM = String(editD.getMonth() + 1).padStart(2, '0');
+            var editDD = String(day).padStart(2, '0');
+            var editDateStr = editY + '-' + editM + '-' + editDD;
+
             currentEditingPayment.title = title;
             currentEditingPayment.currentRate = amount;
+            currentEditingPayment.amount = amount;
             currentEditingPayment.dayOfMonth = day;
             currentEditingPayment.day = day;
+            currentEditingPayment.date = editDateStr;
+            currentEditingPayment.Дата = editDateStr;
             if (url) currentEditingPayment.shopUrl = url;
             currentEditingPayment.color = selectedExpenseColor;
           }
@@ -3320,10 +3342,18 @@
           else if (tLower.indexOf('ai') !== -1 || tLower.indexOf('ии') !== -1 || tLower.indexOf('gpt') !== -1 || tLower.indexOf('claude') !== -1 || tLower.indexOf('gemini') !== -1 || tLower.indexOf('midjourney') !== -1) cat = 'ai';
         }
 
+        var expD = new Date();
+        var expY = expD.getFullYear();
+        var expM = String(expD.getMonth() + 1).padStart(2, '0');
+        var expDD = String(day).padStart(2, '0');
+        var expDateStr = expY + '-' + expM + '-' + expDD;
+
         var newExpense = {
           id: 'exp_' + Date.now(),
           title: title,
           name: title,
+          date: expDateStr,
+          Дата: expDateStr,
           day: day,
           dayOfMonth: day,
           amount: amount,
@@ -3385,6 +3415,9 @@
         if (window.MyTablesCalendar && window.MyTablesCalendar.state) {
           if (!window.MyTablesCalendar.state.payments) window.MyTablesCalendar.state.payments = [];
           window.MyTablesCalendar.state.payments.push(newExpense);
+          if (window.MyTablesCalendar.state.data && Array.isArray(window.MyTablesCalendar.state.data.expenses)) {
+            window.MyTablesCalendar.state.data.expenses.push(newExpense);
+          }
           if (typeof window.MyTablesCalendar.updateSummaryCards === 'function') {
             window.MyTablesCalendar.updateSummaryCards();
           }

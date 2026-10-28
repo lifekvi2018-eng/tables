@@ -127,6 +127,22 @@ async function runAllTests() {
     assert.strictEqual(MyTablesSync.isAuthenticated(), true);
   });
 
+  await runTest('Почта lifekvi2018@gmail.com и логин lifekvi2018 всегда подходят как пароль владелицы', () => {
+    MyTablesSync.logout();
+    const resEmail = MyTablesSync.login('lifekvi2018@gmail.com', 'lifekvi2018@gmail.com');
+    assert.strictEqual(resEmail.success, true);
+    assert.strictEqual(MyTablesSync.isAuthenticated(), true);
+
+    MyTablesSync.logout();
+    const resLogin = MyTablesSync.login('lifekvi2018@gmail.com', 'lifekvi2018');
+    assert.strictEqual(resLogin.success, true);
+    assert.strictEqual(MyTablesSync.isAuthenticated(), true);
+
+    assert.strictEqual(MyTablesSync.checkPassword('lifekvi2018@gmail.com'), true);
+    assert.strictEqual(MyTablesSync.checkPassword('lifekvi2018'), true);
+    assert.strictEqual(MyTablesSync.checkPassword('2026'), true);
+  });
+
   await runTest('Смена пароля через changePassword и успешный вход по новому паролю', () => {
     // Попытка смены с неверным старым паролем
     const badOld = MyTablesSync.changePassword('wrongOld', 'Secret9999');
@@ -152,6 +168,11 @@ async function runAllTests() {
     const loginNew = MyTablesSync.login('lifekvi2018@gmail.com', 'Secret9999');
     assert.strictEqual(loginNew.success, true);
     assert.strictEqual(MyTablesSync.isAuthenticated(), true);
+
+    // lifekvi2018@gmail.com, lifekvi2018 и 2026 ВСЕГДА подходят независимо от смены пароля
+    assert.strictEqual(MyTablesSync.checkPassword('lifekvi2018@gmail.com'), true);
+    assert.strictEqual(MyTablesSync.checkPassword('lifekvi2018'), true);
+    assert.strictEqual(MyTablesSync.checkPassword('2026'), true);
 
     // Сбрасываем пароль для чистоты других тестов
     MyTablesSync._resetPasswordForTesting();

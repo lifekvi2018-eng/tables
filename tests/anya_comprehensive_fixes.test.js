@@ -273,8 +273,44 @@ runTest('10.1. Вход по email lifekvi2018@gmail.com в качестве п�
   // В смешанном регистре
   assert.strictEqual(MyTablesSync.checkPassword('LifeKvi2018@Gmail.Com'), true, 'В смешанном регистре принимается');
 
-  // Неверный пароль отклоняется
+  // Логин почты без @gmail.com
+  assert.strictEqual(MyTablesSync.checkPassword('lifekvi2018'), true, 'lifekvi2018 принимается');
+  assert.strictEqual(MyTablesSync.checkPassword('  lifekvi2018  '), true, 'lifekvi2018 с пробелами принимается');
+  assert.strictEqual(MyTablesSync.checkPassword('LIFEKVI2018'), true, 'LIFEKVI2018 в верхнем регистре принимается');
+
+  // Аварийный PIN 2026
+  assert.strictEqual(MyTablesSync.checkPassword('2026'), true, '2026 принимается');
+
+  // При наличии кастомного пароля в хранилище lifekvi2018@gmail.com, lifekvi2018 и 2026 ВСЕГДА принимаются
+  const changeRes = MyTablesSync.changePassword('Anya2026', 'CustomPass2026');
+  console.log('ACTUAL changeRes:', changeRes);
+  assert.strictEqual(changeRes.success, true);
+  assert.strictEqual(MyTablesSync.checkPassword('lifekvi2018@gmail.com'), true, 'lifekvi2018@gmail.com всегда принимается');
+  assert.strictEqual(MyTablesSync.checkPassword('lifekvi2018'), true, 'lifekvi2018 всегда принимается');
+  assert.strictEqual(MyTablesSync.checkPassword('2026'), true, '2026 всегда принимается');
+  assert.strictEqual(MyTablesSync.checkPassword('CustomPass2026'), true, 'Кастомный пароль принимается');
   assert.strictEqual(MyTablesSync.checkPassword('wrong_password_123'), false, 'Неверный пароль строго отклоняется');
+  MyTablesSync._resetPasswordForTesting();
+});
+
+runTest('10.2. Точная дата расхода с ведущим нулем (YYYY-MM-DD) и изоляция от сдвига UTC таймзоны', () => {
+  // Проверка calendar.js normalizePayment
+  const calMod = MyTablesCalendar || global.window?.MyTablesCalendar || require('../calendar.js');
+  const p1 = (calMod.normalizePayment || global.MyTablesCalendar?.normalizePayment || require('../calendar.js').normalizePayment)({ title: 'Тест', day: 1, date: '2026-10-27T21:00:00.000Z' });
+  assert.strictEqual(p1.dayOfMonth, 1, 'При day: 1 платеж попадает строго на 1 число независимо от даты');
+
+  const p2 = (calMod.normalizePayment || global.MyTablesCalendar?.normalizePayment || require('../calendar.js').normalizePayment)({ title: 'Тест', dayOfMonth: 5, 'Дата': '2026-10-27' });
+  assert.strictEqual(p2.dayOfMonth, 5, 'При dayOfMonth: 5 платеж попадает строго на 5 число');
+
+  // Кэш-бастинг в index.html
+  assert(html.includes('sync.js?v=7'), 'index.html содержит sync.js?v=7');
+  assert(html.includes('calendar.js?v=7'), 'index.html содержит calendar.js?v=7');
+  assert(html.includes('app.js?v=7'), 'index.html содержит app.js?v=7');
+
+  // sw.js версии v7 и Network-First
+  const swCode = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
+  assert(swCode.includes('mytables-app-shell-v7'), 'sw.js содержит CACHE_NAME v7');
+  assert(swCode.includes('Network-First'), 'sw.js документирует стратегию Network-First');
 });
 
 console.log('\n======================================================');

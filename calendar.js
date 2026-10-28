@@ -43,7 +43,10 @@
       nextM = 0;
       nextY++;
     }
-    return { year: nextY, monthIndex: nextM };
+    return {
+      year: nextY,
+      monthIndex: nextM
+    };
   }
 
   // Вспомогательный хелпер для форматирования 'YYYY-MM'
@@ -54,12 +57,33 @@
 
   // Нормализация структуры платежа из разных источников (Google Sheets или объект)
   function normalizePayment(item, idx) {
-    var day = Number(item.dayOfMonth || item['День месяца'] || item.day || 0);
-    if (!day && item['Дата']) {
-      var dMatch = String(item['Дата']).match(/(?:^\d{4}-\d{2}-|\.)(\d{1,2})/);
-      if (dMatch) day = parseInt(dMatch[1], 10);
+    var day = 0;
+    if (item.dayOfMonth !== undefined && item.dayOfMonth !== null && item.dayOfMonth !== '') {
+      day = Number(item.dayOfMonth);
+    } else if (item.day !== undefined && item.day !== null && item.day !== '') {
+      day = Number(item.day);
+    } else if (item['День месяца'] !== undefined && item['День месяца'] !== null && item['День месяца'] !== '') {
+      day = Number(item['День месяца']);
     }
-    if (!day) day = 1;
+
+    if (!day || isNaN(day) || day < 1 || day > 31) {
+      var rawDate = String(item['Дата'] || item.date || '').trim();
+      if (rawDate) {
+        var isoMatch = rawDate.match(/^\d{4}-\d{2}-(\d{1,2})/);
+        if (isoMatch) {
+          day = parseInt(isoMatch[1], 10);
+        } else {
+          var dotMatch = rawDate.match(/^(\d{1,2})\.\d{1,2}\.\d{4}/);
+          if (dotMatch) {
+            day = parseInt(dotMatch[1], 10);
+          } else {
+            var anyMatch = rawDate.match(/(?:^\d{4}-\d{2}-|\.)(\d{1,2})/);
+            if (anyMatch) day = parseInt(anyMatch[1], 10);
+          }
+        }
+      }
+    }
+    if (!day || isNaN(day) || day < 1 || day > 31) day = 1;
 
     var rate = Number(item.currentRate || item['Сумма'] || item.amount || 0);
     var title = item.title || item['Название / Где'] || item['Название'] || 'Платёж';
@@ -594,6 +618,7 @@
 
   // Публичный интерфейс
   var MyTablesCalendar = {
+    normalizePayment: normalizePayment,
     getDaysInMonth: getDaysInMonth,
     getFirstDayOfWeek: getFirstDayOfWeek,
     navigateMonth: navigateMonth,

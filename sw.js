@@ -7,7 +7,7 @@
  * (они идут напрямую в сеть через модуль sync.js).
  */
 
-const CACHE_NAME = 'mytables-app-shell-v6';
+const CACHE_NAME = 'mytables-app-shell-v7';
 
 const PRECACHE_ASSETS = [
   './',
@@ -77,20 +77,24 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // App Shell и локальные ресурсы: стратегия Stale-While-Revalidate
+  // App Shell и локальные ресурсы: стратегия Network-First (сначала свежая сеть, при отсутствии сети — кэш)
   event.respondWith(
-    caches.match(event.request).then((cached) => {
-      const fetchPromise = fetch(event.request)
-        .then((networkResponse) => {
-          if (networkResponse && networkResponse.status === 200) {
-            const cloned = networkResponse.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, cloned));
+    fetch(event.request)
+      .then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200) {
+          const cloned = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, cloned));
+        }
+        return networkResponse;
+      })
+      .catch(() => {
+        // При сбое сети или в офлайне возвращаем ресурс из кэша (с ignoreSearch для версионированных скриптов)
+        return caches.match(event.request, { ignoreSearch: true }).then((cached) => {
+          if (cached) return cached;
+          if (event.request.mode === 'navigate') {
+            return caches.match('./index.html');
           }
-          return networkResponse;
-        })
-        .catch(() => cached); // При сбое сети или офлайне отдаем из кэша
-
-      return cached || fetchPromise;
-    })
+        });
+      })
   );
 });
