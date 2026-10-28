@@ -5704,9 +5704,9 @@
     <span id="toast-text">Действие выполнено</span>
   </div>
 
-  <script src="sync.js?v=9"></script>
-  <script src="calendar.js?v=9"></script>
-  <script src="app.js?v=9"></script>
+  <script src="sync.js?v=10"></script>
+  <script src="calendar.js?v=10"></script>
+  <script src="app.js?v=10"></script>
 
   <script>
     // ПЕРЕКЛЮЧЕНИЕ МОБИЛЬНОГО ВИДА КЛИЕНТОВ (СПИСОК / АНКЕТА)
@@ -5780,8 +5780,17 @@
       }
 
       // 7. Обновление рендеринга для расходов
-      if (tabName === 'expenses' && typeof window.updateExpensesScreen === 'function') {
-        window.updateExpensesScreen();
+      if (tabName === 'expenses') {
+        var exps = (window.allData && window.allData.expenses)
+          || (window.MyTablesCalendar && window.MyTablesCalendar.state && window.MyTablesCalendar.state.payments)
+          || (window.MyTablesSync && window.MyTablesSync.getCachedData && window.MyTablesSync.getCachedData().expenses)
+          || [];
+        if (typeof window.renderExpensesCategories === 'function') {
+          window.renderExpensesCategories(exps);
+        }
+        if (typeof window.updateExpensesScreen === 'function') {
+          window.updateExpensesScreen({ expenses: exps });
+        }
       }
 
       // 7. Подгружаем свежие данные для открытого экрана

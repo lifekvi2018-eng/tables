@@ -280,7 +280,11 @@
     if (!allData) return;
     state.data = allData;
     if (allData.expenses && allData.expenses.length > 0) {
-      state.payments = allData.expenses;
+      state.payments = allData.expenses.map(function (item, idx) {
+        return normalizePayment(item, idx);
+      });
+    } else {
+      state.payments = [];
     }
     renderCalendar();
     updateSummaryCards();

@@ -412,10 +412,21 @@
           var deleted = getDeletedIds();
           var filterDeleted = function (arr) {
             if (!Array.isArray(arr)) return [];
-            return arr.filter(function (item) {
+            var map = new Map();
+            for (var i = 0; i < arr.length; i++) {
+              var item = arr[i];
               var id = item.ID || item.id;
-              return !id || deleted.indexOf(String(id)) === -1;
-            });
+              if (id) {
+                if (deleted.indexOf(String(id)) === -1) {
+                  map.set(String(id), item);
+                }
+              } else {
+                map.set('no_id_' + i, item);
+              }
+            }
+            var result = [];
+            map.forEach(function (v) { result.push(v); });
+            return result;
           };
 
           var cleanData = {
