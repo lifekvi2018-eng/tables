@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Мои таблицы ♡</title>
   
   <!-- PWA Манифест и метатеги Стейджа 5 -->
@@ -30,6 +30,13 @@
     }
     body, button, input, select, textarea, span, div, p, h1, h2, h3 {
       font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif !important;
+    }
+
+    html, body {
+      overflow-x: hidden;
+      touch-action: manipulation;
+      -webkit-text-size-adjust: 100%;
+      scrollbar-gutter: stable;
     }
 
     body {
@@ -3017,10 +3024,7 @@
       z-index: 100;
       animation: popoverFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    @keyframes popoverFadeIn {
-      from { opacity: 0; transform: translateY(-6px) scale(0.97); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
+    @keyframes popoverFadeIn { from { opacity: 0; } to { opacity: 1; } }
     .popover-header {
       display: flex;
       justify-content: space-between;
@@ -3552,6 +3556,7 @@
 
     /* ЗОЛОТОЙ СТАНДАРТ МОДАЛЬНЫХ ОКОН */
     .golden-modal {
+      transform: none !important;
       background: #FAF2E7;
       border-radius: 24px;
       padding: 22px;
@@ -4981,11 +4986,11 @@
     .overlay-card {
       max-width: 440px;
       width: 100%;
-      animation: modalPop 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+      animation: modalFadeIn 0.12s ease-out; transform: none !important;
     }
-    @keyframes modalPop {
-      0% { opacity: 0; transform: scale(0.92) translateY(10px); }
-      100% { opacity: 1; transform: scale(1) translateY(0); }
+    @keyframes modalFadeIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
     }
     .toast-popup {
       position: fixed;
@@ -5011,6 +5016,15 @@
     .toast-popup.active {
       transform: translateX(-50%) translateY(0);
       opacity: 1;
+    }
+
+  
+    /* Защита от автозума Safari на iPhone и iPad (при font-size < 16px Safari приближает экран) */
+    @media (max-width: 1024px) {
+      input, select, textarea,
+      .golden-field-input, .golden-field-select, .field-input, .field-textarea, .auth-email-input {
+        font-size: 16px !important;
+      }
     }
 
   </style>
