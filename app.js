@@ -1008,7 +1008,16 @@
     }
 
     function setIncomeFromSync(syncIncome) {
-      if (!Array.isArray(syncIncome) || syncIncome.length === 0) return;
+      if (!Array.isArray(syncIncome)) return;
+      if (syncIncome.length === 0) {
+        projects = [];
+        payments = [];
+        saveProjects();
+        savePayments();
+        renderIncome();
+        syncToMainScreen();
+        return;
+      }
       var hasChanges = false;
       for (var i = 0; i < syncIncome.length; i++) {
         var row = syncIncome[i];
@@ -1246,27 +1255,42 @@
   window.renderExpensesCategories = renderExpensesCategories;
 
   function updateExpensesScreen(data) {
-    var expensesList = (data && data.expenses) || null;
-    if (!expensesList || !expensesList.length) {
-      if (window.MyTablesCalendar && window.MyTablesCalendar.state && Array.isArray(window.MyTablesCalendar.state.payments) && window.MyTablesCalendar.state.payments.length > 0) {
-        expensesList = window.MyTablesCalendar.state.payments;
-      } else if (window.allData && Array.isArray(window.allData.expenses) && window.allData.expenses.length > 0) {
-        expensesList = window.allData.expenses;
-      } else if (window.MyTablesSync && typeof window.MyTablesSync.getCachedData === 'function') {
-        var cData = window.MyTablesSync.getCachedData();
-        if (cData && Array.isArray(cData.expenses) && cData.expenses.length > 0) {
-          expensesList = cData.expenses;
-        }
+    var expensesList = null;
+    if (data && Array.isArray(data.expenses)) {
+      expensesList = data.expenses;
+    } else if (window.allData && Array.isArray(window.allData.expenses)) {
+      expensesList = window.allData.expenses;
+    } else if (window.MyTablesCalendar && window.MyTablesCalendar.state && Array.isArray(window.MyTablesCalendar.state.payments)) {
+      expensesList = window.MyTablesCalendar.state.payments;
+    } else if (window.MyTablesSync && typeof window.MyTablesSync.getCachedData === 'function') {
+      var cData = window.MyTablesSync.getCachedData();
+      if (cData && Array.isArray(cData.expenses)) {
+        expensesList = cData.expenses;
       }
     }
     expensesList = expensesList || [];
+
+    // Обновляем состояние платежей календаря
+    if (window.MyTablesCalendar && window.MyTablesCalendar.state) {
+      window.MyTablesCalendar.state.payments = expensesList.map(function (it, idx) {
+        return window.MyTablesCalendar.normalizePayment ? window.MyTablesCalendar.normalizePayment(it, idx) : it;
+      });
+      if (typeof window.MyTablesCalendar.renderCalendar === 'function') {
+        window.MyTablesCalendar.renderCalendar();
+      }
+      if (typeof window.MyTablesCalendar.updateSummaryCards === 'function') {
+        window.MyTablesCalendar.updateSummaryCards();
+      }
+    }
+
+    renderRecentExpensesOnMain();
 
     var totalExpense = expensesList.reduce(function (sum, item) {
       return sum + (Number(item['Сумма'] || item.amount || item['Текущий_Тариф'] || item.currentRate || 0));
     }, 0);
 
     var totalPill = document.getElementById('expense-total-val');
-    if (totalPill && totalExpense > 0) totalPill.textContent = formatRub(totalExpense);
+    if (totalPill) totalPill.textContent = formatRub(totalExpense);
 
     var deskRem = document.getElementById('desk-expenses-rem');
     if (deskRem) deskRem.textContent = formatRub(totalExpense);
@@ -1623,21 +1647,9 @@
     }
 
     function setClientsFromSync(syncClients) {
-      if (Array.isArray(syncClients) && syncClients.length > 0) {
-        var clean = syncClients.filter(function (c) { return !isTrashClient(c); });
-        if (clean.length > 0) {
-          clients = clean.map(normalizeClient);
-          saveClients();
-        }
-        var active = getActiveClients();
-        if (active.length > 0) {
-          var found = active.find(function (c) { return c.id === selectedClientId; });
-          if (!found) {
-            selectedClientId = active[0].id;
-          }
-        } else {
-          selectedClientId = null;
-        }
+      if (Array.isArray(syncClients)) {
+        setClients(syncClients);
+        return;
       }
       syncToMainScreen();
       renderClients();
