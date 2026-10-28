@@ -5202,7 +5202,7 @@
                     </div>
                     <span style="font-size: 16px; font-weight: 900; color: #58241B; font-family: 'Manrope', sans-serif;">Расходы</span>
                   </div>
-                  <span id="desk-expenses-rem" style="font-size: 15px; font-weight: 900; color: #58241B;">3 900 ₽</span>
+                  <span id="desk-expenses-rem" style="font-size: 15px; font-weight: 900; color: #58241B;">0 ₽</span>
                 </div>
 
                 <!-- Внутренние строки: СВЕТЛО-РОЗОВЫЕ (НЕ БЕЛЫЕ!) -->
@@ -5249,7 +5249,7 @@
                     </div>
                     <span style="font-size: 16px; font-weight: 900; color: #163B59; font-family: 'Manrope', sans-serif;">Клиенты</span>
                   </div>
-                  <span id="desk-clients-count" style="font-size: 13px; font-weight: 800; color: #163B59;">3 в работе</span>
+                  <span id="desk-clients-count" style="font-size: 13px; font-weight: 800; color: #163B59;">0 в работе</span>
                 </div>
 
                 <!-- Внутренние строки: СВЕТЛО-ГОЛУБЫЕ (НЕ БЕЛЫЕ!) -->
@@ -5285,7 +5285,7 @@
           <div class="desk-top-bar">
             <div class="desk-title-group">
               <span class="desk-page-title">Проекты и доходы</span>
-              <span class="desk-month-badge" id="desk-income-month-badge">195 000 ₽ в октябре</span>
+              <span class="desk-month-badge" id="desk-income-month-badge">0 ₽ в октябре</span>
             </div>
             <!-- Тактильная кнопка добавления проекта (ТЁПЛО-ЖЁЛТЫЙ ЦВЕТ #FDF1CC) -->
             <button class="desk-btn-add" onclick="window.MyTablesIncome.openAddProjectModal()">
@@ -5520,18 +5520,18 @@
 
           <!-- Фильтры статусов десктопа (СТРОГО В ОДНУ СТРОКУ, КАЖДЫЙ В СВОЁМ ЦВЕТЕ!) -->
           <div class="filter-pills-row" id="desk-filter-pills">
-            <button class="filter-pill pill-all active" onclick="window.MyTablesClients.setFilter('all', this)">Все 5</button>
+            <button class="filter-pill pill-all active" onclick="window.MyTablesClients.setFilter('all', this)">Все 0</button>
             <button class="filter-pill pill-work" onclick="window.MyTablesClients.setFilter('work', this)">
-              <span class="filter-dot" style="background:#2D9C5E;"></span>В работе 2
+              <span class="filter-dot" style="background:#2D9C5E;"></span>В работе 0
             </button>
             <button class="filter-pill pill-waiting" onclick="window.MyTablesClients.setFilter('waiting', this)">
-              <span class="filter-dot" style="background:#D4A72C;"></span>Ожидает 1
+              <span class="filter-dot" style="background:#D4A72C;"></span>Ожидает 0
             </button>
             <button class="filter-pill pill-discuss" onclick="window.MyTablesClients.setFilter('discuss', this)">
-              <span class="filter-dot" style="background:#2B82D9;"></span>Обсуждение 1
+              <span class="filter-dot" style="background:#2B82D9;"></span>Обсуждение 0
             </button>
             <button class="filter-pill pill-done" onclick="window.MyTablesClients.setFilter('done', this)">
-              <span class="filter-dot" style="background:#9B8A78;"></span>Завершён 1
+              <span class="filter-dot" style="background:#9B8A78;"></span>Завершён 0
             </button>
           </div>
 
@@ -5602,7 +5602,7 @@
                   </div>
                   <div>
                     <div style="font-size: 14px; font-weight: 800;">Доходы</div>
-                    <div id="mob-income-sum" style="font-size: 11px; font-weight: 700; opacity: 0.85; margin-top: 2px;">45 000 ₽</div>
+                    <div id="mob-income-sum" style="font-size: 11px; font-weight: 700; opacity: 0.85; margin-top: 2px;">0 ₽</div>
                   </div>
                 </div>
                 <button class="arrow-btn">›</button>
@@ -5619,7 +5619,7 @@
                   </div>
                   <div>
                     <div style="font-size: 14px; font-weight: 800;">Расходы</div>
-                    <div id="mob-expense-sum" style="font-size: 11px; font-weight: 700; opacity: 0.85; margin-top: 2px;">3 900 ₽</div>
+                    <div id="mob-expense-sum" style="font-size: 11px; font-weight: 700; opacity: 0.85; margin-top: 2px;">0 ₽</div>
                   </div>
                 </div>
                 <button class="arrow-btn">›</button>
@@ -5638,7 +5638,7 @@
                   </div>
                   <div>
                     <div style="font-size: 14px; font-weight: 800;">Клиенты</div>
-                    <div id="mob-clients-count" style="font-size: 11px; font-weight: 700; opacity: 0.85; margin-top: 2px;">3 в работе</div>
+                    <div id="mob-clients-count" style="font-size: 11px; font-weight: 700; opacity: 0.85; margin-top: 2px;">0 в работе</div>
                   </div>
                 </div>
                 <button class="arrow-btn">›</button>
@@ -5649,7 +5649,7 @@
         <div class="mob-header-row">
           <div class="mob-header-left">
             <span class="mob-header-title">Доходы ♡</span>
-            <span class="mob-total-badge" id="mob-income-month-badge">195 000 ₽</span>
+            <span class="mob-total-badge" id="mob-income-month-badge">0 ₽</span>
           </div>
           <div class="mob-avatar-wrap" onclick="if(window.MyTablesSync&&window.MyTablesSync.syncNow) window.MyTablesSync.syncNow();" title="Синхронизация с Google (нажмите для обновления)"><div class="mob-avatar" title="Аня">А</div><span class="mob-sync-dot" title="Синхронизировано с Google"></span></div>
         </div>
@@ -5872,7 +5872,7 @@
           <div class="mob-header-row">
             <div class="mob-header-left">
               <span class="mob-header-title">Клиенты <span class="heart-icon">♡</span></span>
-              <span class="mob-count-badge" id="mob-work-count-badge">2 в работе</span>
+              <span class="mob-count-badge" id="mob-work-count-badge">0 в работе</span>
             </div>
             <div class="mob-avatar-wrap" onclick="if(window.MyTablesSync&&window.MyTablesSync.syncNow) window.MyTablesSync.syncNow();" title="Синхронизация с Google (нажмите для обновления)"><div class="mob-avatar" title="Аня">А</div><span class="mob-sync-dot" title="Синхронизировано с Google"></span></div>
           </div>

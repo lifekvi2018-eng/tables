@@ -9,6 +9,20 @@
 
 (function (root) {
   'use strict';
+  // Очистка устаревших тестовых данных для старта чистой базы Ани
+  if (typeof localStorage !== 'undefined') {
+    if (localStorage.getItem('mytables_clean_slate_v3') !== 'true') {
+      try {
+        localStorage.removeItem('mytables_clients_v4');
+        localStorage.removeItem('mytables_income_v3');
+        localStorage.removeItem('mytables_expenses_v2');
+        localStorage.removeItem('mytables_calendar_state');
+        localStorage.removeItem('mytables_cached_data_v1');
+        localStorage.setItem('mytables_clean_slate_v3', 'true');
+      } catch (e) {}
+    }
+  }
+
   var window = root;
 
   // Форматирование чисел в рубли
@@ -224,21 +238,10 @@
   // ==========================================================================
   var MyTablesIncome = (function () {
     // 1. Исходные проекты (пастельная палитра: мята, персик, лаванда, небо)
-    var initialProjects = [
-      { id: 'inc_proj_1', client: 'ООО Вектор', project: 'Разработка CRM-системы', totalCost: 120000, 'Полная_Стоимость': 120000, color: 'mint', isArchived: false, 'В_Архиве': false, createdAt: '2026-10-01' },
-      { id: 'inc_proj_2', client: 'Мария Смирнова', project: 'Дизайн мобильного приложения', totalCost: 85000, 'Полная_Стоимость': 85000, color: 'peach', isArchived: false, 'В_Архиве': false, createdAt: '2026-10-01' },
-      { id: 'inc_proj_3', client: 'Иван Петров', project: 'SMM и ведение канала', totalCost: 45000, 'Полная_Стоимость': 45000, color: 'lavender', isArchived: false, 'В_Архиве': false, createdAt: '2026-10-01' },
-      { id: 'inc_proj_4', client: 'Елена Васильева', project: 'SEO и контентная оптимизация', totalCost: 60000, 'Полная_Стоимость': 60000, color: 'blue', isArchived: false, 'В_Архиве': false, createdAt: '2026-10-01' }
-    ];
+    var initialProjects = [];
 
     // 2. Исходные платежи
-    var initialPayments = [
-      { id: 'inc_pay_1', projectId: 'inc_proj_1', date: '2026-10-12', 'Дата': '2026-10-12', amount: 60000, 'Сумма': 60000, note: 'Аванс 50%', 'Заметка': 'Аванс 50%' },
-      { id: 'inc_pay_2', projectId: 'inc_proj_1', date: '2026-10-20', 'Дата': '2026-10-20', amount: 40000, 'Сумма': 40000, note: 'Второй платёж', 'Заметка': 'Второй платёж' },
-      { id: 'inc_pay_3', projectId: 'inc_proj_2', date: '2026-10-05', 'Дата': '2026-10-05', amount: 45000, 'Сумма': 45000, note: 'Аванс', 'Заметка': 'Аванс' },
-      { id: 'inc_pay_4', projectId: 'inc_proj_2', date: '2026-10-18', 'Дата': '2026-10-18', amount: 40000, 'Сумма': 40000, note: 'Окончательный расчёт', 'Заметка': 'Окончательный расчёт' },
-      { id: 'inc_pay_5', projectId: 'inc_proj_3', date: '2026-10-01', 'Дата': '2026-10-01', amount: 45000, 'Сумма': 45000, note: 'Оклад за октябрь', 'Заметка': 'Оклад за октябрь' }
-    ];
+    var initialPayments = [];
 
     var storageKeyProjects = 'mytables_income_projects_v3';
     var storageKeyPayments = 'mytables_income_payments_v3';
@@ -584,11 +587,25 @@
       var cardsHtml = activeProjects.map(renderProjectCard).join('');
 
       var deskContainer = document.getElementById('desk-income-cards-grid');
+      var mobContainer = document.getElementById('mob-income-projects-scroll');
+
+      if (activeProjects.length === 0) {
+        var emptyHtml = [
+          '<div style="grid-column: 1 / -1; width: 100%; background: #FAF2E7; border-radius: 20px; padding: 36px 20px; text-align: center; box-shadow: 2px 4px 12px rgba(140, 110, 80, 0.12), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95); margin: 12px 0;">',
+          '  <div style="font-size: 26px; margin-bottom: 6px;">♡</div>',
+          '  <div style="font-size: 14px; font-weight: 800; color: #4A3E31; margin-bottom: 4px;">Пока нет проектов</div>',
+          '  <div style="font-size: 12px; font-weight: 600; color: #8C784C;">Нажмите «+ Добавить проект», чтобы внести первый заказ</div>',
+          '</div>'
+        ].join('');
+        if (deskContainer) deskContainer.innerHTML = emptyHtml;
+        if (mobContainer) mobContainer.innerHTML = emptyHtml;
+        syncToMainScreen();
+        return;
+      }
+
       if (deskContainer) {
         deskContainer.innerHTML = cardsHtml;
       }
-
-      var mobContainer = document.getElementById('mob-income-projects-scroll');
       if (mobContainer) {
         mobContainer.innerHTML = cardsHtml;
       }

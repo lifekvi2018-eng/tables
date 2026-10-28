@@ -19,56 +19,7 @@
     'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'
   ];
 
-  var DEFAULT_PAYMENTS = [
-    {
-      id: 'exp_vpn',
-      title: 'VPN (телефон и ПК)',
-      category: 'vpn',
-      dayOfMonth: 7,
-      currentRate: 1200,
-      currency: '₽',
-      color: '#D3E7F8',
-      shopUrl: 'https://example.com/vpn-pay',
-      isArchived: false,
-      paidMonths: ['2026-10']
-    },
-    {
-      id: 'exp_net',
-      title: 'Домашний интернет',
-      category: 'net',
-      dayOfMonth: 15,
-      currentRate: 800,
-      currency: '₽',
-      color: '#FCE8D5',
-      shopUrl: 'https://example.com/internet-pay',
-      isArchived: false,
-      paidMonths: []
-    },
-    {
-      id: 'exp_vpn2',
-      title: 'VPN (запасной)',
-      category: 'vpn',
-      dayOfMonth: 15,
-      currentRate: 1200,
-      currency: '₽',
-      color: '#D3E7F8',
-      shopUrl: 'https://example.com/vpn-pay',
-      isArchived: false,
-      paidMonths: ['2026-10']
-    },
-    {
-      id: 'exp_ai',
-      title: 'ChatGPT Plus (ИИ)',
-      category: 'ai',
-      dayOfMonth: 22,
-      currentRate: 1900,
-      currency: '₽',
-      color: '#DBCCE9',
-      shopUrl: 'https://chatgpt.com',
-      isArchived: false,
-      paidMonths: []
-    }
-  ];
+  var DEFAULT_PAYMENTS = [];
 
   // 1. Количество дней в месяце
   function getDaysInMonth(year, monthIndex) {
