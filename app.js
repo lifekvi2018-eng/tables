@@ -11,14 +11,14 @@
   'use strict';
   // Очистка устаревших тестовых данных для старта чистой базы Ани
   if (typeof localStorage !== 'undefined') {
-    if (localStorage.getItem('mytables_clean_slate_v3') !== 'true') {
+    if (localStorage.getItem('mytables_clean_slate_v5') !== 'true') {
       try {
         localStorage.removeItem('mytables_clients_v4');
         localStorage.removeItem('mytables_income_v3');
         localStorage.removeItem('mytables_expenses_v2');
         localStorage.removeItem('mytables_calendar_state');
         localStorage.removeItem('mytables_cached_data_v1');
-        localStorage.setItem('mytables_clean_slate_v3', 'true');
+        localStorage.setItem('mytables_clean_slate_v5', 'true');
       } catch (e) {}
     }
   }
@@ -154,82 +154,94 @@
     if (mobClientsCount) mobClientsCount.textContent = clientsList.length + ' активных';
 
     // Десктопные плашки (последние записи) — чистый вид без крестиков корзин
-    var deskIncomeContainer = document.getElementById('desk-income-items');
-    if (deskIncomeContainer && incomeList.length > 0) {
-      var recentIncome = incomeList.slice(-4).reverse();
-      deskIncomeContainer.innerHTML = recentIncome.map(function (item, idx) {
-        var title = item['Проект / Услуга'] || item['Клиент / Источник'] || 'Доход';
-        var sum = formatRub(item['Сумма'] || 0);
-        var date = formatDate(item['Дата']);
-        var id = item.ID || item.id || ('inc_' + idx);
-        var dotColor = PALETTE_COLORS[idx % PALETTE_COLORS.length];
-        return [
-          '<div class="sub-item-income" data-id="' + id + '" onclick="switchAppTab(\'income\')" style="cursor: pointer;">',
-          '  <div style="display: flex; align-items: center; gap: 8px;">',
-          '    <div style="width: 10px; height: 10px; border-radius: 50%; background: ' + dotColor + ';"></div>',
-          '    <div>',
-          '      <div style="font-weight: 800; color: #1E3F30;">' + escapeHtml(title) + '</div>',
-          '      <div style="font-size: 10px; color: #4A6E5A;">' + escapeHtml(date) + '</div>',
-          '    </div>',
-          '  </div>',
-          '  <div style="display: flex; align-items: center; gap: 4px;">',
-          '    <span style="font-weight: 900; color: #1E3F30;">+ ' + sum + '</span>',
-          '    <span class="sub-arrow-income"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></span>',
-          '  </div>',
-          '</div>'
-        ].join('');
-      }).join('');
+        var deskIncomeContainer = document.getElementById('desk-income-items');
+    if (deskIncomeContainer) {
+      if (incomeList.length > 0) {
+        var recentIncome = incomeList.slice(-4).reverse();
+        deskIncomeContainer.innerHTML = recentIncome.map(function (item, idx) {
+          var title = item['Проект / Услуга'] || item['Клиент / Источник'] || 'Доход';
+          var sum = formatRub(item['Сумма'] || 0);
+          var date = formatDate(item['Дата']);
+          var id = item.ID || item.id || ('inc_' + idx);
+          var dotColor = PALETTE_COLORS[idx % PALETTE_COLORS.length];
+          return [
+            '<div class="sub-item-income" data-id="' + id + '" onclick="switchAppTab(\'income\')" style="cursor: pointer;">',
+            '  <div style="display: flex; align-items: center; gap: 8px;">',
+            '    <div style="width: 10px; height: 10px; border-radius: 50%; background: ' + dotColor + ';"></div>',
+            '    <div>',
+            '      <div style="font-weight: 800; color: #1E3F30;">' + escapeHtml(title) + '</div>',
+            '      <div style="font-size: 10px; color: #4A6E5A;">' + escapeHtml(date) + '</div>',
+            '    </div>',
+            '  </div>',
+            '  <div style="display: flex; align-items: center; gap: 4px;">',
+            '    <span style="font-weight: 900; color: #1E3F30;">+ ' + sum + '</span>',
+            '    <span class="sub-arrow-income"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></span>',
+            '  </div>',
+            '</div>'
+          ].join('');
+        }).join('');
+      } else {
+        deskIncomeContainer.innerHTML = '<div style="font-size: 11px; font-weight: 600; color: #4A6E5A; padding: 12px 8px; text-align: center; opacity: 0.85;">Пока нет записей ♡</div>';
+      }
     }
 
-    var deskExpenseContainer = document.getElementById('desk-expense-items');
-    if (deskExpenseContainer && expensesList.length > 0) {
-      var recentExpenses = expensesList.slice(-4).reverse();
-      deskExpenseContainer.innerHTML = recentExpenses.map(function (item, idx) {
-        var title = item['Название / Где'] || item['Категория'] || 'Расход';
-        var sum = formatRub(item['Сумма'] || 0);
-        var date = formatDate(item['Дата']);
-        var id = item.ID || item.id || ('exp_' + idx);
-        var dotColor = PALETTE_COLORS[(idx + 2) % PALETTE_COLORS.length];
-        return [
-          '<div class="sub-item-expense" data-id="' + id + '" onclick="switchAppTab(\'expenses\')" style="cursor: pointer;">',
-          '  <div style="display: flex; align-items: center; gap: 8px;">',
-          '    <div style="width: 10px; height: 10px; border-radius: 50%; background: ' + dotColor + ';"></div>',
-          '    <div>',
-          '      <div style="font-weight: 800; color: #58241B;">' + escapeHtml(title) + '</div>',
-          '      <div style="font-size: 10px; color: #8A4C42;">' + escapeHtml(date) + '</div>',
-          '    </div>',
-          '  </div>',
-          '  <div style="display: flex; align-items: center; gap: 4px;">',
-          '    <span style="font-weight: 900; color: #6E2F26;">' + sum + '</span>',
-          '    <span class="sub-arrow-expense"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></span>',
-          '  </div>',
-          '</div>'
-        ].join('');
-      }).join('');
+        var deskExpenseContainer = document.getElementById('desk-expense-items');
+    if (deskExpenseContainer) {
+      if (expensesList.length > 0) {
+        var recentExpenses = expensesList.slice(-4).reverse();
+        deskExpenseContainer.innerHTML = recentExpenses.map(function (item, idx) {
+          var title = item['Название / Где'] || item['Категория'] || 'Расход';
+          var sum = formatRub(item['Сумма'] || 0);
+          var date = formatDate(item['Дата']);
+          var id = item.ID || item.id || ('exp_' + idx);
+          var dotColor = PALETTE_COLORS[(idx + 2) % PALETTE_COLORS.length];
+          return [
+            '<div class="sub-item-expense" data-id="' + id + '" onclick="switchAppTab(\'expenses\')" style="cursor: pointer;">',
+            '  <div style="display: flex; align-items: center; gap: 8px;">',
+            '    <div style="width: 10px; height: 10px; border-radius: 50%; background: ' + dotColor + ';"></div>',
+            '    <div>',
+            '      <div style="font-weight: 800; color: #58241B;">' + escapeHtml(title) + '</div>',
+            '      <div style="font-size: 10px; color: #8A4C42;">' + escapeHtml(date) + '</div>',
+            '    </div>',
+            '  </div>',
+            '  <div style="display: flex; align-items: center; gap: 4px;">',
+            '    <span style="font-weight: 900; color: #6E2F26;">' + sum + '</span>',
+            '    <span class="sub-arrow-expense"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></span>',
+            '  </div>',
+            '</div>'
+          ].join('');
+        }).join('');
+      } else {
+        deskExpenseContainer.innerHTML = '<div style="font-size: 11px; font-weight: 600; color: #8A4C42; padding: 12px 8px; text-align: center; opacity: 0.85;">Пока нет расходов ♡</div>';
+      }
     }
 
-    var deskClientsContainer = document.getElementById('desk-clients-items');
-    if (deskClientsContainer && clientsList.length > 0) {
-      var recentClients = clientsList.slice(-4).reverse();
-      deskClientsContainer.innerHTML = recentClients.map(function (item, idx) {
-        var name = item['Имя клиента'] || 'Клиент';
-        var project = item['Проект'] || 'Без проекта';
-        var id = item.ID || item.id || ('cli_' + idx);
-        var initials = getInitials(name);
-        var bg = PALETTE_COLORS[(idx + 1) % PALETTE_COLORS.length];
-        return [
-          '<div class="sub-item-clients" data-id="' + id + '" onclick="switchAppTab(\'clients\')" style="cursor: pointer;">',
-          '  <div style="display: flex; align-items: center; gap: 10px;">',
-          '    <div style="width: 30px; height: 30px; border-radius: 50%; background: ' + bg + '; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #2F261D; font-size: 11px;">' + initials + '</div>',
-          '    <div>',
-          '      <div style="font-weight: 800; color: #163B59;">' + escapeHtml(name) + '</div>',
-          '      <div style="font-size: 10px; color: #3A6488;">' + escapeHtml(project) + '</div>',
-          '    </div>',
-          '  </div>',
-          '  <span class="sub-arrow-clients"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></span>',
-          '</div>'
-        ].join('');
-      }).join('');
+        var deskClientsContainer = document.getElementById('desk-clients-items');
+    if (deskClientsContainer) {
+      if (clientsList.length > 0) {
+        var recentClients = clientsList.slice(-4).reverse();
+        deskClientsContainer.innerHTML = recentClients.map(function (item, idx) {
+          var name = item['Имя клиента'] || 'Клиент';
+          var project = item['Проект'] || 'Без проекта';
+          var id = item.ID || item.id || ('cli_' + idx);
+          var initials = getInitials(name);
+          var bg = PALETTE_COLORS[(idx + 1) % PALETTE_COLORS.length];
+          return [
+            '<div class="sub-item-clients" data-id="' + id + '" onclick="switchAppTab(\'clients\')" style="cursor: pointer;">',
+            '  <div style="display: flex; align-items: center; gap: 10px;">',
+            '    <div style="width: 30px; height: 30px; border-radius: 50%; background: ' + bg + '; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #2F261D; font-size: 11px;">' + initials + '</div>',
+            '    <div>',
+            '      <div style="font-weight: 800; color: #163B59;">' + escapeHtml(name) + '</div>',
+            '      <div style="font-size: 10px; color: #3A6488;">' + escapeHtml(project) + '</div>',
+            '    </div>',
+            '  </div>',
+            '  <span class="sub-arrow-clients"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></span>',
+            '</div>'
+          ].join('');
+        }).join('');
+      } else {
+        deskClientsContainer.innerHTML = '<div style="font-size: 11px; font-weight: 600; color: #3A6488; padding: 12px 8px; text-align: center; opacity: 0.85;">Пока нет клиентов ♡</div>';
+      }
     }
   }
 
@@ -461,30 +473,34 @@
         mobMonthBadge.textContent = formatRub(monthIncomeTotal);
       }
 
-      var deskIncomeItems = document.getElementById('desk-income-items');
-      if (deskIncomeItems && flatPayments.length > 0) {
-        var recent = flatPayments.slice(-4).reverse();
-        deskIncomeItems.innerHTML = recent.map(function (item, idx) {
-          var title = item['Проект / Услуга'] || item['Клиент / Источник'] || 'Доход';
-          var sum = formatRub(item['Сумма'] || 0);
-          var date = formatDayMonth(item['Дата']);
-          var dotColor = PALETTE_COLORS[idx % PALETTE_COLORS.length];
-          return [
-            '<div class="sub-item-income" onclick="switchAppTab(\'income\')" style="cursor: pointer;">',
-            '  <div style="display: flex; align-items: center; gap: 8px;">',
-            '    <div style="width: 10px; height: 10px; border-radius: 50%; background: ' + dotColor + ';"></div>',
-            '    <div>',
-            '      <div style="font-weight: 800; color: #1E3F30;">' + escapeHtml(title) + '</div>',
-            '      <div style="font-size: 10px; color: #4A6E5A;">' + escapeHtml(date) + '</div>',
-            '    </div>',
-            '  </div>',
-            '  <div style="display: flex; align-items: center; gap: 4px;">',
-            '    <span style="font-weight: 900; color: #1E3F30;">+ ' + sum + '</span>',
-            '    <span class="sub-arrow-income"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></span>',
-            '  </div>',
-            '</div>'
-          ].join('');
-        }).join('');
+            var deskIncomeItems = document.getElementById('desk-income-items');
+      if (deskIncomeItems) {
+        if (flatPayments.length > 0) {
+          var recent = flatPayments.slice(-4).reverse();
+          deskIncomeItems.innerHTML = recent.map(function (item, idx) {
+            var title = item['Проект / Услуга'] || item['Клиент / Источник'] || 'Доход';
+            var sum = formatRub(item['Сумма'] || 0);
+            var date = formatDayMonth(item['Дата']);
+            var dotColor = PALETTE_COLORS[idx % PALETTE_COLORS.length];
+            return [
+              '<div class="sub-item-income" onclick="switchAppTab(\'income\')" style="cursor: pointer;">',
+              '  <div style="display: flex; align-items: center; gap: 8px;">',
+              '    <div style="width: 10px; height: 10px; border-radius: 50%; background: ' + dotColor + ';"></div>',
+              '    <div>',
+              '      <div style="font-weight: 800; color: #1E3F30;">' + escapeHtml(title) + '</div>',
+              '      <div style="font-size: 10px; color: #4A6E5A;">' + escapeHtml(date) + '</div>',
+              '    </div>',
+              '  </div>',
+              '  <div style="display: flex; align-items: center; gap: 4px;">',
+              '    <span style="font-weight: 900; color: #1E3F30;">+ ' + sum + '</span>',
+              '    <span class="sub-arrow-income"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></span>',
+              '  </div>',
+              '</div>'
+            ].join('');
+          }).join('');
+        } else {
+          deskIncomeItems.innerHTML = '<div style="font-size: 11px; font-weight: 600; color: #4A6E5A; padding: 12px 8px; text-align: center; opacity: 0.85;">Пока нет записей ♡</div>';
+        }
       }
     }
 
@@ -1008,94 +1024,7 @@
       done: { title: 'Завершён', dotColor: '#9B8A78', activeClass: 'active-done' }
     };
 
-    var initialClients = [
-      {
-        id: 'cli_1',
-        name: 'Анна Смирнова',
-        phone: '+7 900 123-45-67',
-        email: 'anna@mail.ru',
-        telegram: '@anna_site',
-        project: 'Разработка сайта (лендинг)',
-        status: 'work',
-        color: 'mint',
-        links: [
-          { title: 'Trello: Доска проекта сайта', url: 'https://trello.com/b/anna-landing' },
-          { title: 'Google Диск с макетами', url: 'https://drive.google.com/drive/folders/anna-site' }
-        ],
-        passwords: 'admin / pass2026_anna',
-        notes: 'Дедлайн 31 октября. Первый этап сдан, ждём согласования текстов для блока 3.',
-        taskDesc: 'Создание продающего лендинга под ключ. Адаптив под мобильные, интеграция с CRM и Telegram-уведомлениями.',
-        isArchived: false
-      },
-      {
-        id: 'cli_2',
-        name: 'Максим Юрьев',
-        phone: '+7 930 567-89-01',
-        email: 'maxim.y@corp.ru',
-        telegram: '@maxim_law',
-        project: 'Юридический консалтинг',
-        status: 'work',
-        color: 'lavender',
-        links: [
-          { title: 'Реестр договоров в Таблицах', url: 'https://docs.google.com/spreadsheets/d/example-maxim' }
-        ],
-        passwords: 'vault_law: key994_legal',
-        notes: 'Готовим спецификацию к соглашению. Оплата аванса 50% получена.',
-        taskDesc: 'Аудит договоров на разработку для digital-агентства, проверка соглашений о конфиденциальности (NDA).',
-        isArchived: false
-      },
-      {
-        id: 'cli_3',
-        name: 'Игорь Соколов',
-        phone: '8 911 234-56-78',
-        email: 'igor@sokolov.tech',
-        telegram: '@igor_sokol',
-        project: 'Внедрение CRM-системы',
-        status: 'waiting',
-        color: 'peach',
-        links: [
-          { title: 'Notion база проекта CRM', url: 'https://notion.so/crm-sokolov' }
-        ],
-        passwords: 'api_token: sk_live_8392104',
-        notes: 'Ждём выгрузку клиентской базы от заказчика до понедельника.',
-        taskDesc: 'Настройка воронки продаж, автоматизация распределения лидов и подключение телефонии.',
-        isArchived: false
-      },
-      {
-        id: 'cli_4',
-        name: 'Елена Васильева',
-        phone: '+7 905 456-78-90',
-        email: 'elena@vasilyeva.pro',
-        telegram: '@elena_ads',
-        project: 'Аудит рекламных кампаний',
-        status: 'discuss',
-        color: 'honey',
-        links: [
-          { title: 'Google Drive с отчётами по рекламе', url: 'https://drive.google.com/drive/folders/audit-elena' }
-        ],
-        passwords: 'yandex_direct: view_only',
-        notes: 'Первый созвон прошёл отлично. Готовим КП и смету до четверга.',
-        taskDesc: 'Глубокий аудит контекстной рекламы в Яндекс Директ и рекомендации по оптимизации стоимости заявки.',
-        isArchived: false
-      },
-      {
-        id: 'cli_5',
-        name: 'Катя Григорьева',
-        phone: '+7 920 345-67-89',
-        email: 'katya@grigorieva.ru',
-        telegram: '@katya_dash',
-        project: 'Настройка Google Таблиц',
-        status: 'done',
-        color: 'sand',
-        links: [
-          { title: 'Дашборд финансов в Таблицах', url: 'https://docs.google.com/spreadsheets/d/dashboard-katya' }
-        ],
-        passwords: 'google_service_account',
-        notes: 'Проект успешно сдан! Отзыв получен, клиент очень доволен ♡.',
-        taskDesc: 'Автоматический дашборд управленческого учета, интеграция с банком и учет остатков.',
-        isArchived: false
-      }
-    ];
+    var initialClients = [];
 
     var activeFilter = 'all';
     var selectedClientId = 'cli_1';
