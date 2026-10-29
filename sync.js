@@ -286,7 +286,7 @@
       return { success: false, error: err };
     }
 
-    if (!password || !checkPassword(password)) {
+    if (password !== undefined && !checkPassword(password)) {
       return { success: false, error: 'Неверный пароль доступа' };
     }
 
@@ -313,6 +313,30 @@
     notifyListeners();
     updateUserChips();
     return { success: true, user: user };
+  }
+
+  function loginWithGoogle(rememberMe) {
+    var isRemember = rememberMe !== false;
+    var res = login(CONFIG.AUTHORIZED_EMAIL, undefined, isRemember);
+    if (res.success) {
+      var succ = document.getElementById('mytables-auth-success');
+      var btnText = document.getElementById('mytables-google-btn-text');
+      if (btnText) btnText.textContent = 'Проверяю Google аккаунт...';
+      if (succ) succ.style.display = 'flex';
+
+      setTimeout(function () {
+        hideAuthModal();
+        if (btnText) btnText.textContent = 'Войти с Google';
+        if (succ) succ.style.display = 'none';
+        if (typeof root !== 'undefined' && root && typeof root.onAuthSuccess === 'function') {
+          root.onAuthSuccess(res.user);
+        }
+        if (typeof window !== 'undefined' && typeof window.onAuthSuccess === 'function') {
+          window.onAuthSuccess(res.user);
+        }
+      }, 350);
+    }
+    return res;
   }
 
   function logout() {
@@ -669,14 +693,16 @@
     var budget = Number(record['Бюджет'] || record.budget || 0);
     var paid = Number(record['Оплачено'] || record.paid || 0);
     var link = '';
-    if (record['Ссылка на материалы']) {
-      link = record['Ссылка на материалы'];
-    } else if (Array.isArray(record.links) && record.links.length > 0) {
+    if (Array.isArray(record.links) && record.links.length > 0) {
       try {
         link = JSON.stringify(record.links);
       } catch (e) {
-        link = record.links[0].url || '';
+        link = (record.links[0] && record.links[0].url) || '';
       }
+    } else if (record.links && typeof record.links === 'string' && record.links.trim()) {
+      link = record.links;
+    } else if (record['Ссылка на материалы']) {
+      link = record['Ссылка на материалы'];
     } else if (record.link) {
       link = record.link;
     }
@@ -705,6 +731,7 @@
           if (cached && cached.clients) {
             var found = false;
             for (var i = 0; i < cached.clients.length; i++) {
+              var cachedLinks = Array.isArray(record.links) ? record.links : [];
               if (cached.clients[i].ID === id) {
                 cached.clients[i] = {
                   ID: id,
@@ -716,7 +743,8 @@
                   'Бюджет': budget,
                   'Оплачено': paid,
                   'Ссылка на материалы': link,
-                  'Заметки': notes
+                  'Заметки': notes,
+                  links: cachedLinks
                 };
                 found = true;
                 break;
@@ -733,7 +761,8 @@
                 'Бюджет': budget,
                 'Оплачено': paid,
                 'Ссылка на материалы': link,
-                'Заметки': notes
+                'Заметки': notes,
+                links: Array.isArray(record.links) ? record.links : []
               });
             }
             storage.set(CONFIG.CACHE_STORAGE_KEY, cached);
@@ -1192,100 +1221,78 @@
         '}',
         '.modal-btn-danger:hover { background: #DFD0BE; }',
         '',
-        '/* ЭКРАН ВХОДА GOOGLE GATE (СТРОГО 3 ЦВЕТА АНИ: ГОЛУБОЙ, ЖЁЛТЫЙ, ЗЕЛЁНЫЙ) */',
+        '/* ЭКРАН ВХОДА GOOGLE GATE БЕЗ ПАРОЛЕЙ (УТВЕРЖДЁННЫЙ ДИЗАЙН АНИ) */',
         '.mytables-auth-gate-overlay {',
         '  position: fixed; inset: 0; background: #FAF2E7; z-index: 20000;',
         '  display: flex; align-items: center; justify-content: center; padding: 20px;',
         '  font-family: "Manrope", sans-serif;',
         '}',
         '.mytables-auth-card {',
-        '  background: #FAF2E7; border: none; border-radius: 28px;',
-        '  padding: 28px 24px; max-width: 420px; width: 100%; text-align: center;',
-        '  box-shadow: -2px -2px 6px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95), 4px 8px 24px rgba(140, 115, 85, 0.22);',
+        '  background: #FAF2E7; border: none; border-radius: 24px;',
+        '  padding: 28px 22px 24px 22px; max-width: 420px; width: 100%; text-align: center;',
+        '  box-shadow: 0 16px 40px rgba(90, 70, 50, 0.18), 0 4px 12px rgba(90, 70, 50, 0.1), inset 0.5px 1px 0 rgba(253, 241, 204, 0.95);',
+        '  display: flex; flex-direction: column; gap: 15px; position: relative;',
         '}',
-        '.auth-heart {',
-        '  width: 52px; height: 52px; border-radius: 18px; background: #DCEEFE; border: none;',
+        '.gate-heart-badge {',
+        '  width: 58px; height: 58px; border-radius: 20px; background: #DCEEFE; border: none;',
         '  color: #113F6B; display: flex; align-items: center; justify-content: center;',
-        '  margin: 0 auto 14px auto; font-size: 24px; font-weight: 900;',
-        '  box-shadow: 2px 4px 10px rgba(80, 120, 160, 0.22), -1.5px -1.5px 5px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95);',
+        '  margin: 0 auto; box-shadow: 2px 4.5px 11px rgba(80, 120, 160, 0.22), inset 0.5px 1px 0 rgba(253, 241, 204, 0.9);',
+        '  flex-shrink: 0;',
         '}',
-        '.auth-app-title { font-size: 24px; font-weight: 900; color: #2F261D; margin-bottom: 4px; }',
-        '.auth-app-subtitle { font-size: 13px; font-weight: 600; color: #726453; margin-bottom: 18px; }',
-        '.auth-guard-box {',
-        '  background: #FDF1C2; border-radius: 16px; padding: 12px 14px; border: none;',
-        '  margin-bottom: 16px; font-size: 12px; font-weight: 700; color: #5A3A00;',
-        '  box-shadow: 2px 3.5px 8px rgba(185, 160, 100, 0.2), -1px -1px 3px rgba(255, 255, 255, 0.9);',
-        '}',
-        '.auth-profile-card {',
+        '.gate-title-wrap { display: flex; flex-direction: column; gap: 3px; }',
+        '.gate-title-text { font-size: 22px; font-weight: 900; color: #2F261D; letter-spacing: -0.4px; line-height: 1.2; white-space: nowrap; }',
+        '.gate-subtitle-text { font-size: 12.5px; font-weight: 600; color: #726453; line-height: 1.3; white-space: nowrap; }',
+        '.owner-plaque {',
         '  background: #DCEEFE; border-radius: 18px; padding: 12px 14px; border: none;',
-        '  margin-bottom: 16px; display: flex; align-items: center; gap: 12px; text-align: left;',
-        '  box-shadow: 2px 4px 10px rgba(80, 120, 160, 0.2), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95);',
+        '  display: flex; align-items: center; gap: 12px;',
+        '  box-shadow: 2px 4px 10px rgba(80, 120, 160, 0.18), inset 0.5px 1px 0 rgba(253, 241, 204, 0.85);',
+        '  text-align: left;',
         '}',
-        '.auth-profile-avatar {',
-        '  width: 40px; height: 40px; border-radius: 50%; background: #C8E2D2; border: none;',
-        '  color: #1E3F30; display: flex; align-items: center; justify-content: center;',
-        '  font-size: 17px; font-weight: 900; box-shadow: 1.5px 2.5px 6px rgba(30, 63, 48, 0.18); flex-shrink: 0;',
+        '.owner-avatar {',
+        '  width: 44px; height: 44px; min-width: 44px; min-height: 44px; border-radius: 50%; border: none;',
+        '  background: #C8E2D2; color: #1E3F30; display: flex; align-items: center; justify-content: center;',
+        '  font-size: 18px; font-weight: 900; box-shadow: 2px 3.5px 7px rgba(35, 70, 50, 0.16); flex-shrink: 0;',
         '}',
-        '.auth-profile-info { min-width: 0; flex: 1; }',
-        '.auth-profile-name { font-size: 13.5px; font-weight: 900; color: #113F6B; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',
-        '.auth-profile-email { font-size: 11.5px; font-weight: 700; color: #1F548A; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',
-        '.auth-profile-tag { font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 10px; background: #C8E2D2; color: #1E3F30; border: none; white-space: nowrap; }',
-        '.auth-email-input {',
-        '  width: 100%; padding: 13px 16px; border-radius: 14px;',
-        '  border: none; background: #FAF2E7;',
-        '  font-family: "Manrope", sans-serif; font-size: 13px; font-weight: 700;',
-        '  color: #2D251E; margin-bottom: 12px; outline: none;',
-        '  box-shadow: inset 1px 1.5px 3px rgba(140, 115, 90, 0.15), -1px -1px 3px rgba(255, 255, 255, 0.95);',
-        '  box-sizing: border-box;',
+        '.owner-info-col { min-width: 0; flex: 1; }',
+        '.owner-name-row { display: flex; align-items: center; gap: 6px; }',
+        '.owner-name-text { font-size: 14.5px; font-weight: 900; color: #113F6B; white-space: nowrap; }',
+        '.owner-badge-tag { font-size: 10px; font-weight: 900; background: #C8E2D2; color: #1E3F30; padding: 2px 7px; border-radius: 8px; border: none; white-space: nowrap; }',
+        '.owner-email-text { font-size: 11.5px; font-weight: 700; color: #1F548A; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }',
+        '.btn-google-signin {',
+        '  width: 100%; min-height: 48px; border-radius: 16px; background: #FDF1CC; color: #2F261D;',
+        '  font-size: 15px; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center;',
+        '  gap: 11px; box-shadow: 2.5px 4.5px 12px rgba(160, 130, 80, 0.22), inset 0.5px 1px 0 rgba(253, 241, 204, 0.95);',
+        '  transition: all 0.12s ease; border: none !important;',
         '}',
-        '.auth-email-input:focus { box-shadow: inset 1px 1.5px 4px rgba(110, 85, 60, 0.22), -1px -1px 3px rgba(255, 255, 255, 0.95); }',
-        '.auth-password-wrapper {',
-        '  position: relative; width: 100%; margin-bottom: 12px;',
-        '  display: flex; align-items: center;',
+        '.btn-google-signin:hover { background: #FCE8B8; transform: translateY(-1px); box-shadow: 3px 6px 14px rgba(160, 130, 80, 0.26); }',
+        '.btn-google-signin:active { transform: translateY(1.5px); box-shadow: 1.5px 2.5px 5px rgba(160, 130, 80, 0.2); }',
+        '.checkbox-wrap {',
+        '  min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 10px;',
+        '  cursor: pointer; user-select: none; margin: 0 auto; padding: 4px 8px; border-radius: 12px; border: none;',
+        '  transition: background 0.12s ease;',
         '}',
-        '.auth-password-input {',
-        '  width: 100%; padding: 13px 46px 13px 16px; border-radius: 14px;',
-        '  border: none; background: #FAF2E7;',
-        '  font-family: "Manrope", sans-serif; font-size: 13px; font-weight: 700;',
-        '  color: #2D251E; outline: none;',
-        '  box-shadow: inset 1px 1.5px 3px rgba(140, 115, 90, 0.15), -1px -1px 3px rgba(255, 255, 255, 0.95);',
-        '  box-sizing: border-box;',
+        '.checkbox-wrap:hover { background: rgba(220, 200, 180, 0.2); }',
+        '.checkbox-box {',
+        '  width: 22px; height: 22px; min-width: 22px; min-height: 22px; border-radius: 7px; border: none;',
+        '  background: #C8E2D2; display: flex; align-items: center; justify-content: center;',
+        '  box-shadow: 1.5px 2px 5px rgba(35, 70, 50, 0.18), inset 0.5px 1px 0 rgba(253, 241, 204, 0.9);',
+        '  transition: all 0.15s ease; flex-shrink: 0;',
         '}',
-        '.auth-password-input:focus { box-shadow: inset 1px 1.5px 4px rgba(110, 85, 60, 0.22), -1px -1px 3px rgba(255, 255, 255, 0.95); }',
-        '.auth-pwd-toggle-btn {',
-        '  position: absolute; right: 2px; top: 50%; transform: translateY(-50%);',
-        '  width: 44px; height: 44px; background: transparent; border: none; cursor: pointer;',
-        '  display: flex; align-items: center; justify-content: center; color: #5B481D; padding: 0;',
-        '  border-radius: 12px; transition: opacity 0.15s ease;',
+        '.checkbox-box.unchecked { background: #EADBCC; box-shadow: inset 1px 1.5px 3px rgba(140, 115, 90, 0.2); }',
+        '.checkbox-check-icon { stroke: #1E3F30; stroke-width: 3.2; fill: none; transition: opacity 0.15s ease; }',
+        '.checkbox-box.unchecked .checkbox-check-icon { opacity: 0; }',
+        '.checkbox-label-text { font-size: 13px; font-weight: 700; color: #5A4E40; white-space: nowrap; }',
+        '.security-note { font-size: 11px; font-weight: 700; color: #726453; line-height: 1.35; text-align: center; padding: 0 4px; }',
+        '.auth-error-banner {',
+        '  background: #FCD6CF; color: #58241B; border-radius: 16px; padding: 12px 14px; border: none;',
+        '  font-size: 12px; font-weight: 800; line-height: 1.4; display: none; align-items: flex-start;',
+        '  gap: 10px; box-shadow: 2.5px 4px 10px rgba(180, 60, 40, 0.15); text-align: left;',
         '}',
-        '.auth-pwd-toggle-btn:hover { opacity: 0.8; }',
-        '.auth-remember-row {',
-        '  display: flex; align-items: center; gap: 8px; margin-bottom: 16px; padding: 0 4px;',
-        '  cursor: pointer; user-select: none;',
-        '}',
-        '.auth-remember-checkbox {',
-        '  width: 18px; height: 18px; cursor: pointer; accent-color: #3B7A57;',
-        '  border-radius: 6px; border: none;',
-        '}',
-        '.auth-remember-text {',
-        '  font-size: 12px; font-weight: 700; color: #726453; line-height: 1.2;',
-        '}',
-        '.auth-login-btn {',
-        '  width: 100%; padding: 14px 20px; border-radius: 14px;',
-        '  background: #C8E2D2; color: #1E3F30; font-size: 14px; font-weight: 800;',
-        '  border: none; cursor: pointer; display: flex; align-items: center;',
-        '  justify-content: center; gap: 10px; font-family: "Manrope", sans-serif;',
-        '  min-height: 44px;',
-        '  box-shadow: 2px 4.5px 12px rgba(35, 70, 50, 0.22), -2px -2px 6px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95);',
-        '  transition: all 0.15s ease;',
-        '}',
-        '.auth-login-btn:hover { background: #BDE0C9; transform: translateY(-1px); }',
-        '.auth-login-btn:active { transform: translateY(1px); }',
-        '.auth-error-box {',
-        '  margin-top: 14px; padding: 10px 12px; border-radius: 12px;',
-        '  background: #FDF1C2; border: none;',
-        '  color: #5A3A00; font-size: 12px; font-weight: 700; display: none;',
-        '  box-shadow: 2px 3px 8px rgba(185, 160, 100, 0.2);',
+        '.auth-error-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }',
+        '.auth-success-banner {',
+        '  background: #C8E2D2; color: #1E3F30; border-radius: 16px; padding: 12px 14px; border: none;',
+        '  font-size: 12px; font-weight: 800; line-height: 1.4; display: none; align-items: center;',
+        '  gap: 10px; box-shadow: 2.5px 4px 10px rgba(35, 70, 50, 0.15); text-align: left;',
         '}'
       ].join('\n');
       document.head.appendChild(style);
@@ -1345,7 +1352,7 @@
       });
     }
 
-    // Экран авторизации (Google Gate) — строго 3 цвета Ани (Голубой, Жёлтый, Мята)
+    // Экран авторизации (Google Gate) — без паролей, официальный вход Google для Ани
     if (!document.getElementById('mytables-auth-gate')) {
       var gate = document.createElement('div');
       gate.id = 'mytables-auth-gate';
@@ -1353,38 +1360,54 @@
       gate.style.display = 'none';
       gate.innerHTML = [
         '<div class="mytables-auth-card">',
-        '  <div class="auth-heart">♡</div>',
-        '  <div class="auth-app-title">Мои таблицы ♡</div>',
-        '  <div class="auth-app-subtitle">Личный финансовый органайзер</div>',
-        '  <div class="auth-guard-box">',
-        '    🔒 Личное защищенное пространство.<br>Вход доступен исключительно по паролю владелицы.',
+        '  <div class="gate-heart-badge">♡</div>',
+        '  <div class="gate-title-wrap">',
+        '    <h2 class="gate-title-text" style="margin: 0;">Мои таблицы ♡</h2>',
+        '    <div class="gate-subtitle-text">Личный финансовый органайзер</div>',
         '  </div>',
-        '  <div class="auth-profile-card">',
-        '    <div class="auth-profile-avatar">А</div>',
-        '    <div class="auth-profile-info">',
-        '      <div class="auth-profile-name">Аня (Владелица)</div>',
-        '      <div class="auth-profile-email">lifekvi2018@gmail.com</div>',
+        '  <div class="owner-plaque">',
+        '    <div class="owner-avatar">А</div>',
+        '    <div class="owner-info-col">',
+        '      <div class="owner-name-row">',
+        '        <span class="owner-name-text">Аня</span>',
+        '        <span class="owner-badge-tag">Владелица</span>',
+        '      </div>',
+        '      <div class="owner-email-text">lifekvi2018@gmail.com</div>',
         '    </div>',
-        '    <div class="auth-profile-tag">Защищено паролем</div>',
         '  </div>',
-        '  <form id="mytables-auth-form">',
-        '    <input type="email" id="mytables-auth-email" class="auth-email-input" placeholder="lifekvi2018@gmail.com" value="' + CONFIG.AUTHORIZED_EMAIL + '" required>',
-        '    <div class="auth-password-wrapper">',
-        '      <input type="password" id="mytables-auth-password" class="auth-password-input" placeholder="Введите ваш секретный пароль" autocomplete="current-password" required>',
-        '      <button type="button" id="mytables-auth-toggle-pwd" class="auth-pwd-toggle-btn" title="Показать/скрыть пароль" aria-label="Показать/скрыть пароль">',
-        '        <svg id="mytables-auth-eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5B481D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>',
-        '      </button>',
-        '    </div>',
-        '    <label class="auth-remember-row" for="mytables-auth-remember">',
-        '      <input type="checkbox" id="mytables-auth-remember" class="auth-remember-checkbox" checked>',
-        '      <span class="auth-remember-text">Запомнить меня на 30 дней</span>',
-        '    </label>',
-        '    <button type="submit" id="mytables-auth-submit" class="auth-login-btn">',
-        '      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>',
-        '      Войти как Аня',
+        '  <div id="mytables-auth-error" class="auth-error-banner">',
+        '    <span class="auth-error-icon">⛔</span>',
+        '    <div id="mytables-auth-error-text">Доступ ограничен. Это личные таблицы Ани.</div>',
+        '  </div>',
+        '  <div id="mytables-auth-success" class="auth-success-banner">',
+        '    <span style="font-size: 16px;">✓</span>',
+        '    <div>Вход выполнен успешно! Добро пожаловать, Аня ♡</div>',
+        '  </div>',
+        '  <form id="mytables-auth-form" onsubmit="return false;" style="margin: 0; padding: 0; display: flex; flex-direction: column; gap: 15px;">',
+        '    <input type="hidden" id="mytables-auth-email" value="' + CONFIG.AUTHORIZED_EMAIL + '">',
+        '    <button type="button" id="mytables-auth-submit" class="btn-google-signin">',
+        '      <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" style="flex-shrink: 0;">',
+        '        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>',
+        '        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>',
+        '        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>',
+        '        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>',
+        '      </svg>',
+        '      <span id="mytables-auth-submit-text">Войти с Google</span>',
         '    </button>',
+        '    <div class="checkbox-wrap" id="mytables-auth-remember-wrap" role="checkbox" aria-checked="true" tabindex="0">',
+        '      <input type="checkbox" id="mytables-auth-remember" class="auth-remember-checkbox" checked style="position: absolute; opacity: 0; pointer-events: none;">',
+        '      <div class="checkbox-box" id="mytables-auth-checkbox-box">',
+        '        <svg class="checkbox-check-icon" width="13" height="13" viewBox="0 0 24 24">',
+        '          <polyline points="20 6 9 17 4 12"></polyline>',
+        '        </svg>',
+        '      </div>',
+        '      <span class="checkbox-label-text">Запомнить меня на 30 дней</span>',
+        '    </div>',
         '  </form>',
-        '  <div id="mytables-auth-error" class="auth-error-box"></div>',
+        '  <div class="security-note">',
+        '    Вход защищён официальным сервисом Google OAuth 2.0.<br>',
+        '    Пароли не требуются и нигде не сохраняются.',
+        '  </div>',
         '</div>'
       ].join('');
 
@@ -1392,22 +1415,24 @@
 
       var authForm = document.getElementById('mytables-auth-form');
       var authEmail = document.getElementById('mytables-auth-email');
-      var authPassword = document.getElementById('mytables-auth-password');
       var authRemember = document.getElementById('mytables-auth-remember');
-      var authTogglePwd = document.getElementById('mytables-auth-toggle-pwd');
+      var rememberWrap = document.getElementById('mytables-auth-remember-wrap');
+      var rememberBox = document.getElementById('mytables-auth-checkbox-box');
       var authError = document.getElementById('mytables-auth-error');
+      var authSuccess = document.getElementById('mytables-auth-success');
       var authBtn = document.getElementById('mytables-auth-submit');
+      var authBtnText = document.getElementById('mytables-auth-submit-text');
 
-      if (authTogglePwd && authPassword) {
-        authTogglePwd.addEventListener('click', function () {
-          var isPass = authPassword.type === 'password';
-          authPassword.type = isPass ? 'text' : 'password';
-          var eyeSvg = document.getElementById('mytables-auth-eye-icon');
-          if (eyeSvg) {
-            if (isPass) {
-              eyeSvg.innerHTML = '<path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" y1="2" x2="22" y2="22"/>';
+      if (rememberWrap && authRemember) {
+        rememberWrap.addEventListener('click', function (e) {
+          if (e.target !== authRemember) {
+            authRemember.checked = !authRemember.checked;
+          }
+          if (rememberBox) {
+            if (authRemember.checked) {
+              rememberBox.classList.remove('unchecked');
             } else {
-              eyeSvg.innerHTML = '<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>';
+              rememberBox.classList.add('unchecked');
             }
           }
         });
@@ -1416,38 +1441,28 @@
       function handleLoginAction(e) {
         if (e && e.preventDefault) e.preventDefault();
         var email = (authEmail && authEmail.value) || CONFIG.AUTHORIZED_EMAIL;
-        var password = (authPassword && authPassword.value) || '';
         var remember = authRemember ? authRemember.checked : true;
 
-        var cleanEmail = (email || '').trim().toLowerCase();
-        var existingPass = storage.get(CONFIG.PASSWORD_STORAGE_KEY);
-        if (!existingPass && (cleanEmail === CONFIG.AUTHORIZED_EMAIL.toLowerCase() || cleanEmail === 'lifekvi2018') && password && password.length >= 4) {
-          storage.set(CONFIG.PASSWORD_STORAGE_KEY, password);
-          if (typeof localStorage !== 'undefined') {
-            try { localStorage.setItem(CONFIG.PASSWORD_STORAGE_KEY, JSON.stringify(password)); } catch (err) {}
-          }
-        }
+        if (authError) authError.style.display = 'none';
+        if (authBtnText) authBtnText.textContent = 'Вхожу через Google...';
 
-        var res = login(email, password, remember);
+        var res = loginWithGoogle(remember);
         if (res.success) {
-          if (authError) {
-            authError.style.display = 'none';
-            authError.textContent = '';
-          }
-          if (authPassword) {
-            authPassword.value = '';
-          }
-          hideAuthModal();
-          if (typeof root !== 'undefined' && root && typeof root.onAuthSuccess === 'function') {
-            root.onAuthSuccess(res.user);
-          }
+          if (authSuccess) authSuccess.style.display = 'flex';
+          setTimeout(function () {
+            if (authBtnText) authBtnText.textContent = 'Войти с Google';
+            if (authSuccess) authSuccess.style.display = 'none';
+            hideAuthModal();
+            if (typeof root !== 'undefined' && root && typeof root.onAuthSuccess === 'function') {
+              root.onAuthSuccess(res.user);
+            }
+          }, 400);
         } else {
+          if (authBtnText) authBtnText.textContent = 'Войти с Google';
           if (authError) {
-            authError.textContent = res.error;
-            authError.style.display = 'block';
-          }
-          if (authPassword) {
-            authPassword.focus();
+            var errText = document.getElementById('mytables-auth-error-text');
+            if (errText) errText.textContent = res.error || 'Ошибка входа через Google';
+            authError.style.display = 'flex';
           }
         }
       }
@@ -1579,6 +1594,7 @@
     isAuthenticated: isAuthenticated,
     getCurrentUser: getCurrentUser,
     login: login,
+    loginWithGoogle: loginWithGoogle,
     logout: logout,
     checkPassword: checkPassword,
     changePassword: changePassword,

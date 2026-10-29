@@ -1129,6 +1129,17 @@
     }
     expensesList = expensesList || [];
 
+    // Дедупликация expensesList по ID или уникальному ключу
+    var expMap = new Map();
+    for (var di = 0; di < expensesList.length; di++) {
+      var dItem = expensesList[di];
+      var dId = dItem.id || dItem.ID || (dItem.title + '_' + (dItem.dayOfMonth || dItem.day || 1) + '_' + (dItem.amount || dItem.currentRate || 0));
+      expMap.set(String(dId), dItem);
+    }
+    var cleanExpenses = [];
+    expMap.forEach(function (v) { cleanExpenses.push(v); });
+    expensesList = cleanExpenses;
+
     // Восстанавливаем сохраненные кастомные категории, если они еще не вставлены в DOM
     if (Array.isArray(customExpenseCategories) && customExpenseCategories.length > 0 && typeof spawnCategoryCard === 'function') {
       for (var k = 0; k < customExpenseCategories.length; k++) {
@@ -1156,12 +1167,20 @@
       var tLower = title.toLowerCase();
 
       var bucket = 'other';
-      if (cat === 'ai' || cat.indexOf('ии') !== -1 || cat.indexOf('ai') !== -1 || tLower.indexOf('gpt') !== -1 || tLower.indexOf('claude') !== -1 || tLower.indexOf('gemini') !== -1) {
-        bucket = 'ai';
-      } else if (cat === 'internet' || cat.indexOf('интернет') !== -1 || cat.indexOf('связь') !== -1 || tLower.indexOf('интернет') !== -1 || tLower.indexOf('телефон') !== -1) {
-        bucket = 'internet';
-      } else if (cat === 'vpn' || tLower.indexOf('vpn') !== -1) {
+      if (cat === 'vpn') {
         bucket = 'vpn';
+      } else if (cat === 'internet') {
+        bucket = 'internet';
+      } else if (cat === 'ai') {
+        bucket = 'ai';
+      } else if (catBuckets[cat]) {
+        bucket = cat;
+      } else if (cat.indexOf('vpn') !== -1 || tLower.indexOf('vpn') !== -1) {
+        bucket = 'vpn';
+      } else if (cat.indexOf('интернет') !== -1 || cat.indexOf('связь') !== -1 || tLower.indexOf('интернет') !== -1 || tLower.indexOf('телефон') !== -1) {
+        bucket = 'internet';
+      } else if (cat.indexOf('ии') !== -1 || cat.indexOf('ai') !== -1 || tLower.indexOf('gpt') !== -1 || tLower.indexOf('claude') !== -1 || tLower.indexOf('gemini') !== -1) {
+        bucket = 'ai';
       } else if (item.category) {
         bucket = item.category;
       }
@@ -1793,6 +1812,7 @@
         title: (linkObj && linkObj.title) || 'Новая ссылка',
         url: (linkObj && linkObj.url) || '#'
       });
+      client['Ссылка на материалы'] = JSON.stringify(client.links);
       saveClients();
       renderDossiers();
       if (typeof window.MyTablesSync !== 'undefined' && typeof window.MyTablesSync.saveClient === 'function') {
@@ -1813,6 +1833,7 @@
         client.links[index].title = linkObj.title;
         client.links[index].url = linkObj.url || client.links[index].url;
       }
+      client['Ссылка на материалы'] = JSON.stringify(client.links);
       saveClients();
       renderDossiers();
       if (typeof window.MyTablesSync !== 'undefined' && typeof window.MyTablesSync.saveClient === 'function') {
@@ -3277,7 +3298,7 @@
       '      <div class="cat-badge-icon">' + escapeHtml(cat.badge || '♡') + '</div>',
       '      <span class="cat-name">' + escapeHtml(cat.name) + '</span>',
       '    </div>',
-      '    <button class="cat-add-btn" title="Добавить подписку" onclick="window.openAddExpenseModal ? window.openAddExpenseModal(\'' + cat.id + '\', \'' + cat.color + '\') : null">',
+      '    <button class="cat-add-btn" data-category="' + cat.id + '" title="Добавить подписку" onclick="event.stopPropagation(); window.openAddExpenseModal ? window.openAddExpenseModal(\'' + cat.id + '\', \'' + cat.color + '\') : null">',
       '      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>',
       '    </button>',
       '  </div>',
@@ -3358,6 +3379,7 @@
         '    <button type="button" id="exp-modal-close" style="background: none; border: none; font-size: 20px; font-weight: 800; cursor: pointer; color: #8C784C; padding: 4px; line-height: 1; outline: none;">✕</button>',
         '  </div>',
         '  <form id="exp-modal-form" onsubmit="return false;">',
+        '    <input type="hidden" id="exp-in-category" value="">',
         '    <div style="background: #FCE8D5; border-radius: 18px; padding: 16px; box-shadow: 3px 5px 14px rgba(170, 130, 95, 0.2), -2px -2px 6px rgba(255, 255, 255, 0.85); margin-bottom: 16px; border: none;">',
         '      <div style="margin-bottom: 12px;">',
         '        <label style="font-size: 11px; font-weight: 800; color: #6D3E14; display: block; margin-bottom: 5px;">Услуга / Название</label>',
@@ -3434,6 +3456,8 @@
         currentEditingSlip = null;
         currentEditingPayment = null;
         currentTargetCategory = targetCat || null;
+        var catIn = document.getElementById('exp-in-category');
+        if (catIn) catIn.value = targetCat || '';
 
         var meta = targetCat ? getCategoryMeta(targetCat) : null;
         var chosenColor = targetColor || (meta ? meta.color : '#D3E7F8');
@@ -3511,6 +3535,9 @@
 
         selectColorDot(color);
 
+        var catIn = document.getElementById('exp-in-category');
+        if (catIn) catIn.value = (p && (p.category || p['Категория'])) || '';
+
         var archBtn = document.getElementById('exp-modal-archive');
         if (archBtn) archBtn.style.display = 'inline-flex';
 
@@ -3522,9 +3549,16 @@
       window.openEditExpenseModal = window._realOpenEditExpenseModal;
       root.openEditExpenseModal = window._realOpenEditExpenseModal;
 
+      var isSubmittingExpense = false;
       var closeExpModal = function () {
         currentEditingSlip = null;
         currentEditingPayment = null;
+        isSubmittingExpense = false;
+        var submitBtn = document.getElementById('exp-modal-submit');
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Сохранить';
+        }
         expModal.classList.remove('active');
         expModal.style.display = 'none';
         expModal.style.pointerEvents = 'none';
@@ -3579,6 +3613,8 @@
 
       document.getElementById('exp-modal-form').addEventListener('submit', function (e) {
         e.preventDefault();
+        if (isSubmittingExpense) return;
+
         var title = (document.getElementById('exp-in-title').value || '').trim();
         var day = parseInt(document.getElementById('exp-in-day').value, 10);
         var amount = Number(document.getElementById('exp-in-amount').value) || 0;
@@ -3597,6 +3633,7 @@
           return;
         }
 
+        isSubmittingExpense = true;
         var submitBtn = document.getElementById('exp-modal-submit');
         submitBtn.textContent = 'Сохраняю...';
         submitBtn.disabled = true;
@@ -3655,18 +3692,21 @@
           setTimeout(function () {
             submitBtn.textContent = 'Сохранить';
             submitBtn.disabled = false;
+            isSubmittingExpense = false;
             closeExpModal();
           }, 300);
           return;
         }
 
-        // Категория платежа
-        var cat = currentTargetCategory || 'other';
-        if (cat === 'other') {
+        // Категория платежа — строгая привязка к выбранной категории
+        var catIn = document.getElementById('exp-in-category');
+        var cat = (catIn && catIn.value) || currentTargetCategory || '';
+        if (!cat || cat === 'other') {
           var tLower = title.toLowerCase();
           if (tLower.indexOf('vpn') !== -1) cat = 'vpn';
           else if (tLower.indexOf('интернет') !== -1 || tLower.indexOf('телефон') !== -1 || tLower.indexOf('связь') !== -1 || tLower.indexOf('мегафон') !== -1 || tLower.indexOf('мтс') !== -1 || tLower.indexOf('билайн') !== -1 || tLower.indexOf('т-мобайл') !== -1) cat = 'internet';
           else if (tLower.indexOf('ai') !== -1 || tLower.indexOf('ии') !== -1 || tLower.indexOf('gpt') !== -1 || tLower.indexOf('claude') !== -1 || tLower.indexOf('gemini') !== -1 || tLower.indexOf('midjourney') !== -1) cat = 'ai';
+          else cat = 'other';
         }
 
         var expD = new Date();
@@ -3693,57 +3733,27 @@
           isArchived: false
         };
 
-        // Добавляем новую плашечку на экран (десктоп и мобильный)
-        var slipHtml = [
-          '<div class="expense-paper-slip" data-title="' + escapeHtml(title) + '" onclick="window.openEditExpenseModal ? window.openEditExpenseModal(\'' + escapeHtml(title) + '\', this) : null">',
-          '  <div class="expense-item-left">',
-          '    <div class="service-logo-circle" style="color: ' + selectedExpenseColor + ';">',
-          '      <span style="font-weight:900; font-size:13px; color:#2F261D;">' + escapeHtml(title.charAt(0).toUpperCase()) + '</span>',
-          '    </div>',
-          '    <div class="expense-item-info">',
-          '      <span class="expense-item-name">' + escapeHtml(title) + '</span>',
-          '      <div class="expense-item-sub">',
-          '        <span class="expense-item-price">' + formatRub(amount) + '</span>',
-          '        <span class="expense-item-date">• ' + day + ' число</span>',
-          '      </div>',
-          '    </div>',
-          '  </div>',
-          '  <div class="expense-item-right">',
-          '    <button class="status-pill unpaid" onclick="window.toggleExpenseItemStatus(event, this)"><span class="status-dot"></span> Оплатить</button>',
-          '  </div>',
-          '</div>'
-        ].join('');
-
-        // Находим целевой список карточек (десктоп и мобилка)
-        var targetColIndex = (cat === 'ai') ? 0 : (cat === 'internet' ? 1 : (cat === 'vpn' ? 2 : 0));
-        var deskCards = document.querySelectorAll('#desk-view-expenses .expense-cat-card');
-        var deskTargetCard = document.querySelector('#desk-view-expenses .expense-cat-card[data-category="' + cat + '"]') || (deskCards ? deskCards[targetColIndex] : null);
-        if (deskTargetCard) {
-          var deskList = deskTargetCard.querySelector('.cat-items-list');
-          if (deskList) {
-            var ep = deskList.querySelector('.cat-empty-prompt');
-            if (ep) ep.remove();
-            deskList.insertAdjacentHTML('beforeend', slipHtml);
-          }
-        }
-
-        var mobCards = document.querySelectorAll('#mob-view-expenses .expense-cat-card');
-        var mobTargetCard = document.querySelector('#mob-view-expenses .expense-cat-card[data-category="' + cat + '"]') || (mobCards ? mobCards[targetColIndex] : null);
-        if (mobTargetCard) {
-          var mobList = mobTargetCard.querySelector('.cat-items-list');
-          if (mobList) {
-            var mep = mobList.querySelector('.cat-empty-prompt');
-            if (mep) mep.remove();
-            mobList.insertAdjacentHTML('beforeend', slipHtml);
-          }
-        }
-
-        // Добавляем в календарь и кэш
+        // Добавляем в календарь и кэш с дедупликацией
         if (window.MyTablesCalendar && window.MyTablesCalendar.state) {
           if (!window.MyTablesCalendar.state.payments) window.MyTablesCalendar.state.payments = [];
-          window.MyTablesCalendar.state.payments.push(newExpense);
+          var pIdx = window.MyTablesCalendar.state.payments.findIndex(function (p) {
+            return (p.id || p.ID) === newExpense.id;
+          });
+          if (pIdx >= 0) {
+            window.MyTablesCalendar.state.payments[pIdx] = newExpense;
+          } else {
+            window.MyTablesCalendar.state.payments.push(newExpense);
+          }
+
           if (window.MyTablesCalendar.state.data && Array.isArray(window.MyTablesCalendar.state.data.expenses)) {
-            window.MyTablesCalendar.state.data.expenses.push(newExpense);
+            var dIdx = window.MyTablesCalendar.state.data.expenses.findIndex(function (p) {
+              return (p.id || p.ID) === newExpense.id;
+            });
+            if (dIdx >= 0) {
+              window.MyTablesCalendar.state.data.expenses[dIdx] = newExpense;
+            } else {
+              window.MyTablesCalendar.state.data.expenses.push(newExpense);
+            }
           }
           if (typeof window.MyTablesCalendar.updateSummaryCards === 'function') {
             window.MyTablesCalendar.updateSummaryCards();
@@ -3752,6 +3762,18 @@
             window.MyTablesCalendar.renderCalendar();
           }
         }
+
+        if (window.allData && Array.isArray(window.allData.expenses)) {
+          var aIdx = window.allData.expenses.findIndex(function (p) {
+            return (p.id || p.ID) === newExpense.id;
+          });
+          if (aIdx >= 0) {
+            window.allData.expenses[aIdx] = newExpense;
+          } else {
+            window.allData.expenses.push(newExpense);
+          }
+        }
+
         renderRecentExpensesOnMain();
         if (typeof updateExpensesScreen === 'function') {
           updateExpensesScreen();
@@ -3765,10 +3787,12 @@
         syncPromise.then(function () {
           submitBtn.textContent = 'Сохранить';
           submitBtn.disabled = false;
+          isSubmittingExpense = false;
           closeExpModal();
         }).catch(function (err) {
           submitBtn.textContent = 'Сохранить';
           submitBtn.disabled = false;
+          isSubmittingExpense = false;
           closeExpModal();
         });
       });
@@ -3958,9 +3982,12 @@
       plusIncome[i].addEventListener('click', function () { openAddModal('income'); });
     }
 
-    var plusExpense = document.querySelectorAll('.btn-plus-expense, .cat-add-btn');
+    var plusExpense = document.querySelectorAll('.btn-plus-expense');
     for (var j = 0; j < plusExpense.length; j++) {
-      plusExpense[j].addEventListener('click', function () { openAddModal('expense'); });
+      plusExpense[j].addEventListener('click', function (e) {
+        if (e && e.target && e.target.closest('.cat-add-btn')) return;
+        openAddModal('expense');
+      });
     }
 
     var plusClients = document.querySelectorAll('.btn-plus-clients, .btn-plus-desk');

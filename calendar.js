@@ -111,13 +111,21 @@
     var tLow = title.toLowerCase();
 
     if (!color) {
-      if (cat.indexOf('vpn') !== -1 || tLow.indexOf('vpn') !== -1) color = '#D3E7F8';
-      else if (cat.indexOf('интернет') !== -1 || tLow.indexOf('интернет') !== -1 || cat.indexOf('net') !== -1) color = '#FCE8D5';
-      else if (cat.indexOf('ии') !== -1 || cat.indexOf('ai') !== -1 || cat.indexOf('gpt') !== -1 || tLow.indexOf('chatgpt') !== -1) color = '#DBCCE9';
-      else if (cat.indexOf('подписк') !== -1) color = '#FCD6CF';
-      else if (tLow.indexOf('яблок') !== -1 || tLow.indexOf('красот') !== -1 || cat.indexOf('красот') !== -1) color = '#FDF1CC';
-      else if (tLow.indexOf('заправ') !== -1 || tLow.indexOf('бензин') !== -1 || cat.indexOf('авто') !== -1) color = '#FCE8D5';
-      else color = '#FDF1CC';
+      if (cat.indexOf('vpn') !== -1 || tLow.indexOf('vpn') !== -1) {
+        color = '#D3E7F8';
+      } else if (cat.indexOf('интернет') !== -1 || tLow.indexOf('интернет') !== -1 || cat.indexOf('связь') !== -1 || cat.indexOf('net') !== -1 || cat === 'internet') {
+        color = '#C8E2D2';
+      } else if (cat.indexOf('ии') !== -1 || cat.indexOf('ai') !== -1 || cat.indexOf('gpt') !== -1 || tLow.indexOf('chatgpt') !== -1 || tLow.indexOf('gemini') !== -1 || tLow.indexOf('claude') !== -1 || cat === 'ai') {
+        color = '#FCE8D5';
+      } else if (cat.indexOf('подписк') !== -1) {
+        color = '#FCD6CF';
+      } else if (tLow.indexOf('яблок') !== -1 || tLow.indexOf('красот') !== -1 || cat.indexOf('красот') !== -1) {
+        color = '#FDF1CC';
+      } else if (tLow.indexOf('заправ') !== -1 || tLow.indexOf('бензин') !== -1 || cat.indexOf('авто') !== -1) {
+        color = '#FCE8D5';
+      } else {
+        color = '#FDF1CC';
+      }
     }
 
     return {
@@ -362,6 +370,7 @@
         var bg = dots[0];
         var textColor = '#4A3E25';
         if (bg === '#D3E7F8') textColor = '#1B4567';
+        else if (bg === '#C8E2D2') textColor = '#1E3F30';
         else if (bg === '#FCD6CF') textColor = '#6E2F26';
         else if (bg === '#FDF1CC' || bg === '#F7E4A8') textColor = '#5B481D';
         else if (bg === '#FCE8D5') textColor = '#6D3E14';
