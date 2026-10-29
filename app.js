@@ -49,8 +49,7 @@
     document.addEventListener('DOMContentLoaded', function () {
       // 1. Проверяем наличие MyTablesSync
       if (typeof MyTablesSync === 'undefined') {
-        console.error('MyTablesSync не найден. Убедитесь, что sync.js подключен.');
-        return;
+        console.warn('MyTablesSync не найден. Убедитесь, что sync.js подключен.');
       }
 
       // 2. Внедряем модальное окно добавления записей (+)
@@ -62,37 +61,42 @@
       // 4. Подключаем кнопки выхода в сайдбарах и шапках
       bindLogoutButtons();
 
-      // 5. Загружаем живые данные из Google Таблицы
-      loadLiveData();
-
-      // 6. Подписываемся на повторный вход при смене аккаунта
+      // 5. Подписываемся на успешную авторизацию
+      window.addEventListener('mytables:auth-success', function () {
+        loadLiveData();
+      });
       window.onAuthSuccess = function () {
         loadLiveData();
       };
+
+      // 6. Загружаем живые данные ТОЛЬКО если уже авторизованы
+      if (typeof MyTablesSync !== 'undefined' && typeof MyTablesSync.isAuthenticated === 'function' && MyTablesSync.isAuthenticated()) {
+        loadLiveData();
+      }
 
       // 7. Инициализация MyTablesClients
       if (typeof MyTablesClients !== 'undefined' && MyTablesClients.init) {
         MyTablesClients.init();
       }
 
-    // 7. Клик по плашке расхода открывает окно изменения суммы и тарифа
-    document.addEventListener('click', function (e) {
-      var slip = e.target.closest('.expense-paper-slip');
-      if (!slip) return;
-      if (e.target.closest('.status-pill')) return; // Клик по статусу обрабатывается отдельно
-      var nameEl = slip.querySelector('.expense-item-name');
-      var title = nameEl ? nameEl.textContent.trim() : '';
-      if (typeof window.openEditExpenseModal === 'function') {
-        window.openEditExpenseModal(title, slip);
+      // 8. Клик по плашке расхода открывает окно изменения суммы и тарифа
+      document.addEventListener('click', function (e) {
+        var slip = e.target.closest('.expense-paper-slip');
+        if (!slip) return;
+        if (e.target.closest('.status-pill')) return; // Клик по статусу обрабатывается отдельно
+        var nameEl = slip.querySelector('.expense-item-name');
+        var title = nameEl ? nameEl.textContent.trim() : '';
+        if (typeof window.openEditExpenseModal === 'function') {
+          window.openEditExpenseModal(title, slip);
+        }
+      });
+
+      // 9. Инициализируем экран Доходов (Стейдж 3)
+      if (window.MyTablesIncome && typeof window.MyTablesIncome.renderIncome === 'function') {
+        window.MyTablesIncome.renderIncome();
       }
     });
-
-    // 8. Инициализируем экран Доходов (Стейдж 3)
-    if (window.MyTablesIncome && typeof window.MyTablesIncome.renderIncome === 'function') {
-      window.MyTablesIncome.renderIncome();
-    }
-  });
-}
+  }
 
   // Загрузка живых данных и обновление текущего экрана
   function loadLiveData() {
@@ -4050,7 +4054,15 @@
     for (var i = 0; i < logoutBtns.length; i++) {
       logoutBtns[i].addEventListener('click', function (e) {
         e.preventDefault();
-        MyTablesSync.logout();
+        window.allData = null;
+        if (typeof window.updateCurrentScreen === 'function') {
+          try {
+            window.updateCurrentScreen({ summary: [], income: [], expenses: [], clients: [] });
+          } catch (err) {}
+        }
+        if (typeof MyTablesSync !== 'undefined' && MyTablesSync.logout) {
+          MyTablesSync.logout();
+        }
       });
     }
   }

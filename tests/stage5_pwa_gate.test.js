@@ -254,6 +254,9 @@ async function runStage5Tests() {
       clients: [{ ID: 'cli_test', Имя: 'Тестовый клиент' }]
     };
 
+    // Авторизуем владелицу для доступа к данным
+    MyTablesSync.login('lifekvi2018@gmail.com', 'Anya2026', true);
+
     // Сохраняем в кэш
     const storageKey = MyTablesSync.CONFIG.CACHE_STORAGE_KEY;
     const authStore = MyTablesSync.getAuthStorage ? MyTablesSync.getAuthStorage() : global.sessionStorage;

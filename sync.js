@@ -341,41 +341,51 @@
 
   function handleGoogleCredentialResponse(response) {
     if (!response || !response.credential) {
-      var errEl = document.getElementById('mytables-auth-error');
-      var errText = document.getElementById('mytables-auth-error-text');
-      if (errText) errText.textContent = 'Не удалось получить учетные данные Google';
-      if (errEl) errEl.style.display = 'flex';
+      if (typeof document !== 'undefined') {
+        var errEl = document.getElementById('mytables-auth-error');
+        var errText = document.getElementById('mytables-auth-error-text');
+        if (errText) errText.textContent = 'Не удалось получить учетные данные Google';
+        if (errEl) errEl.style.display = 'flex';
+      }
       return { success: false, error: 'Empty credential' };
     }
     var payload = decodeJwt(response.credential);
     if (!payload || !payload.email) {
-      var errEl2 = document.getElementById('mytables-auth-error');
-      var errText2 = document.getElementById('mytables-auth-error-text');
-      if (errText2) errText2.textContent = 'Не удалось прочитать данные профиля Google';
-      if (errEl2) errEl2.style.display = 'flex';
+      if (typeof document !== 'undefined') {
+        var errEl2 = document.getElementById('mytables-auth-error');
+        var errText2 = document.getElementById('mytables-auth-error-text');
+        if (errText2) errText2.textContent = 'Не удалось прочитать данные профиля Google';
+        if (errEl2) errEl2.style.display = 'flex';
+      }
       return { success: false, error: 'Invalid JWT payload' };
     }
 
-    var cleanEmail = payload.email.toLowerCase().trim();
-    if (cleanEmail !== CONFIG.AUTHORIZED_EMAIL.toLowerCase()) {
-      var errEl3 = document.getElementById('mytables-auth-error');
-      var errText3 = document.getElementById('mytables-auth-error-text');
-      if (errText3) errText3.innerHTML = 'Доступ ограничен. Это личные таблицы Ани. Вход с аккаунта <strong style="color: #4D201A;">' + cleanEmail + '</strong> отклонён.';
-      if (errEl3) errEl3.style.display = 'flex';
-      return { success: false, error: 'Unauthorized email: ' + cleanEmail };
+    var cleanEmail = (payload.email || '').toLowerCase().trim();
+    var isVerified = payload.email_verified === true || payload.email_verified === 'true';
+    if (!cleanEmail || cleanEmail !== CONFIG.AUTHORIZED_EMAIL.toLowerCase() || !isVerified) {
+      if (typeof document !== 'undefined') {
+        var errEl3 = document.getElementById('mytables-auth-error');
+        var errText3 = document.getElementById('mytables-auth-error-text');
+        if (errText3) errText3.textContent = 'Доступ ограничен. Это личное приложение Ани.';
+        if (errEl3) errEl3.style.display = 'flex';
+      }
+      logout();
+      return { success: false, error: 'Доступ ограничен. Это личное приложение Ани.' };
     }
 
-    var authRemember = document.getElementById('mytables-auth-remember');
+    var authRemember = (typeof document !== 'undefined') ? document.getElementById('mytables-auth-remember') : null;
     var isRemember = authRemember ? authRemember.checked : true;
+    var now = Date.now();
 
     var user = {
-      email: CONFIG.AUTHORIZED_EMAIL,
-      name: payload.name || payload.given_name || 'Аня',
+      authorized: true,
+      email: CONFIG.AUTHORIZED_EMAIL.toLowerCase(),
+      name: 'Аня',
       avatar: payload.picture || '',
       authType: 'google',
       googleSub: payload.sub,
-      loginAt: Date.now(),
-      expiresAt: isRemember ? (Date.now() + 30 * 24 * 60 * 60 * 1000) : (Date.now() + 24 * 60 * 60 * 1000)
+      loginAt: now,
+      expiresAt: isRemember ? (now + 30 * 24 * 60 * 60 * 1000) : (now + 24 * 60 * 60 * 1000)
     };
 
     var adapter = isRemember ? storage : sessionAdapter;
@@ -383,14 +393,19 @@
     if (typeof localStorage !== 'undefined' && isRemember) {
       try { localStorage.setItem(CONFIG.AUTH_STORAGE_KEY, JSON.stringify(user)); } catch (e) {}
     }
+    if (typeof sessionStorage !== 'undefined' && !isRemember) {
+      try { sessionStorage.setItem(CONFIG.AUTH_STORAGE_KEY, JSON.stringify(user)); } catch (e) {}
+    }
 
-    var succ = document.getElementById('mytables-auth-success');
-    var errBox = document.getElementById('mytables-auth-error');
+    var succ = (typeof document !== 'undefined') ? document.getElementById('mytables-auth-success') : null;
+    var errBox = (typeof document !== 'undefined') ? document.getElementById('mytables-auth-error') : null;
     if (errBox) errBox.style.display = 'none';
     if (succ) {
-      succ.innerHTML = '<span style="font-size: 16px;">✓</span><div>Вход выполнен успешно! Добро пожаловать, ' + (user.name || 'Аня') + ' ♡</div>';
+      succ.innerHTML = '<span style="font-size: 16px;">✓</span><div>Вход выполнен успешно! Добро пожаловать, Аня ♡</div>';
       succ.style.display = 'flex';
     }
+
+    unlockContainers();
 
     updateUserChips();
     notifyListeners();
@@ -398,6 +413,9 @@
     setTimeout(function () {
       hideAuthModal();
       if (succ) succ.style.display = 'none';
+      if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
+        window.dispatchEvent(new CustomEvent('mytables:auth-success', { detail: user }));
+      }
       if (typeof root !== 'undefined' && root && typeof root.onAuthSuccess === 'function') {
         root.onAuthSuccess(user);
       }
@@ -441,51 +459,25 @@
     var btnText = document.getElementById('mytables-auth-submit-text');
     if (btnText) btnText.textContent = 'Открываю вход Google...';
 
-    // 1. Если доступен официальный Google Identity Services (в живом браузере)
+    // Если доступен официальный Google Identity Services (в живом браузере)
     if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
       try {
         initGoogleIdentity();
-        google.accounts.id.prompt(function (notification) {
-          if (notification && (notification.isNotDisplayed() || notification.isSkippedMoment())) {
-            var renderedGsi = document.querySelector('#mytables-gsi-btn-container [role="button"]');
-            if (renderedGsi) {
-              renderedGsi.click();
-            } else {
-              performDirectGoogleLogin(isRemember);
-            }
-          }
-        });
+        var renderedGsi = document.querySelector('#mytables-gsi-btn-container [role="button"]');
+        if (renderedGsi && typeof renderedGsi.click === 'function') {
+          renderedGsi.click();
+        } else {
+          google.accounts.id.prompt(function (notification) {
+            // One Tap пропущен или не отобразился — модалка остаётся открытой, авто-вход запрещен
+          });
+        }
         return { success: true, pending: true };
       } catch (err) {
         console.warn('Google prompt fallback:', err);
-        return performDirectGoogleLogin(isRemember);
       }
     }
 
-    // 2. Fallback для автономного режима или автотестов в Node.js
-    return performDirectGoogleLogin(isRemember);
-  }
-
-  function performDirectGoogleLogin(isRemember) {
-    var res = login(CONFIG.AUTHORIZED_EMAIL, undefined, isRemember);
-    if (res.success) {
-      var succ = document.getElementById('mytables-auth-success');
-      var btnText = document.getElementById('mytables-auth-submit-text');
-      if (btnText) btnText.textContent = 'Войти с Google';
-      if (succ) succ.style.display = 'flex';
-
-      setTimeout(function () {
-        hideAuthModal();
-        if (succ) succ.style.display = 'none';
-        if (typeof root !== 'undefined' && root && typeof root.onAuthSuccess === 'function') {
-          root.onAuthSuccess(res.user);
-        }
-        if (typeof window !== 'undefined' && typeof window.onAuthSuccess === 'function') {
-          window.onAuthSuccess(res.user);
-        }
-      }, 350);
-    }
-    return res;
+    return { success: false, error: 'Google Sign-In загружается...' };
   }
 
   function logout() {
@@ -498,9 +490,9 @@
       try { sessionStorage.removeItem(CONFIG.AUTH_STORAGE_KEY); } catch (e) {}
     }
     _memStore = {};
-    notifyListeners();
-    updateUserChips();
+
     if (typeof document !== 'undefined') {
+      lockContainers();
       var pwdInput = document.getElementById('mytables-auth-password');
       if (pwdInput) pwdInput.value = '';
       var errBox = document.getElementById('mytables-auth-error');
@@ -510,6 +502,9 @@
       }
       initGoogleIdentity();
     }
+
+    notifyListeners();
+    updateUserChips();
     showAuthModal();
   }
 
@@ -519,6 +514,16 @@
 
   function fetchWithTimeout(url, options, timeoutMs) {
     timeoutMs = timeoutMs || CONFIG.TIMEOUT_MS;
+
+    // Аппаратный предохранитель: в среде Node.js прямые запросы к боевой Google Таблице заблокированы
+    if (typeof window === 'undefined' && typeof process !== 'undefined' && !process.env.LIVE_GOOGLE_SHEETS) {
+      var hasMock = (typeof mockFetchHandler !== 'undefined' && mockFetchHandler) ||
+                    (typeof global !== 'undefined' && global.mockFetchHandler) ||
+                    (CONFIG._mockFetch);
+      if (!hasMock && url === CONFIG.SCRIPT_URL) {
+        return Promise.reject(new Error('Сетевые вызовы к боевой Google Таблице заблокированы в среде Node.js (предохранитель тестов)'));
+      }
+    }
 
     if (!isOnline()) {
       return Promise.reject(new Error('Нет подключения к интернету. Проверьте сеть.'));
@@ -567,6 +572,10 @@
   function getAllData(options) {
     options = options || {};
 
+    if (!isAuthenticated()) {
+      return Promise.reject(new Error('Требуется авторизация'));
+    }
+
     if (!isOnline()) {
       setStatus('error', 'Нет связи с Google ✕', 'Отсутствует интернет-соединение');
       var cached = getCachedData();
@@ -591,7 +600,7 @@
               var item = arr[i];
               var id = item.ID || item.id;
               if (id) {
-                if (deleted.indexOf(String(id)) === -1) {
+                if (deleted.indexOf(String(id)) === -1 && String(id) !== 'test_123') {
                   map.set(String(id), item);
                 }
               } else {
@@ -645,6 +654,10 @@
    * Сохранение новой строки дохода
    */
   function saveIncome(record) {
+    if (!isAuthenticated()) {
+      return Promise.reject(new Error('Требуется авторизация'));
+    }
+
     if (!isOnline()) {
       setStatus('error', 'Нет связи с Google ✕', 'Нельзя сохранить без интернета');
       return Promise.reject(new Error('Нет подключения к интернету. Доход не сохранен.'));
@@ -724,6 +737,10 @@
    * Сохранение нового расхода
    */
   function saveExpense(record) {
+    if (!isAuthenticated()) {
+      return Promise.reject(new Error('Требуется авторизация'));
+    }
+
     if (!isOnline()) {
       setStatus('error', 'Нет связи с Google ✕', 'Нельзя сохранить без интернета');
       return Promise.reject(new Error('Нет подключения к интернету. Расход не сохранен.'));
@@ -824,6 +841,10 @@
    * Сохранение или обновление клиента
    */
   function saveClient(record) {
+    if (!isAuthenticated()) {
+      return Promise.reject(new Error('Требуется авторизация'));
+    }
+
     if (!isOnline()) {
       setStatus('error', 'Нет связи с Google ✕', 'Нельзя сохранить без интернета');
       return Promise.reject(new Error('Нет подключения к интернету. Клиент не сохранен.'));
@@ -937,6 +958,10 @@
    * Удаление записи с обязательным подтверждением
    */
   function deleteRecord(sheet, id, description) {
+    if (!isAuthenticated()) {
+      return Promise.reject(new Error('Требуется авторизация'));
+    }
+
     if (!id) {
       return Promise.reject(new Error('Не указан ID записи для удаления.'));
     }
@@ -1069,8 +1094,44 @@
     }
   }
 
+  function lockContainers() {
+    if (typeof document === 'undefined') return;
+    if (document.documentElement && document.documentElement.classList) {
+      document.documentElement.classList.remove('mytables-authed');
+    }
+    var desk = document.getElementById('desktop-app');
+    var mob = document.getElementById('mobile-app');
+    if (desk) {
+      if (typeof desk.setAttribute === 'function') { desk.setAttribute('inert', ''); desk.setAttribute('aria-hidden', 'true'); }
+      else if (desk.attributes) { desk.attributes['inert'] = ''; desk.attributes['aria-hidden'] = 'true'; }
+    }
+    if (mob) {
+      if (typeof mob.setAttribute === 'function') { mob.setAttribute('inert', ''); mob.setAttribute('aria-hidden', 'true'); }
+      else if (mob.attributes) { mob.attributes['inert'] = ''; mob.attributes['aria-hidden'] = 'true'; }
+    }
+  }
+
+  function unlockContainers() {
+    if (typeof document === 'undefined') return;
+    if (document.documentElement && document.documentElement.classList) {
+      document.documentElement.classList.add('mytables-authed');
+    }
+    var desk = document.getElementById('desktop-app');
+    var mob = document.getElementById('mobile-app');
+    if (desk) {
+      if (typeof desk.removeAttribute === 'function') { desk.removeAttribute('inert'); desk.removeAttribute('aria-hidden'); }
+      else if (desk.attributes) { delete desk.attributes['inert']; delete desk.attributes['aria-hidden']; }
+    }
+    if (mob) {
+      if (typeof mob.removeAttribute === 'function') { mob.removeAttribute('inert'); mob.removeAttribute('aria-hidden'); }
+      else if (mob.attributes) { delete mob.attributes['inert']; delete mob.attributes['aria-hidden']; }
+    }
+  }
+
   function showAuthModal() {
     if (typeof document === 'undefined') return;
+    lockContainers();
+
     var gate = document.getElementById('mytables-auth-gate');
     if (gate) {
       gate.style.setProperty('display', 'flex', 'important');
@@ -1093,6 +1154,8 @@
 
   function hideAuthModal() {
     if (typeof document === 'undefined') return;
+    unlockContainers();
+
     var gate = document.getElementById('mytables-auth-gate');
     if (gate) {
       gate.style.setProperty('display', 'none', 'important');
@@ -1512,8 +1575,9 @@
     }
 
     // Экран авторизации (Google Gate) — без паролей, официальный вход Google для Ани
-    if (!document.getElementById('mytables-auth-gate')) {
-      var gate = document.createElement('div');
+    var gate = document.getElementById('mytables-auth-gate');
+    if (!gate) {
+      gate = document.createElement('div');
       gate.id = 'mytables-auth-gate';
       gate.className = 'mytables-auth-gate-overlay';
       gate.style.display = 'none';
@@ -1570,70 +1634,69 @@
         '  </div>',
         '</div>'
       ].join('');
-
       document.body.appendChild(gate);
-      initGoogleIdentity();
+    }
 
-      var authForm = document.getElementById('mytables-auth-form');
-      var authEmail = document.getElementById('mytables-auth-email');
-      var authRemember = document.getElementById('mytables-auth-remember');
-      var rememberWrap = document.getElementById('mytables-auth-remember-wrap');
-      var rememberBox = document.getElementById('mytables-auth-checkbox-box');
-      var authError = document.getElementById('mytables-auth-error');
-      var authSuccess = document.getElementById('mytables-auth-success');
-      var authBtn = document.getElementById('mytables-auth-submit');
-      var authBtnText = document.getElementById('mytables-auth-submit-text');
+    initGoogleIdentity();
 
-      if (rememberWrap && authRemember) {
-        rememberWrap.addEventListener('click', function (e) {
-          if (e.target !== authRemember) {
-            authRemember.checked = !authRemember.checked;
-          }
-          if (rememberBox) {
-            if (authRemember.checked) {
-              rememberBox.classList.remove('unchecked');
-            } else {
-              rememberBox.classList.add('unchecked');
-            }
-          }
-        });
-      }
+    var authForm = document.getElementById('mytables-auth-form');
+    var authEmail = document.getElementById('mytables-auth-email');
+    var authRemember = document.getElementById('mytables-auth-remember');
+    var rememberWrap = document.getElementById('mytables-auth-remember-wrap');
+    var rememberBox = document.getElementById('mytables-auth-checkbox-box');
+    var authError = document.getElementById('mytables-auth-error');
+    var authSuccess = document.getElementById('mytables-auth-success');
+    var authBtn = document.getElementById('mytables-auth-submit');
+    var authBtnText = document.getElementById('mytables-auth-submit-text');
 
-      function handleLoginAction(e) {
-        if (e && e.preventDefault) e.preventDefault();
-        var email = (authEmail && authEmail.value) || CONFIG.AUTHORIZED_EMAIL;
-        var remember = authRemember ? authRemember.checked : true;
-
-        if (authError) authError.style.display = 'none';
-        if (authBtnText) authBtnText.textContent = 'Вхожу через Google...';
-
-        var res = loginWithGoogle(remember);
-        if (res.success) {
-          if (authSuccess) authSuccess.style.display = 'flex';
-          setTimeout(function () {
-            if (authBtnText) authBtnText.textContent = 'Войти с Google';
-            if (authSuccess) authSuccess.style.display = 'none';
-            hideAuthModal();
-            if (typeof root !== 'undefined' && root && typeof root.onAuthSuccess === 'function') {
-              root.onAuthSuccess(res.user);
-            }
-          }, 400);
-        } else {
-          if (authBtnText) authBtnText.textContent = 'Войти с Google';
-          if (authError) {
-            var errText = document.getElementById('mytables-auth-error-text');
-            if (errText) errText.textContent = res.error || 'Ошибка входа через Google';
-            authError.style.display = 'flex';
+    if (rememberWrap && authRemember && !rememberWrap._hasListener) {
+      rememberWrap._hasListener = true;
+      rememberWrap.addEventListener('click', function (e) {
+        if (e.target !== authRemember) {
+          authRemember.checked = !authRemember.checked;
+        }
+        if (rememberBox) {
+          if (authRemember.checked) {
+            rememberBox.classList.remove('unchecked');
+          } else {
+            rememberBox.classList.add('unchecked');
           }
         }
-      }
+      });
+    }
 
-      if (authForm) {
-        authForm.addEventListener('submit', handleLoginAction);
+    function handleLoginAction(e) {
+      if (e && e.preventDefault) e.preventDefault();
+      var remember = authRemember ? authRemember.checked : true;
+
+      if (authError) authError.style.display = 'none';
+      if (authBtnText) authBtnText.textContent = 'Вхожу через Google...';
+
+      var res = loginWithGoogle(remember);
+      if (res && res.success && !res.pending) {
+        if (authSuccess) authSuccess.style.display = 'flex';
+        setTimeout(function () {
+          if (authBtnText) authBtnText.textContent = 'Войти с Google';
+          if (authSuccess) authSuccess.style.display = 'none';
+          hideAuthModal();
+        }, 400);
+      } else if (res && !res.success) {
+        if (authBtnText) authBtnText.textContent = 'Войти с Google';
+        if (authError) {
+          var errText = document.getElementById('mytables-auth-error-text');
+          if (errText) errText.textContent = res.error || 'Ошибка входа через Google';
+          authError.style.display = 'flex';
+        }
       }
-      if (authBtn) {
-        authBtn.addEventListener('click', handleLoginAction);
-      }
+    }
+
+    if (authForm && !authForm._hasListener) {
+      authForm._hasListener = true;
+      authForm.addEventListener('submit', handleLoginAction);
+    }
+    if (authBtn && !authBtn._hasListener) {
+      authBtn._hasListener = true;
+      authBtn.addEventListener('click', handleLoginAction);
     }
 
     // Модальное окно смены пароля
@@ -1722,6 +1785,8 @@
     updateUserChips();
     if (!isAuthenticated()) {
       showAuthModal();
+    } else {
+      hideAuthModal();
     }
   }
 

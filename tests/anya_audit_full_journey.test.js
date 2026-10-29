@@ -68,6 +68,7 @@ function createMockElement(id, tag = 'div') {
     children: [],
     attributes: {},
     setAttribute: function (k, v) { this.attributes[k] = String(v); },
+    removeAttribute: function (k) { delete this.attributes[k]; },
     getAttribute: function (k) { return this.attributes[k] || null; },
     appendChild: function (c) { this.children.push(c); return c; },
     querySelector: function (sel) { return null; },

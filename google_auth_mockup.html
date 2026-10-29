@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Макет авторизации Google Gate ♡ — Мои таблицы</title>
+
+  <style>
+    /* ========================================================
+       1. СБРОС И БАЗОВЫЕ НАСТРОЙКИ (ЖЕЛЕЗНЫЕ ПРАВИЛА АНИ)
+       - Полный запрет чисто белого цвета
+       - Полный запрет рамок (border: none)
+       - Автономные шрифты без внешних CDN
+       ======================================================== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+      -webkit-tap-highlight-color: transparent;
+      outline: none !important;
+      border: none !important;
+    }
+
+    html, body {
+      background: #FAF2E7;
+      color: #383025;
+      padding: 24px 16px 80px 16px;
+      line-height: 1.4;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* ========================================================
+       2. ВЕРХНЕЕ МЕНЮ И ШАПКА МАКЕТА
+       ======================================================== */
+    .top-header {
+      margin-bottom: 28px;
+      text-align: center;
+    }
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      background: #C8E2D2;
+      color: #1E3F30;
+      padding: 6px 18px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+      box-shadow: 2.5px 4px 10px rgba(35, 70, 50, 0.14), -1.5px -1.5px 4px rgba(253, 241, 204, 0.7), inset 1px 1px 0 rgba(253, 241, 204, 0.8);
+    }
+    .screen-title {
+      font-size: 30px;
+      font-weight: 900;
+      color: #2F261D;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+    }
+    .screen-desc {
+      font-size: 14px;
+      color: #726453;
+      font-weight: 600;
+      max-width: 820px;
+      margin: 0 auto 20px auto;
+      line-height: 1.5;
+    }
+
+    /* Интерактивный переключатель сценариев */
+    .scenario-bar {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .scenario-btn {
+      padding: 9px 18px;
+      border-radius: 14px;
+      font-size: 13px;
+      font-weight: 800;
+      color: #726453;
+      background: #EADBCC;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 2px 3px 6px rgba(35, 30, 20, 0.08);
+      cursor: pointer;
+    }
+    .scenario-btn:hover {
+      background: #DFD0BE;
+      color: #2F261D;
+      transform: translateY(-1px);
+    }
+    .scenario-btn.active {
+      background: #5A4E40;
+      color: #FAF2E7;
+      box-shadow: 2.5px 4px 10px rgba(35, 30, 20, 0.2);
+    }
+
+    /* Навигационные таблетки быстрого перехода */
+    .section-nav-row {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 36px;
+      flex-wrap: wrap;
+    }
+    .section-nav-pill {
+      background: #FCE8D5;
+      color: #58241B;
+      padding: 7px 16px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: 1.5px 2.5px 6px rgba(90, 50, 30, 0.08);
+      transition: all 0.12s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .section-nav-pill:hover {
+      background: #FBD8BD;
+      transform: translateY(-1px);
+    }
+
+    /* Разделитель секций */
+    .section-divider {
+      text-align: center;
+      margin: 48px 0 24px 0;
+    }
+    .section-pill-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #FDF1CC;
+      color: #5B481D;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 6px 18px;
+      border-radius: 14px;
+      box-shadow: 2px 3px 8px rgba(180, 150, 90, 0.15);
+      margin-bottom: 8px;
+    }
+    .section-heading-text {
+      font-size: 22px;
+      font-weight: 900;
+      color: #2F261D;
+      letter-spacing: -0.3px;
+    }
+    .section-subheading-text {
+      font-size: 13px;
+      color: #726453;
+      font-weight: 600;
+      margin-top: 4px;
+    }
+
+    /* ========================================================
+       3. ГЛАВНАЯ СЕТКА: ТЕЛЕФОН И ДЕСКТОП НА ЕДИНОМ СКРОЛЛЕ
+       ======================================================== */
+    .duo-grid {
+      display: grid;
+      grid-template-columns: 414px 1fr;
+      gap: 36px;
+      align-items: start;
+      margin-bottom: 48px;
+    }
+    @media (max-width: 1100px) {
+      .duo-grid {
+        grid-template-columns: 1fr;
+        justify-items: center;
+      }
+    }
+
+    /* ========================================================
+       4. ТЕЛЕФОН (IPHONE ФРЕЙМ В ТОЧНОМ РАЗМЕРЕ 390×844)
+       ======================================================== */
+    .iphone-box {
+      width: 100%;
+      max-width: 414px;
+      background: #F6EDE2;
+      border-radius: 48px;
+      padding: 12px;
+      box-shadow: 16px 26px 54px rgba(140, 115, 90, 0.3), -4px -4px 12px rgba(253, 241, 204, 0.6);
+      margin: 0 auto;
+      flex-shrink: 0;
+    }
+    .iphone-screen {
+      background: #FAF2E7;
+      border-radius: 38px;
+      padding: 14px 14px 16px 14px;
+      width: 390px;
+      max-width: 100%;
+      min-height: 844px;
+      height: 844px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      box-shadow: inset 1px 1px 3px rgba(140, 115, 90, 0.15);
+      margin: 0 auto;
+    }
+    .iphone-island {
+      width: 110px;
+      height: 26px;
+      background: #2A241C;
+      border-radius: 20px;
+      margin: 0 auto 10px auto;
+      flex-shrink: 0;
+    }
+    .iphone-status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 800;
+      color: #5A4E40;
+      padding: 0 10px;
+      margin-bottom: 12px;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+    .status-bar-icons {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #5A4E40;
+    }
+
+    /* Мобильный контейнер Google Gate */
+    .mob-gate-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 4px 2px 20px 2px;
+      min-height: 0;
+    }
+
+    /* ЗОЛОТОЙ СТАНДАРТ АНИ: КАРТОЧКА ОКНА АВТОРИЗАЦИИ */
+    .mob-gate-card {
+      background: #FAF2E7;
+      border-radius: 24px;
+      padding: 24px 18px 22px 18px;
+      box-shadow: 0 16px 40px rgba(90, 70, 50, 0.18), 0 4px 12px rgba(90, 70, 50, 0.1), inset 0.5px 1px 0 rgba(253, 241, 204, 0.95);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      position: relative;
+    }
+
+    /* Иконка сердца ♡ в пастельно-голубой плашке #DCEEFE */
+    .gate-heart-badge {
+      width: 58px;
+      height: 58px;
+      border-radius: 20px;
+      background: #DCEEFE;
+      color: #113F6B;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+      box-shadow: 2px 4.5px 11px rgba(80, 120, 160, 0.22), inset 0.5px 1px 0 rgba(253, 241, 204, 0.9);
+      flex-shrink: 0;
+    }
+    .gate-heart-icon {
+      stroke: #113F6B;
+      stroke-width: 2.3;
+      fill: none;
+    }
+
+    /* Заголовок «Мои таблицы ♡» и подзаголовок */
+    .gate-title-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .gate-title-text {
+      font-size: 22px;
+      font-weight: 900;
+      color: #2F261D;
+      letter-spacing: -0.4px;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+    .gate-subtitle-text {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #726453;
+      line-height: 1.3;
+      white-space: nowrap;
+    }
+
+    /* Плашка владелицы: «Аня (lifekvi2018@gmail.com)» */
+    .owner-plaque {
+      background: #DCEEFE;
+      border-radius: 18px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 2px 4px 10px rgba(80, 120, 160, 0.18), inset 0.5px 1px 0 rgba(253, 241, 204, 0.85);
+      text-align: left;
+    }
+    .owner-avatar {
+      width: 44px;
+      height: 44px;
+      min-width: 44px;
+      min-height: 44px;
+      border-radius: 50%;
+      background: #C8E2D2;
+      color: #1E3F30;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 900;
+      box-shadow: 2px 3.5px 7px rgba(35, 70, 50, 0.16);
+      flex-shrink: 0;
+    }
+    .owner-info-col {
+      min-width: 0;
+      flex: 1;
+    }
+    .owner-name-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .owner-name-text {
+      font-size: 14.5px;
+      font-weight: 900;
+      color: #113F6B;
+      white-space: nowrap;
+    }
+    .owner-badge-tag {
+      font-size: 10px;
+      font-weight: 900;
+      background: #C8E2D2;
+      color: #1E3F30;
+      padding: 2px 7px;
+      border-radius: 8px;
+      white-space: nowrap;
+    }
+    .owner-email-text {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #1F548A;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: 2px;
+    }
+
+    /* Чекбокс «Запомнить меня на 30 дней» */
+    .checkbox-wrap {
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      cursor: pointer;
+      user-select: none;
+      margin: 0 auto;
+      padding: 4px 8px;
+      border-radius: 12px;
+      transition: background 0.12s ease;
+    }
+    .checkbox-wrap:hover {
+      background: rgba(220, 200, 180, 0.2);
+    }
+    .checkbox-box {
+      width: 22px;
+      height: 22px;
+      min-width: 22px;
+      min-height: 22px;
+      border-radius: 7px;
+      background: #C8E2D2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 1.5px 2px 5px rgba(35, 70, 50, 0.18), inset 0.5px 1px 0 rgba(253, 241, 204, 0.9);
+      transition: all 0.15s ease;
+      flex-shrink: 0;
+    }
+    .checkbox-box.unchecked {
+      background: #EADBCC;
+      box-shadow: inset 1px 1.5px 3px rgba(140, 115, 90, 0.2);
+    }
+    .checkbox-check-icon {
+      stroke: #1E3F30;
+      stroke-width: 3.2;
+      fill: none;
+      transition: opacity 0.15s ease;
+    }
+    .checkbox-box.unchecked .checkbox-check-icon {
+      opacity: 0;
+    }
+    .checkbox-label-text {
+      font-size: 13px;
+      font-weight: 700;
+      color: #5A4E40;
+      white-space: nowrap;
+    }
+
+    /* Фирменная кнопка Google «Войти с Google» (Google Sign-In) */
+    .btn-google-signin {
+      width: 100%;
+      min-height: 48px;
+      border-radius: 16px;
+      background: #FDF1CC;
+      color: #2F261D;
+      font-size: 15px;
+      font-weight: 900;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 11px;
+      box-shadow: 2.5px 4.5px 12px rgba(160, 130, 80, 0.22), inset 0.5px 1px 0 rgba(253, 241, 204, 0.95);
+      transition: all 0.12s ease;
+      border: none !important;
+    }
+    .btn-google-signin:hover {
+      background: #FCE8B8;
+      transform: translateY(-1px);
+      box-shadow: 3px 6px 14px rgba(160, 130, 80, 0.26);
+    }
+    .btn-google-signin:active {
+      transform: translateY(1.5px);
+      box-shadow: 1.5px 2.5px 5px rgba(160, 130, 80, 0.2);
+    }
+
+    /* Тёплая сноска о безопасности без паролей */
+    .security-note {
+      font-size: 11px;
+      font-weight: 700;
+      color: #726453;
+      line-height: 1.35;
+      text-align: center;
+      padding: 0 4px;
+    }
+
+    /* Блок ошибки доступа для чужих email (коралл #FCD6CF) */
+    .auth-error-banner {
+      background: #FCD6CF;
+      color: #58241B;
+      border-radius: 16px;
+      padding: 12px 14px;
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1.4;
+      display: none;
+      align-items: flex-start;
+      gap: 10px;
+      box-shadow: 2.5px 4px 10px rgba(180, 60, 40, 0.15);
+      text-align: left;
+      transition: all 0.2s ease;
+    }
+    .auth-error-icon {
+      font-size: 16px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* Блок успешного входа (мята #C8E2D2) */
+    .auth-success-banner {
+      background: #C8E2D2;
+      color: #1E3F30;
+      border-radius: 16px;
+      padding: 12px 14px;
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1.4;
+      display: none;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 2.5px 4px 10px rgba(35, 70, 50, 0.15);
+      text-align: left;
+      transition: all 0.2s ease;
+    }
+
+    /* Мобильный таб-бар снизу (СТРОГО 4 утверждённые иконки без текста!) */
+    .tabbar-box {
+      background: #FAF2E7;
+      border-radius: 22px;
+      padding: 8px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 10px 24px rgba(140, 115, 90, 0.22), 0 2px 6px rgba(140, 115, 90, 0.12);
+      flex-shrink: 0;
+      margin-top: auto;
+    }
+    .mob-tab-btn {
+      width: 44px;
+      height: 44px;
+      min-width: 44px;
+      min-height: 44px;
+      border-radius: 14px;
+      background: transparent;
+      color: #726453;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.12s ease;
+      box-shadow: none;
+    }
+    .mob-tab-btn:hover {
+      background: #F6EDE2;
+      color: #2F261D;
+    }
+    .mob-tab-btn.active {
+      background: #C8E2D2;
+      color: #1E3F30;
+      box-shadow: 2px 3.5px 8px rgba(35, 70, 50, 0.18), inset 0.5px 1px 0 rgba(253, 241, 204, 0.8);
+    }
+
+    /* ========================================================
+       5. ДЕСКТОПНЫЙ ВИД (КОМПЬЮТЕР / НОУТБУК)
+       ======================================================== */
+    .desktop-presentation-wrapper {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .desktop-window {
+      background: #F8EFE4;
+      border-radius: 34px;
+      padding: 24px 26px 36px 26px !important;
+      box-shadow: 16px 28px 56px rgba(140, 115, 85, 0.25), -4px -4px 14px rgba(253, 241, 204, 0.6);
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: stretch !important;
+      height: auto !important;
+      min-height: 844px !important;
+      position: relative;
+    }
+
+    /* Верхняя панель окна браузера десктопа */
+    .desk-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 4px 16px 4px;
+      margin-bottom: 16px;
+      box-shadow: 0 1.5px 0 rgba(220, 200, 180, 0.4);
+    }
+    .window-controls-dots {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .control-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+    .dot-coral { background: #FCD6CF; }
+    .dot-cream { background: #FDF1CC; }
+    .dot-mint  { background: #C8E2D2; }
+
+    .desk-address-pill {
+      background: #FAF2E7;
+      border-radius: 12px;
+      padding: 6px 20px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #726453;
+      box-shadow: inset 1px 1px 3px rgba(140, 115, 90, 0.12);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .desk-top-badge {
+      font-size: 11px;
+      font-weight: 800;
+      color: #1E3F30;
+      background: #C8E2D2;
+      padding: 4px 12px;
+      border-radius: 10px;
+    }
+
+    /* Модальное окно десктопного Google Gate */
+    .desktop-gate-backdrop {
+      background: rgba(43, 34, 25, 0.42);
+      border-radius: 26px;
+      padding: 40px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 700px;
+      position: relative;
+      box-shadow: inset 0 2px 10px rgba(40, 30, 20, 0.15);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+    .desktop-gate-modal {
+      background: #FAF2E7;
+      border-radius: 24px !important;
+      padding: 38px 34px 34px 34px;
+      max-width: 460px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 24px 60px rgba(90, 70, 50, 0.35), 0 8px 20px rgba(90, 70, 50, 0.18), inset 0.5px 1px 0 rgba(253, 241, 204, 0.95);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      position: relative;
+    }
+
+    /* Иконка сердца десктопа в пастельно-голубой плашке #DCEEFE */
+    .desk-gate-icon-circle {
+      width: 64px;
+      height: 64px;
+      border-radius: 22px;
+      background: #DCEEFE;
+      color: #113F6B;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+      box-shadow: 2px 4.5px 12px rgba(80, 120, 160, 0.22), inset 0.5px 1px 0 rgba(253, 241, 204, 0.9);
+      flex-shrink: 0;
+    }
+    .desk-gate-title {
+      font-size: 26px;
+      font-weight: 900;
+      color: #2F261D;
+      letter-spacing: -0.4px;
+      line-height: 1.2;
+      margin-bottom: 4px;
+    }
+    .desk-gate-subtitle {
+      font-size: 14px;
+      font-weight: 600;
+      color: #726453;
+      line-height: 1.3;
+    }
+
+    /* Плашка аккаунта Ани в десктопной модалке */
+    .desk-owner-plaque {
+      background: #DCEEFE;
+      border-radius: 20px;
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-align: left;
+      box-shadow: 2px 4px 10px rgba(80, 120, 160, 0.2), inset 0.5px 1px 0 rgba(253, 241, 204, 0.85);
+    }
+    .desk-owner-avatar {
+      width: 48px;
+      height: 48px;
+      min-width: 48px;
+      min-height: 48px;
+      border-radius: 50%;
+      background: #C8E2D2;
+      color: #1E3F30;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 900;
+      box-shadow: 2px 4px 8px rgba(35, 70, 50, 0.18);
+      flex-shrink: 0;
+    }
+    .desk-owner-info {
+      min-width: 0;
+      flex: 1;
+    }
+    .desk-owner-name-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .desk-owner-name {
+      font-size: 15.5px;
+      font-weight: 900;
+      color: #113F6B;
+      white-space: nowrap;
+    }
+    .desk-owner-tag {
+      font-size: 11px;
+      font-weight: 900;
+      background: #C8E2D2;
+      color: #1E3F30;
+      padding: 2px 8px;
+      border-radius: 8px;
+      white-space: nowrap;
+    }
+    .desk-owner-email {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #1F548A;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: 2px;
+    }
+
+    /* Десктопная фирменная кнопка Google */
+    .desk-btn-google {
+      width: 100%;
+      min-height: 52px;
+      border-radius: 16px;
+      background: #FDF1CC;
+      color: #2F261D;
+      font-size: 16px;
+      font-weight: 900;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      box-shadow: 3px 5px 14px rgba(160, 130, 80, 0.22), inset 0.5px 1px 0 rgba(253, 241, 204, 0.95);
+      transition: all 0.12s ease;
+      border: none !important;
+    }
+    .desk-btn-google:hover {
+      background: #FCE8B8;
+      transform: translateY(-1px);
+      box-shadow: 3.5px 6.5px 16px rgba(160, 130, 80, 0.28);
+    }
+    .desk-btn-google:active {
+      transform: translateY(1.5px);
+      box-shadow: 1.5px 2.5px 5px rgba(160, 130, 80, 0.2);
+    }
+
+    /* Десктопная сноска */
+    .desk-security-note {
+      font-size: 12px;
+      font-weight: 700;
+      color: #726453;
+      line-height: 1.4;
+      text-align: center;
+    }
+
+    /* ========================================================
+       6. ИНЖЕНЕРНЫЙ ЧЕК-ЛИСТ СТАНДАРТОВ АНИ
+       ======================================================== */
+    .standards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
+      margin-top: 32px;
+    }
+    .standard-card {
+      background: #FAF2E7;
+      border-radius: 20px;
+      padding: 18px 20px;
+      box-shadow: 3px 5px 14px rgba(140, 115, 85, 0.12), inset 0.5px 1px 0 rgba(253, 241, 204, 0.9);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .standard-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .standard-icon-badge {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      background: #C8E2D2;
+      color: #1E3F30;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 900;
+      flex-shrink: 0;
+      box-shadow: 1.5px 2.5px 5px rgba(35, 70, 50, 0.15);
+    }
+    .standard-title {
+      font-size: 14.5px;
+      font-weight: 900;
+      color: #2F261D;
+    }
+    .standard-desc {
+      font-size: 12px;
+      color: #726453;
+      font-weight: 600;
+      line-height: 1.45;
+    }
+
+    /* ========================================================
+       7. ДИАГНОСТИЧЕСКИЙ БЕЙДЖ ГЕОМЕТРИИ (ВСПЛЫВАЮЩИЙ)
+       ======================================================== */
+    .geometry-sanity-badge {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 9999;
+      background: #C8E2D2;
+      color: #1E3F30;
+      border-radius: 30px;
+      padding: 10px 20px;
+      font-size: 12px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 10px 25px rgba(35, 70, 50, 0.25), inset 0.5px 1px 0 rgba(253, 241, 204, 0.9);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .geometry-sanity-badge:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 28px rgba(35, 70, 50, 0.32);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- ========================================================
+         ВЕРХНЯЯ ШАПКА МАКЕТА
+         ======================================================== -->
+    <header class="top-header">
+      <div class="badge-status">
+        <span>✓</span> ЗОЛОТОЙ СТАНДАРТ АНИ • GOOGLE GATE БЕЗ ПАРОЛЕЙ
+      </div>
+      <h1 class="screen-title">Макет авторизации Google Gate ♡</h1>
+      <p class="screen-desc">
+        Новый экран входа без паролей для личного финансового органайзера «Мои таблицы».
+        Полное удаление полей ввода пароля! Вход в один клик через официальный Google Sign-In владелицы.
+      </p>
+
+      <!-- Интерактивное переключение сценариев -->
+      <div class="scenario-bar">
+        <button type="button" class="scenario-btn active" id="btn-scen-normal" onclick="setScenario('normal')">
+          <span>✓</span> Вход владелицы (Аня)
+        </button>
+        <button type="button" class="scenario-btn" id="btn-scen-error" onclick="setScenario('error')">
+          <span>⛔</span> Чужой Google аккаунт (ошибка)
+        </button>
+        <button type="button" class="scenario-btn" id="btn-scen-loading" onclick="setScenario('loading')">
+          <span>⏳</span> Процесс авторизации
+        </button>
+      </div>
+
+      <!-- Быстрый переход по секциям макета -->
+      <nav class="section-nav-row" aria-label="Разделы макета">
+        <a href="#mobile-view" class="section-nav-pill">📱 Мобильный вид (390×844)</a>
+        <a href="#desktop-view" class="section-nav-pill">💻 Десктопный вид</a>
+        <a href="#standards-view" class="section-nav-pill">📋 Чек-лист стандартов</a>
+      </nav>
+    </header>
+
+    <!-- ========================================================
+         ЕДИНЫЙ ДУО-СКРОЛЛ: ТЕЛЕФОН СЛЕВА, ДЕСКТОП СПРАВА
+         ======================================================== -->
+    <main class="duo-grid">
+
+      <!-- ========================================================
+           СЕКЦИЯ 1: ТЕЛЕФОН (IPHONE ФРЕЙМ 390×844)
+           ======================================================== -->
+      <section id="mobile-view" aria-label="Мобильный экран авторизации">
+        <div style="text-align: center; margin-bottom: 14px;">
+          <span class="section-pill-tag">📱 Телефонный экран</span>
+          <div style="font-size: 13px; font-weight: 800; color: #726453;">Точная рамка 390 × 844 px</div>
+        </div>
+
+        <div class="iphone-box">
+          <div class="iphone-screen" id="iphone-screen-viewport">
+
+            <!-- Dynamic Island -->
+            <div class="iphone-island"></div>
+
+            <!-- Верхняя строка статуса iPhone -->
+            <div class="iphone-status-bar">
+              <span>9:41</span>
+              <div class="status-bar-icons">
+                <svg width="15" height="11" viewBox="0 0 17 11" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M1 8.5C1 7.94772 1.44772 7.5 2 7.5H3C3.55228 7.5 4 7.94772 4 8.5V10C4 10.5523 3.55228 11 3 11H2C1.44772 11 1 10.5523 1 10V8.5ZM5.5 6C5.5 5.44772 5.94772 5 6.5 5H7.5C8.05228 5 8.5 5.44772 8.5 6V10C8.5 10.5523 8.05228 11 7.5 11H6.5C5.94772 11 5.5 10.5523 5.5 10V6ZM10 3.5C10 2.94772 10.4477 2.5 11 2.5H12C12.5523 2.5 13 2.94772 13 3.5V10C13 10.5523 12.5523 11 12 11H11C10.4477 11 10 10.5523 10 10V3.5ZM14.5 1C14.5 0.447715 14.9477 0 15.5 0H16.5C17.0523 0 17.5 0.447715 17.5 1V10C17.5 10.5523 17.0523 11 16.5 11H15.5C14.9477 11 14.5 10.5523 14.5 10V1Z" fill="#5A4E40"/></svg>
+                <svg width="15" height="11" viewBox="0 0 16 11" fill="none"><path d="M8 11C8.69 11 9.25 10.44 9.25 9.75C9.25 9.06 8.69 8.5 8 8.5C7.31 8.5 6.75 9.06 6.75 9.75C6.75 10.44 7.31 11 8 11ZM12.07 5.68C10.95 4.56 9.47 3.87 8 3.87C6.53 3.87 5.05 4.56 3.93 5.68L2.87 4.62C4.28 3.21 6.14 2.37 8 2.37C9.86 2.37 11.72 3.21 13.13 4.62L12.07 5.68ZM14.19 3.56C12.55 1.92 10.27 1 8 1C5.73 1 3.45 1.92 1.81 3.56L0.75 2.5C2.68 0.57 5.34 -0.5 8 -0.5C10.66 -0.5 13.32 0.57 15.25 2.5L14.19 3.56Z" fill="#5A4E40"/></svg>
+                <svg width="22" height="11" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="#5A4E40"/><rect x="2" y="2" width="16" height="8" rx="2" fill="#5A4E40"/><path d="M23 4C23.5523 4 24 4.44772 24 5V7C24 7.55228 23.5523 8 23 8V4Z" fill="#5A4E40"/></svg>
+              </div>
+            </div>
+
+            <!-- Центральный контент мобильного экрана авторизации -->
+            <div class="mob-gate-wrapper">
+              <div class="mob-gate-card" id="mob-gate-card-box">
+
+                <!-- Иконка сердца ♡ в пастельно-голубой плашке #DCEEFE -->
+                <div class="gate-heart-badge">
+                  <svg class="gate-heart-icon" width="28" height="28" viewBox="0 0 24 24">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                  </svg>
+                </div>
+
+                <!-- Заголовок и подзаголовок -->
+                <div class="gate-title-wrap">
+                  <h2 class="gate-title-text">Мои таблицы ♡</h2>
+                  <div class="gate-subtitle-text">Личный финансовый органайзер</div>
+                </div>
+
+                <!-- Плашка владелицы: «Аня (lifekvi2018@gmail.com)» -->
+                <div class="owner-plaque">
+                  <div class="owner-avatar">А</div>
+                  <div class="owner-info-col">
+                    <div class="owner-name-row">
+                      <span class="owner-name-text">Аня</span>
+                      <span class="owner-badge-tag">Владелица</span>
+                    </div>
+                    <div class="owner-email-text">lifekvi2018@gmail.com</div>
+                  </div>
+                </div>
+
+                <!-- Сообщение об ошибке (чужой аккаунт) -->
+                <div class="auth-error-banner" id="mob-error-banner">
+                  <span class="auth-error-icon">⛔</span>
+                  <div>
+                    Доступ ограничен. Это личные таблицы Ани. Вход с аккаунта <strong style="color: #4D201A;">other@gmail.com</strong> отклонён.
+                  </div>
+                </div>
+
+                <!-- Сообщение об успехе -->
+                <div class="auth-success-banner" id="mob-success-banner">
+                  <span style="font-size: 16px;">✓</span>
+                  <div>Вход выполнен успешно! Добро пожаловать, Аня ♡</div>
+                </div>
+
+                <!-- Фирменная кнопка Google «Войти с Google» (Google Sign-In) -->
+                <button type="button" class="btn-google-signin" id="mob-google-btn" onclick="handleGoogleSignIn()">
+                  <!-- Официальная цветная 4-цветная буква G -->
+                  <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" style="flex-shrink: 0;">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                  </svg>
+                  <span id="mob-google-btn-text">Войти с Google</span>
+                </button>
+
+                <!-- Чекбокс «Запомнить меня на 30 дней» -->
+                <div class="checkbox-wrap" id="mob-checkbox-wrap" onclick="toggleRememberCheckbox()" role="checkbox" aria-checked="true" tabindex="0">
+                  <div class="checkbox-box" id="mob-checkbox-box">
+                    <svg class="checkbox-check-icon" width="13" height="13" viewBox="0 0 24 24">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                  </div>
+                  <span class="checkbox-label-text">Запомнить меня на 30 дней</span>
+                </div>
+
+                <!-- Тёплая сноска о безопасности -->
+                <div class="security-note">
+                  Вход защищён официальным сервисом Google OAuth 2.0.<br>
+                  Пароли не требуются и нигде не сохраняются.
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Мобильный таб-бар снизу (СТРОГО 4 утверждённые иконки без текста!) -->
+            <nav class="tabbar-box" aria-label="Нижняя навигация приложения">
+              <button type="button" class="mob-tab-btn active" title="Главная" aria-label="Главная">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              </button>
+              <button type="button" class="mob-tab-btn" title="Доходы" aria-label="Доходы">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+              </button>
+              <button type="button" class="mob-tab-btn" title="Расходы" aria-label="Расходы">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="3"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="m9 16 2 2 4-4"/></svg>
+              </button>
+              <button type="button" class="mob-tab-btn" title="Клиенты" aria-label="Клиенты">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              </button>
+            </nav>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================
+           СЕКЦИЯ 2: ДЕСКТОПНЫЙ ВИД (КОМПЬЮТЕР)
+           ======================================================== -->
+      <section id="desktop-view" class="desktop-presentation-wrapper" aria-label="Десктопный экран авторизации">
+        <div style="text-align: center; margin-bottom: 14px;">
+          <span class="section-pill-tag">💻 Десктопное окно</span>
+          <div style="font-size: 13px; font-weight: 800; color: #726453;">Масштабируемое окно браузера на компьютере</div>
+        </div>
+
+        <div class="desktop-window">
+
+          <!-- Шапка окна десктопа -->
+          <div class="desk-topbar">
+            <div class="window-controls-dots">
+              <span class="control-dot dot-coral"></span>
+              <span class="control-dot dot-cream"></span>
+              <span class="control-dot dot-mint"></span>
+            </div>
+            <div class="desk-address-pill">
+              <span>🔒</span> https://mytables.local/
+            </div>
+            <div class="desk-top-badge">
+              Золотой стандарт
+            </div>
+          </div>
+
+          <!-- Полупрозрачный фон с модальным окном Google Gate -->
+          <div class="desktop-gate-backdrop">
+            <div class="desktop-gate-modal">
+
+              <!-- Иконка сердца десктопа в пастельно-голубой плашке #DCEEFE -->
+              <div class="desk-gate-icon-circle">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#113F6B" stroke-width="2.3">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                </svg>
+              </div>
+
+              <!-- Заголовок и подзаголовок -->
+              <div>
+                <h2 class="desk-gate-title">Мои таблицы ♡</h2>
+                <div class="desk-gate-subtitle">Личный финансовый органайзер</div>
+              </div>
+
+              <!-- Плашка владелицы: «Аня (lifekvi2018@gmail.com)» -->
+              <div class="desk-owner-plaque">
+                <div class="desk-owner-avatar">А</div>
+                <div class="desk-owner-info">
+                  <div class="desk-owner-name-row">
+                    <span class="desk-owner-name">Аня</span>
+                    <span class="desk-owner-tag">Владелица</span>
+                  </div>
+                  <div class="desk-owner-email">lifekvi2018@gmail.com</div>
+                </div>
+              </div>
+
+              <!-- Сообщение об ошибке (чужой аккаунт) -->
+              <div class="auth-error-banner" id="desk-error-banner">
+                <span class="auth-error-icon">⛔</span>
+                <div>
+                  Доступ ограничен. Это личные таблицы Ани. Вход с аккаунта <strong style="color: #4D201A;">other@gmail.com</strong> отклонён.
+                </div>
+              </div>
+
+              <!-- Сообщение об успехе -->
+              <div class="auth-success-banner" id="desk-success-banner">
+                <span style="font-size: 16px;">✓</span>
+                <div>Вход выполнен успешно! Добро пожаловать, Аня ♡</div>
+              </div>
+
+              <!-- Фирменная кнопка Google «Войти с Google» (Google Sign-In) -->
+              <button type="button" class="desk-btn-google" id="desk-google-btn" onclick="handleGoogleSignIn()">
+                <!-- Официальная цветная 4-цветная буква G -->
+                <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex-shrink: 0;">
+                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                </svg>
+                <span id="desk-google-btn-text">Войти с Google</span>
+              </button>
+
+              <!-- Чекбокс «Запомнить меня на 30 дней» -->
+              <div class="checkbox-wrap" id="desk-checkbox-wrap" onclick="toggleRememberCheckbox()" role="checkbox" aria-checked="true" tabindex="0">
+                <div class="checkbox-box" id="desk-checkbox-box">
+                  <svg class="checkbox-check-icon" width="13" height="13" viewBox="0 0 24 24">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </div>
+                <span class="checkbox-label-text">Запомнить меня на 30 дней</span>
+              </div>
+
+              <!-- Тёплая десктопная сноска -->
+              <div class="desk-security-note">
+                Авторизация через защищённый протокол Google OAuth 2.0.<br>
+                Секретные пароли и пин-коды полностью отсутствуют.
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ========================================================
+         СЕКЦИЯ 3: ИНЖЕНЕРНЫЙ ЧЕК-ЛИСТ СТАНДАРТОВ АНИ
+         ======================================================== -->
+    <footer id="standards-view" style="margin-top: 60px;">
+      <div style="text-align: center; margin-bottom: 24px;">
+        <span class="section-pill-tag">📋 Контроль качества</span>
+        <h3 class="section-heading-text">Чек-лист Золотого стандарта Ани</h3>
+        <p class="section-subheading-text">Все 7 правил строго соблюдены в коде макета</p>
+      </div>
+
+      <div class="standards-grid">
+
+        <div class="standard-card">
+          <div class="standard-header">
+            <div class="standard-icon-badge">🚫</div>
+            <div class="standard-title">100% Без паролей</div>
+          </div>
+          <div class="standard-desc">
+            Полное удаление поля ввода пароля или кода. Больше нет секретных паролей, форм смены паролей или пин-кодов.
+          </div>
+        </div>
+
+        <div class="standard-card">
+          <div class="standard-header">
+            <div class="standard-icon-badge">📜</div>
+            <div class="standard-title">Золотой стандарт модалок</div>
+          </div>
+          <div class="standard-desc">
+            Тёплый фон бумаги #FAF2E7, радиус 24px, объёмные 3D-тени бумаги, полное отсутствие рамок (border: none) и 0 чисто белого цвета.
+          </div>
+        </div>
+
+        <div class="standard-card">
+          <div class="standard-header">
+            <div class="standard-icon-badge">♡</div>
+            <div class="standard-title">Иконка сердца в #DCEEFE</div>
+          </div>
+          <div class="standard-desc">
+            Аккуратный значок сердца ♡ в пастельно-голубой плашке #DCEEFE с мягкой бумажной тенью.
+          </div>
+        </div>
+
+        <div class="standard-card">
+          <div class="standard-header">
+            <div class="standard-icon-badge">👤</div>
+            <div class="standard-title">Плашка владелицы</div>
+          </div>
+          <div class="standard-desc">
+            Плашка владелицы: «Аня (lifekvi2018@gmail.com)» с мятным аватаром #C8E2D2 и защитой от разрывов текста (nowrap + ellipsis).
+          </div>
+        </div>
+
+        <div class="standard-card">
+          <div class="standard-header">
+            <div class="standard-icon-badge">🌐</div>
+            <div class="standard-title">Фирменная кнопка Google</div>
+          </div>
+          <div class="standard-desc">
+            Официальная 4-цветная буква G, высота 48–52px (от 44px), тёплый сливочный фон #FDF1CC без рамок.
+          </div>
+        </div>
+
+        <div class="standard-card">
+          <div class="standard-header">
+            <div class="standard-icon-badge">☑️</div>
+            <div class="standard-title">Чекбокс на 30 дней</div>
+          </div>
+          <div class="standard-desc">
+            Тактильный бумажный чекбокс «Запомнить меня на 30 дней» с сенсорной зоной нажатия пальцем от 44px.
+          </div>
+        </div>
+
+        <div class="standard-card">
+          <div class="standard-header">
+            <div class="standard-icon-badge">📐</div>
+            <div class="standard-title">Геометрия 390×844</div>
+          </div>
+          <div class="standard-desc">
+            Строгая проверка Layout Sanity Check: scrollWidth &lt;= clientWidth, ни один пиксель не вылезает за пределы экрана телефона.
+          </div>
+        </div>
+
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Плавающий диагностический бейдж геометрии -->
+  <div class="geometry-sanity-badge" id="sanity-badge" title="Кликните для повторной проверки геометрии" onclick="runGeometryCheck(true)">
+    <span>📐</span>
+    <span id="sanity-text">Геометрия 390px: ИДЕАЛЬНО (0 ошибок)</span>
+  </div>
+
+  <!-- ========================================================
+       ИНТЕРАКТИВНАЯ ЛОГИКА МАКЕТА
+       ======================================================== -->
+  <script>
+    // 1. Состояние чекбокса «Запомнить меня на 30 дней»
+    let isRememberChecked = true;
+
+    function toggleRememberCheckbox() {
+      isRememberChecked = !isRememberChecked;
+      updateCheckboxUI();
+    }
+
+    function updateCheckboxUI() {
+      const mobBox = document.getElementById('mob-checkbox-box');
+      const deskBox = document.getElementById('desk-checkbox-box');
+      const mobWrap = document.getElementById('mob-checkbox-wrap');
+      const deskWrap = document.getElementById('desk-checkbox-wrap');
+
+      if (isRememberChecked) {
+        mobBox.classList.remove('unchecked');
+        deskBox.classList.remove('unchecked');
+        mobWrap.setAttribute('aria-checked', 'true');
+        deskWrap.setAttribute('aria-checked', 'true');
+      } else {
+        mobBox.classList.add('unchecked');
+        deskBox.classList.add('unchecked');
+        mobWrap.setAttribute('aria-checked', 'false');
+        deskWrap.setAttribute('aria-checked', 'false');
+      }
+    }
+
+    // 2. Интерактивные сценарии (Аня / Чужой аккаунт / Загрузка)
+    function setScenario(scen) {
+      document.getElementById('btn-scen-normal').classList.toggle('active', scen === 'normal');
+      document.getElementById('btn-scen-error').classList.toggle('active', scen === 'error');
+      document.getElementById('btn-scen-loading').classList.toggle('active', scen === 'loading');
+
+      const mobErr = document.getElementById('mob-error-banner');
+      const deskErr = document.getElementById('desk-error-banner');
+      const mobSucc = document.getElementById('mob-success-banner');
+      const deskSucc = document.getElementById('desk-success-banner');
+      const mobBtnText = document.getElementById('mob-google-btn-text');
+      const deskBtnText = document.getElementById('desk-google-btn-text');
+
+      mobSucc.style.display = 'none';
+      deskSucc.style.display = 'none';
+
+      if (scen === 'error') {
+        mobErr.style.display = 'flex';
+        deskErr.style.display = 'flex';
+        mobBtnText.textContent = 'Попробовать снова';
+        deskBtnText.textContent = 'Попробовать снова';
+      } else if (scen === 'loading') {
+        mobErr.style.display = 'none';
+        deskErr.style.display = 'none';
+        mobBtnText.textContent = 'Связываюсь с Google...';
+        deskBtnText.textContent = 'Связываюсь с Google...';
+      } else {
+        mobErr.style.display = 'none';
+        deskErr.style.display = 'none';
+        mobBtnText.textContent = 'Войти с Google';
+        deskBtnText.textContent = 'Войти с Google';
+      }
+    }
+
+    // 3. Клик по кнопке Google Sign-In
+    function handleGoogleSignIn() {
+      const mobBtnText = document.getElementById('mob-google-btn-text');
+      const deskBtnText = document.getElementById('desk-google-btn-text');
+      const mobSucc = document.getElementById('mob-success-banner');
+      const deskSucc = document.getElementById('desk-success-banner');
+      const mobErr = document.getElementById('mob-error-banner');
+      const deskErr = document.getElementById('desk-error-banner');
+
+      mobErr.style.display = 'none';
+      deskErr.style.display = 'none';
+      mobBtnText.textContent = 'Проверяю аккаунт...';
+      deskBtnText.textContent = 'Проверяю аккаунт...';
+
+      setTimeout(() => {
+        mobBtnText.textContent = 'Войти с Google';
+        deskBtnText.textContent = 'Войти с Google';
+        mobSucc.style.display = 'flex';
+        deskSucc.style.display = 'flex';
+      }, 700);
+    }
+
+    // 4. Автоматическая проверка геометрии (Layout Sanity Check)
+    function runGeometryCheck(alertUser) {
+      const phoneScreen = document.getElementById('iphone-screen-viewport');
+      const phoneCard = document.getElementById('mob-gate-card-box');
+      const errors = [];
+
+      if (phoneScreen) {
+        if (phoneScreen.scrollWidth > phoneScreen.clientWidth) {
+          errors.push('Телефонный экран вылезает: scrollWidth (' + phoneScreen.scrollWidth + ') > clientWidth (' + phoneScreen.clientWidth + ')');
+        }
+      }
+      if (phoneCard) {
+        if (phoneCard.scrollWidth > phoneCard.clientWidth) {
+          errors.push('Карточка авторизации вылезает: scrollWidth (' + phoneCard.scrollWidth + ') > clientWidth (' + phoneCard.clientWidth + ')');
+        }
+      }
+
+      const badge = document.getElementById('sanity-badge');
+      const text = document.getElementById('sanity-text');
+
+      if (errors.length === 0) {
+        badge.style.background = '#C8E2D2';
+        badge.style.color = '#1E3F30';
+        text.textContent = 'Геометрия 390px: ИДЕАЛЬНО (0 ошибок)';
+        if (alertUser) alert('✓ Проверка геометрии пройдена! scrollWidth <= clientWidth, 0 вылезаний.');
+      } else {
+        badge.style.background = '#FCD6CF';
+        badge.style.color = '#58241B';
+        text.textContent = 'Ошибка геометрии: ' + errors.join('; ');
+        if (alertUser) alert('Ошибка геометрии:\n' + errors.join('\n'));
+      }
+    }
+
+    window.addEventListener('load', () => {
+      runGeometryCheck(false);
+    });
+  </script>
+
+</body>
+</html>

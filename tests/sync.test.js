@@ -42,8 +42,9 @@ const originalFetch = global.fetch;
 let mockFetchHandler = null;
 
 global.fetch = function (url, options) {
-  if (mockFetchHandler) {
-    return mockFetchHandler(url, options);
+  const handler = mockFetchHandler || global.mockFetchHandler;
+  if (handler) {
+    return handler(url, options);
   }
   return originalFetch.apply(this, arguments);
 };
@@ -184,6 +185,42 @@ async function runAllTests() {
     assert.strictEqual(MyTablesSync.getCurrentUser(), null);
   });
 
+  await runTest('Все методы синхронизации отклоняют запросы без авторизации', async () => {
+    assert.strictEqual(MyTablesSync.isAuthenticated(), false);
+    let rejectedCount = 0;
+    try { await MyTablesSync.getAllData(); } catch (e) { if (e.message.includes('авторизация')) rejectedCount++; }
+    try { await MyTablesSync.saveIncome({}); } catch (e) { if (e.message.includes('авторизация')) rejectedCount++; }
+    try { await MyTablesSync.saveExpense({}); } catch (e) { if (e.message.includes('авторизация')) rejectedCount++; }
+    try { await MyTablesSync.saveClient({}); } catch (e) { if (e.message.includes('авторизация')) rejectedCount++; }
+    try { await MyTablesSync.deleteRecord('Расходы', '1'); } catch (e) { if (e.message.includes('авторизация')) rejectedCount++; }
+    assert.strictEqual(rejectedCount, 5, 'Все 5 методов отклонили вызов без авторизации');
+  });
+
+  await runTest('Попытка входа с чужим Google-аккаунтом строго отклоняется', () => {
+    const fakeToken = [
+      Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64url'),
+      Buffer.from(JSON.stringify({ email: 'intruder@gmail.com', email_verified: true, name: 'Hacker' })).toString('base64url'),
+      'sig'
+    ].join('.');
+    const res = MyTablesSync.handleGoogleCredentialResponse({ credential: fakeToken });
+    assert.strictEqual(res.success, false);
+    assert.ok(res.error && res.error.includes('личное приложение Ани'));
+    assert.strictEqual(MyTablesSync.isAuthenticated(), false);
+  });
+
+  await runTest('Вход с аккаунтом Ани lifekvi2018@gmail.com через Google успешен', () => {
+    const validToken = [
+      Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64url'),
+      Buffer.from(JSON.stringify({ email: 'lifekvi2018@gmail.com', email_verified: true, name: 'Аня' })).toString('base64url'),
+      'sig'
+    ].join('.');
+    const res = MyTablesSync.handleGoogleCredentialResponse({ credential: validToken });
+    assert.strictEqual(res.success, true);
+    assert.strictEqual(res.user.authorized, true);
+    assert.strictEqual(res.user.email, 'lifekvi2018@gmail.com');
+    assert.strictEqual(MyTablesSync.isAuthenticated(), true);
+  });
+
   // Группа 3: Честность при отсутствии сети (Offline honesty)
   console.log('\n[Группа 3: Честность статусов и контроль сети]');
   await runTest('При отсутствии интернета getAllData честно сообщает об ошибке', async () => {
@@ -220,6 +257,17 @@ async function runAllTests() {
     // В изолированном режиме настраиваем mock-ответы
     let lastSavedPayload = null;
 
+    await runTest('Сетевые вызовы к live Google Таблице без mockFetchHandler заблокированы в Node.js', async () => {
+      const oldMock = mockFetchHandler;
+      mockFetchHandler = null;
+      global.mockFetchHandler = null;
+      const res = await MyTablesSync.getAllData();
+      assert.strictEqual(res.success, false);
+      assert.ok(res.error && (res.error.includes('заблокированы') || res.error.includes('предохранитель')));
+      mockFetchHandler = oldMock;
+      global.mockFetchHandler = oldMock;
+    });
+
     mockFetchHandler = async (url, options) => {
       if (options && options.method === 'POST') {
         const body = JSON.parse(options.body);
@@ -245,6 +293,7 @@ async function runAllTests() {
         })
       };
     };
+    global.mockFetchHandler = mockFetchHandler;
 
     await runTest('getAllData() успешно возвращает структуру из 4 листов', async () => {
       const res = await MyTablesSync.getAllData();
@@ -276,6 +325,7 @@ async function runAllTests() {
       mockFetchHandler = async () => {
         throw new Error('Network request failed');
       };
+      global.mockFetchHandler = mockFetchHandler;
 
       const res = await MyTablesSync.deleteRecord('Доходы', 'inc_fail_test', 'Запись');
       assert.strictEqual(res.success, false, 'При ошибке сети success не должен быть true');
@@ -284,6 +334,7 @@ async function runAllTests() {
 
     // Сбрасываем мок
     mockFetchHandler = null;
+    global.mockFetchHandler = null;
   } else {
     // В живом режиме выполняем сетевые запросы
     await runTest('getAllData() успешно загружает данные из живой Google Таблицы', async () => {
