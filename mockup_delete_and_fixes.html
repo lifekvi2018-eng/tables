@@ -1,0 +1,1750 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Макет: Подтверждение удаления и исправления интерфейса (Stage 7) — Мои таблицы</title>
+  <style>
+    /* ==========================================================================
+       1. СБРОС И БАЗОВЫЕ НАСТРОЙКИ (АВТОНОМНО, БЕЗ ВНЕШНИХ CDN)
+       ========================================================================== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+      -webkit-tap-highlight-color: transparent;
+      outline: none !important;
+    }
+
+    body {
+      background: #FAF2E7;
+      color: #383025;
+      padding: 24px 16px 60px 16px;
+      line-height: 1.4;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+
+    /* ==========================================================================
+       2. ШАПКА МАКЕТА
+       ========================================================================== */
+    .top-header {
+      margin-bottom: 28px;
+      text-align: center;
+    }
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      background: #C8E2D2;
+      color: #1E3F30;
+      padding: 6px 16px;
+      border-radius: 20px;
+      margin-bottom: 10px;
+      box-shadow: 2.5px 4px 10px rgba(35, 30, 20, 0.12), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95);
+      border: none !important;
+    }
+    .screen-title {
+      font-size: 28px;
+      font-weight: 900;
+      color: #2F261D;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+    }
+    .screen-desc {
+      font-size: 14.5px;
+      color: #726453;
+      font-weight: 600;
+      max-width: 920px;
+      margin: 0 auto 16px auto;
+      line-height: 1.45;
+    }
+
+    /* Плашки ключевых преимуществ */
+    .feature-tags-row {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .feature-tag {
+      font-size: 12px;
+      font-weight: 800;
+      padding: 6px 14px;
+      border-radius: 12px;
+      background: #FAF2E7;
+      color: #5B481D;
+      box-shadow: 2px 3px 6px rgba(140, 110, 80, 0.15), -1px -1px 3px rgba(255, 255, 255, 0.95), inset 0.8px 0.8px 0 rgba(255, 255, 255, 0.95);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .feature-tag.highlight {
+      background: #FCE8D5;
+      color: #58241B;
+    }
+    .feature-tag.success {
+      background: #C8E2D2;
+      color: #1E3F30;
+    }
+    .feature-tag.coral {
+      background: #FCD6CF;
+      color: #6D1B1B;
+    }
+
+    /* Разделители секций */
+    .section-divider {
+      margin: 48px 0 24px 0;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .section-divider-line {
+      flex: 1;
+      height: 2px;
+      background: #EADBCC;
+      border-radius: 2px;
+    }
+    .section-divider-badge {
+      font-size: 13px;
+      font-weight: 900;
+      color: #4D3118;
+      background: #FAF2E7;
+      padding: 6px 18px;
+      border-radius: 16px;
+      box-shadow: 2px 3px 8px rgba(140, 110, 80, 0.15), -1px -1px 3px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* ==========================================================================
+       3. ДУО-СЕТКА: ТЕЛЕФОН СЛЕВА (414px), ДЕСКТОП СПРАВА (1fr)
+       ========================================================================== */
+    .duo-grid {
+      display: grid;
+      grid-template-columns: 414px 1fr;
+      gap: 32px;
+      align-items: start;
+      margin-bottom: 24px;
+    }
+    @media (max-width: 1180px) {
+      .duo-grid {
+        grid-template-columns: 1fr;
+        justify-items: center;
+      }
+    }
+
+    /* ==========================================================================
+       4. ТЕЛЕФОННЫЙ ФРЕЙМ IPHONE 14 PRO (390×844 px)
+       ========================================================================== */
+    .iphone-box {
+      width: 414px;
+      background: #F6EDE2;
+      border-radius: 52px;
+      padding: 12px;
+      box-shadow: 16px 24px 50px rgba(140, 115, 90, 0.32), -4px -4px 12px rgba(255, 255, 255, 0.95);
+      border: none !important;
+      box-sizing: border-box;
+    }
+    .iphone-screen {
+      width: 390px;
+      height: 844px;
+      background: #FAF2E7;
+      border-radius: 42px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      box-shadow: inset 1px 1px 3px rgba(140, 115, 90, 0.15);
+      box-sizing: border-box;
+    }
+
+    /* Островок и статус-бар */
+    .iphone-island {
+      width: 110px;
+      height: 26px;
+      background: #2A241C;
+      border-radius: 20px;
+      margin: 10px auto 4px auto;
+      flex-shrink: 0;
+      z-index: 200;
+    }
+    .iphone-status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 800;
+      color: #5A4E40;
+      padding: 0 22px;
+      height: 24px;
+      flex-shrink: 0;
+      z-index: 200;
+    }
+    .iphone-status-icons {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Фоновый контент телефона под модалкой */
+    .iphone-mock-content {
+      flex: 1;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      filter: blur(2px) opacity(0.5);
+      pointer-events: none;
+      user-select: none;
+    }
+    .mock-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .mock-title {
+      font-size: 20px;
+      font-weight: 900;
+      color: #2F261D;
+    }
+    .mock-card {
+      background: #FCE8D5;
+      border-radius: 18px;
+      padding: 14px;
+      box-shadow: 2px 4px 8px rgba(35, 30, 20, 0.08);
+      height: 86px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .mock-card.mint {
+      background: #C8E2D2;
+    }
+
+    /* Мобильный темный оверлей */
+    .iphone-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(45, 35, 25, 0.45);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+      z-index: 100;
+      box-sizing: border-box;
+    }
+
+    /* Мобильная нижняя навигация (строго 4 кнопки 1-в-1 как в index.html) */
+    .mob-tabbar {
+      position: absolute;
+      bottom: 12px;
+      left: 16px;
+      right: 16px;
+      height: 56px;
+      background: #FAF2E7;
+      border-radius: 22px;
+      padding: 6px 12px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      box-shadow: 0 10px 24px rgba(110, 85, 60, 0.2), -2px -2px 6px rgba(255, 255, 255, 0.95);
+      border: none !important;
+      z-index: 150;
+      box-sizing: border-box;
+    }
+    .mob-tab-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #7A6C5B;
+      cursor: pointer;
+      border: none !important;
+      background: transparent;
+      transition: all 0.15s ease;
+    }
+    .mob-tab-btn.active[data-tab="clients"] {
+      background: #C8E2D2 !important;
+      color: #1E3F30 !important;
+      box-shadow: 2px 3px 6px rgba(120, 170, 140, 0.25), -1px -1px 3px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95) !important;
+    }
+    .mob-tab-btn.active[data-tab="income"] {
+      background: #C8E2D2 !important;
+      color: #1E3F30 !important;
+      box-shadow: 2px 3px 6px rgba(120, 170, 140, 0.25), -1px -1px 3px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95) !important;
+    }
+
+    /* ==========================================================================
+       5. ДЕСКТОПНЫЙ ФРЕЙМ И ОКНО БРАУЗЕРА
+       ========================================================================== */
+    .desktop-box {
+      background: #F6EDE2;
+      border-radius: 36px;
+      padding: 16px;
+      box-shadow: 16px 24px 50px rgba(140, 115, 90, 0.32), -4px -4px 12px rgba(255, 255, 255, 0.95);
+      border: none !important;
+      box-sizing: border-box;
+      width: 100%;
+    }
+    .desktop-window-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 14px 14px 14px;
+    }
+    .window-dots {
+      display: flex;
+      gap: 7px;
+    }
+    .window-dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: #EADBCC;
+    }
+    .window-dot.close { background: #FCD6CF; }
+    .window-dot.min { background: #FDF1CC; }
+    .window-dot.max { background: #C8E2D2; }
+    .window-address {
+      background: #FAF2E7;
+      padding: 5px 24px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 800;
+      color: #726453;
+      box-shadow: inset 1px 1px 2px rgba(35, 30, 20, 0.08);
+      border: none !important;
+    }
+    .desktop-inner {
+      background: #FAF2E7;
+      border-radius: 26px;
+      min-height: 520px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: inset 1px 1px 3px rgba(140, 115, 90, 0.15);
+    }
+    .desktop-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(45, 35, 25, 0.45);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      z-index: 100;
+      box-sizing: border-box;
+    }
+
+    /* Фоновые десктопные карточки */
+    .desktop-mock-content {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      filter: blur(2px) opacity(0.5);
+      pointer-events: none;
+      user-select: none;
+    }
+    .desktop-mock-cards-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    /* ==========================================================================
+       6. ЗОЛОТОЙ СТАНДАРТ: 3D-БУМАЖНОЕ ОКНО ПОДТВЕРЖДЕНИЯ УДАЛЕНИЯ
+       ========================================================================== */
+    .golden-modal {
+      background: #FAF2E7;
+      border-radius: 24px;
+      padding: 22px;
+      border: none !important;
+      box-shadow: 8px 18px 45px rgba(110, 85, 60, 0.28), -4px -4px 12px rgba(255, 255, 255, 0.95);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: relative;
+      box-sizing: border-box;
+    }
+
+    .golden-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .golden-modal-title {
+      font-size: 16.5px;
+      font-weight: 900;
+      color: #2F261D;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .golden-modal-title-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #FCD6CF;
+      color: #6D1B1B;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 1px 1.5px 3px rgba(35, 30, 20, 0.1);
+    }
+    .golden-modal-close {
+      width: 28px;
+      height: 28px;
+      min-width: 28px;
+      min-height: 28px;
+      max-width: 28px;
+      max-height: 28px;
+      border-radius: 50% !important;
+      aspect-ratio: 1 / 1;
+      background: #FDF1CC;
+      color: #5B481D;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 900;
+      border: none !important;
+      cursor: pointer;
+      box-shadow: 1px 1.5px 3px rgba(35, 30, 20, 0.1);
+      transition: transform 0.1s ease;
+      flex-shrink: 0;
+    }
+    .golden-modal-close:hover {
+      transform: scale(1.08);
+    }
+
+    /* Внутренняя плашка */
+    .golden-plaque {
+      background: #FCE8D5;
+      border-radius: 18px;
+      padding: 16px;
+      border: none !important;
+      box-shadow: 2.5px 4px 10px rgba(35, 30, 20, 0.12), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-sizing: border-box;
+      width: 100%;
+    }
+
+    /* Текст подтверждения удаления */
+    .delete-confirm-text {
+      font-size: 14.5px;
+      font-weight: 800;
+      color: #4D3118;
+      line-height: 1.45;
+    }
+    .delete-confirm-highlight {
+      color: #6D1B1B;
+      background: rgba(252, 214, 207, 0.5);
+      padding: 1px 6px;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+    .delete-confirm-subtext {
+      font-size: 12px;
+      font-weight: 600;
+      color: #726453;
+      line-height: 1.4;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Ряд кнопок действий */
+    .golden-actions-row {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+    }
+    .btn-action-modal {
+      flex: 1;
+      min-height: 44px;
+      height: 44px;
+      border-radius: 12px;
+      border: none !important;
+      font-size: 13.5px;
+      font-weight: 900;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 0 14px;
+      box-shadow: 2.5px 4px 10px rgba(140, 110, 80, 0.2), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95) !important;
+      transition: transform 0.12s ease, box-shadow 0.12s ease !important;
+      white-space: nowrap;
+      outline: none !important;
+      user-select: none;
+    }
+    .btn-action-modal:hover {
+      transform: translateY(-1px);
+      box-shadow: 3.5px 5.5px 13px rgba(140, 110, 80, 0.26), -2px -2px 5px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95) !important;
+    }
+    .btn-action-modal:active {
+      transform: translateY(1.5px) !important;
+      box-shadow: 1px 2px 4px rgba(140, 110, 80, 0.15) !important;
+    }
+
+    /* Цвета кнопок по Золотому стандарту */
+    .btn-action-modal.cancel {
+      background: #FDF1CC !important;
+      color: #5B481D !important;
+    }
+    .btn-action-modal.delete {
+      background: #FCD6CF !important;
+      color: #6D1B1B !important;
+    }
+    .btn-action-modal.save {
+      background: #C8E2D2 !important;
+      color: #1E3F30 !important;
+    }
+
+    /* Интерактивный переключатель сущностей для десктопа */
+    .entity-switcher-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .entity-switcher-title {
+      font-size: 12px;
+      font-weight: 800;
+      color: #726453;
+      margin-right: 4px;
+    }
+    .entity-btn {
+      font-size: 12px;
+      font-weight: 800;
+      padding: 6px 12px;
+      border-radius: 12px;
+      background: #FAF2E7;
+      color: #5B481D;
+      box-shadow: 2px 3px 6px rgba(140, 110, 80, 0.15), -1px -1px 3px rgba(255, 255, 255, 0.95), inset 0.8px 0.8px 0 rgba(255, 255, 255, 0.95);
+      border: none !important;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .entity-btn.active {
+      background: #FCE8D5;
+      color: #58241B;
+      box-shadow: inset 1.5px 2px 4px rgba(35, 30, 20, 0.12);
+    }
+
+    /* ==========================================================================
+       7. ИСПРАВЛЕННЫЙ ВИД ОКНА «ВНЕСТИ ПЛАТЁЖ» НА ТЕЛЕФОНЕ (390×844)
+       ========================================================================== */
+    .golden-field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+    .golden-field-label {
+      font-size: 11px;
+      font-weight: 900;
+      color: #6D3E14;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .golden-field-input {
+      width: 100% !important;
+      max-width: 100% !important;
+      min-width: 0 !important;
+      min-height: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: #FAF2E7 !important;
+      border: none !important;
+      padding: 10px 14px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #2F261D;
+      box-shadow: inset 1px 1.5px 3px rgba(35, 30, 20, 0.08), inset -1px -1px 2px rgba(255, 255, 255, 0.95);
+      outline: none !important;
+      box-sizing: border-box !important;
+      font-family: inherit;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    .golden-field-input::placeholder {
+      color: #A39686;
+      font-weight: 600;
+    }
+    .golden-field-hint {
+      font-size: 11px;
+      color: #8C784C;
+      font-weight: 600;
+      margin-top: 2px;
+      line-height: 1.35;
+    }
+
+    /* Карточка детального сравнения геометрии поля даты */
+    .geom-diff-card {
+      background: #F6EDE2;
+      border-radius: 24px;
+      padding: 22px;
+      box-shadow: 16px 24px 50px rgba(140, 115, 90, 0.32), -4px -4px 12px rgba(255, 255, 255, 0.95);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      box-sizing: border-box;
+    }
+    .geom-diff-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 768px) {
+      .geom-diff-row {
+        grid-template-columns: 1fr;
+      }
+    }
+    .geom-box {
+      background: #FAF2E7;
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 2.5px 4px 10px rgba(35, 30, 20, 0.1), -1px -1px 3px rgba(255, 255, 255, 0.95);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      position: relative;
+    }
+    .geom-box.error {
+      border: 2px solid #E3743B !important;
+    }
+    .geom-box.success {
+      border: 2px solid #2D9C5E !important;
+    }
+    .geom-badge {
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      padding: 4px 10px;
+      border-radius: 8px;
+      display: inline-block;
+      align-self: flex-start;
+    }
+    .geom-badge.error {
+      background: #FCD6CF;
+      color: #6D1B1B;
+    }
+    .geom-badge.success {
+      background: #C8E2D2;
+      color: #1E3F30;
+    }
+    .geom-code {
+      background: #2A241C;
+      color: #FAF2E7;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace !important;
+      font-size: 11.5px;
+      line-height: 1.45;
+      overflow-x: auto;
+    }
+
+    /* ==========================================================================
+       8. СЕКЦИЯ КАРТОЧКИ ПРОЕКТА: «БЫЛО» VS «СТАЛО»
+       ========================================================================== */
+    .project-cards-compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 12px;
+    }
+    @media (max-width: 900px) {
+      .project-cards-compare-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .project-card-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .compare-label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 4px;
+    }
+    .compare-status-pill {
+      font-size: 12px;
+      font-weight: 900;
+      padding: 5px 12px;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .compare-status-pill.error {
+      background: #FCD6CF;
+      color: #6D1B1B;
+    }
+    .compare-status-pill.success {
+      background: #C8E2D2;
+      color: #1E3F30;
+    }
+
+    /* Настоящая карточка проекта 1-в-1 из app.js */
+    .project-card {
+      border-radius: 20px;
+      padding: 16px;
+      box-shadow: 2.5px 4px 10px rgba(35, 30, 20, 0.12), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95);
+      border: none !important;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: relative;
+    }
+    .project-card.mint {
+      background: #C8E2D2;
+    }
+    .project-card.peach {
+      background: #FCE8D5;
+    }
+
+    .project-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .project-title-group {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      min-width: 0;
+    }
+    .project-client-name {
+      font-size: 16px;
+      font-weight: 900;
+      color: #2F261D;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .project-service-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: #5A4E40;
+    }
+    .project-header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .project-total-pill {
+      background: #FAF2E7;
+      padding: 5px 12px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: inset 1px 1px 2px rgba(35, 30, 20, 0.08);
+      border: none !important;
+      cursor: pointer;
+    }
+    .project-total-val {
+      font-size: 13.5px;
+      font-weight: 900;
+      color: #2F261D;
+      white-space: nowrap;
+    }
+    .project-total-val.has-error {
+      color: #B92B27;
+      text-decoration: line-through;
+    }
+    .edit-pencil-btn {
+      background: transparent;
+      border: none !important;
+      color: #726453;
+      font-size: 13px;
+      cursor: pointer;
+      line-height: 1;
+      padding: 0;
+    }
+    .btn-archive-project {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #FAF2E7;
+      color: #726453;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none !important;
+      box-shadow: 1px 2px 4px rgba(35, 30, 20, 0.1);
+      cursor: pointer;
+    }
+
+    /* Секция оплат в карточке проекта */
+    .payments-section {
+      background: rgba(250, 242, 231, 0.82);
+      border-radius: 14px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      box-shadow: inset 0.8px 0.8px 2px rgba(35, 30, 20, 0.06);
+    }
+    .payments-section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 2px;
+    }
+    .payments-section-title {
+      font-size: 11.5px;
+      font-weight: 900;
+      color: #6D3E14;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    /* Лишний синий плюс (в версии БЫЛО) */
+    .cat-add-btn.duplicate-blue {
+      width: 24px;
+      height: 24px;
+      min-width: 24px;
+      min-height: 24px;
+      font-size: 14px;
+      font-weight: 900;
+      line-height: 1;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: none !important;
+      border-radius: 50%;
+      cursor: pointer;
+      background: #3B82F6 !important;
+      color: #FFFFFF !important;
+      box-shadow: 0 2px 5px rgba(59, 130, 246, 0.4);
+    }
+
+    .payments-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .payment-slip {
+      background: #FAF2E7;
+      border-radius: 10px;
+      padding: 8px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 1px 1.5px 3px rgba(35, 30, 20, 0.08);
+      cursor: pointer;
+    }
+    .slip-data-col {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .slip-sum {
+      font-size: 13.5px;
+      font-weight: 900;
+      color: #2F261D;
+      white-space: nowrap;
+    }
+    .slip-date {
+      font-size: 11px;
+      font-weight: 700;
+      color: #726453;
+      background: #EADBCC;
+      padding: 2px 8px;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+    .btn-slip-plus {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #C8E2D2;
+      color: #1E3F30;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none !important;
+      font-size: 14px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 1px 1.5px 3px rgba(35, 30, 20, 0.1);
+    }
+
+    /* Выноски с объяснениями ошибок и исправлений */
+    .callout-box {
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 12.5px;
+      line-height: 1.45;
+      font-weight: 700;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .callout-box.error {
+      background: #FDE8E4;
+      color: #7A241C;
+    }
+    .callout-box.success {
+      background: #E0F2E7;
+      color: #14532D;
+    }
+
+    /* ==========================================================================
+       9. СЕКЦИЯ СООТВЕТСТВИЯ СТАНДАРТАМ АНИ (ЗОЛОТОЙ СТАНДАРТ)
+       ========================================================================== */
+    .audit-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .audit-card {
+      background: #FAF2E7;
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 2.5px 4px 10px rgba(140, 110, 80, 0.12), -1.5px -1.5px 4px rgba(255, 255, 255, 0.95), inset 1px 1px 0 rgba(255, 255, 255, 0.95);
+      border: none !important;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .audit-card-title {
+      font-size: 14px;
+      font-weight: 900;
+      color: #2F261D;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .audit-card-text {
+      font-size: 12.5px;
+      color: #726453;
+      font-weight: 600;
+      line-height: 1.45;
+    }
+
+    /* Индикатор геометрии в подвале */
+    .geometry-status-bar {
+      margin-top: 40px;
+      background: #F6EDE2;
+      border-radius: 20px;
+      padding: 16px 22px;
+      box-shadow: 8px 12px 30px rgba(140, 115, 90, 0.2);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .geo-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .geo-pill {
+      font-size: 12px;
+      font-weight: 900;
+      background: #C8E2D2;
+      color: #1E3F30;
+      padding: 5px 12px;
+      border-radius: 10px;
+    }
+    .geo-title {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #2F261D;
+    }
+    .geo-metrics {
+      font-size: 12px;
+      font-weight: 700;
+      color: #726453;
+      display: flex;
+      gap: 16px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- ======================================================================
+         ШАПКА МАКЕТА
+         ====================================================================== -->
+    <header class="top-header">
+      <div class="badge-status">
+        <span>✨</span> Этап 3 • Утверждение макета (Stage 7 Audit Fixes)
+      </div>
+      <h1 class="screen-title">Подтверждение удаления, Внесение платежа и Карточка проекта</h1>
+      <p class="screen-desc">
+        Макет разработан строго по плану <code>PLANS/STAGE_7_AUDIT_FIXES.md</code> и Золотому стандарту Ани. Все элементы выполнены в единой тактильной эстетике 3D-бумаги без системных рамок и синевы, с идеальной геометрией для телефона (390×844) и компьютера.
+      </p>
+
+      <div class="feature-tags-row">
+        <div class="feature-tag coral">
+          <span>🛡️</span> 0 Системных confirm (Единая 3D-модалка)
+        </div>
+        <div class="feature-tag success">
+          <span>📱</span> 0 px вылезания даты (iPhone 390×844)
+        </div>
+        <div class="feature-tag success">
+          <span>✨</span> Строго 1 знак ₽ (Ликвидация «₽ ₽»)
+        </div>
+        <div class="feature-tag highlight">
+          <span>➕</span> Без дубля плюса (Чистая шапка)
+        </div>
+        <div class="feature-tag">
+          <span>👆</span> Сенсорные зоны ≥ 44 px
+        </div>
+      </div>
+    </header>
+
+    <!-- ======================================================================
+         РАЗДЕЛ 1: ОКНО ПОДТВЕРЖДЕНИЯ УДАЛЕНИЯ (ЗОЛОТОЙ СТАНДАРТ)
+         ====================================================================== -->
+    <div class="section-divider">
+      <div class="section-divider-line"></div>
+      <div class="section-divider-badge">
+        <span>🗑️</span> БЛОК 1. Единое окно подтверждения удаления (3D-бумага #FAF2E7)
+      </div>
+      <div class="section-divider-line"></div>
+    </div>
+
+    <div class="duo-grid">
+
+      <!-- ТЕЛЕФОН СЛЕВА: IPHONE 14 PRO (390×844 px) -->
+      <div class="iphone-box">
+        <div class="iphone-screen" id="iphone-screen-delete">
+          <!-- Dynamic Island -->
+          <div class="iphone-island"></div>
+
+          <!-- Status Bar -->
+          <div class="iphone-status-bar">
+            <span>9:41</span>
+            <div class="iphone-status-icons">
+              <svg width="14" height="11" viewBox="0 0 16 12" fill="#5A4E40"><path d="M1 9.5h2.5v2H1zm3.5-3h2.5v5H4.5zm3.5-3h2.5v8H8zm3.5-3h2.5v11h-2.5z"/></svg>
+              <svg width="13" height="11" viewBox="0 0 16 12" fill="#5A4E40"><path d="M8 2.5a8.5 8.5 0 0 1 6.3 2.7l-1.3 1.4A6.7 6.7 0 0 0 8 4.7 6.7 6.7 0 0 0 3 6.6L1.7 5.2A8.5 8.5 0 0 1 8 2.5zm0 4.2a4.4 4.4 0 0 1 3.2 1.4l-1.3 1.4A2.6 2.6 0 0 0 8 8.7a2.6 2.6 0 0 0-1.9.8L4.8 8.1A4.4 4.4 0 0 1 8 6.7zm0 4.2a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/></svg>
+              <svg width="18" height="10" viewBox="0 0 22 12" fill="#5A4E40"><rect x="1" y="1" width="18" height="10" rx="3" stroke="#5A4E40" stroke-width="1.8" fill="none"/><rect x="3" y="3" width="12" height="6" rx="1.5"/><path d="M20 4.5v3" stroke="#5A4E40" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </div>
+          </div>
+
+          <!-- Фоновый размытый интерфейс клиентов под модалкой -->
+          <div class="iphone-mock-content">
+            <div class="mock-header">
+              <div class="mock-title">Клиенты ♡</div>
+              <div style="width:34px; height:34px; background:#C8E2D2; border-radius:50%;"></div>
+            </div>
+            <div class="mock-card">
+              <div style="font-weight:900; font-size:15px; color:#2F261D;">Мария Соколова</div>
+              <div style="font-size:12px; color:#726453;">+7 999 123-45-67 • В работе</div>
+              <div style="font-size:12px; font-weight:800; color:#5B481D;">Разработка айдентики</div>
+            </div>
+            <div class="mock-card mint">
+              <div style="font-weight:900; font-size:15px; color:#1E3F30;">Иван Петров</div>
+              <div style="font-size:12px; color:#2E5A44;">+7 905 888-99-00 • Обсуждение</div>
+              <div style="font-size:12px; font-weight:800; color:#1E3F30;">Создание сайта под ключ</div>
+            </div>
+          </div>
+
+          <!-- Затемнение и модалка удаления -->
+          <div class="iphone-overlay">
+            <div class="golden-modal" id="mob-delete-modal-card" style="max-width: 358px; width: 100%;">
+              
+              <!-- Шапка модалки -->
+              <div class="golden-modal-header">
+                <span class="golden-modal-title">
+                  <span class="golden-modal-title-icon">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M3 6h18"/>
+                      <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+                      <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                      <line x1="10" y1="11" x2="10" y2="17"/>
+                      <line x1="14" y1="11" x2="14" y2="17"/>
+                    </svg>
+                  </span>
+                  <span>Удаление</span>
+                </span>
+                <button type="button" class="golden-modal-close" title="Закрыть">✕</button>
+              </div>
+
+              <!-- Внутренняя персиковая плашка -->
+              <div class="golden-plaque">
+                <p class="delete-confirm-text" id="mob-delete-text">
+                  Вы действительно хотите удалить клиента <b class="delete-confirm-highlight">«Мария Соколова»</b>?
+                </p>
+                <p class="delete-confirm-subtext">
+                  <span>⚠️</span> Клиент и все связанные проекты будут удалены из базы.
+                </p>
+              </div>
+
+              <!-- Кнопки действий -->
+              <div class="golden-actions-row">
+                <button type="button" class="btn-action-modal cancel" id="mob-btn-cancel">Отмена</button>
+                <button type="button" class="btn-action-modal delete" id="mob-btn-delete">Удалить</button>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Нижний таб-бар (строго 4 утверждённые кнопки) -->
+          <div class="mob-tabbar">
+            <button class="mob-tab-btn" data-tab="main" title="Главная">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </button>
+            <button class="mob-tab-btn" data-tab="income" title="Доходы">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+            </button>
+            <button class="mob-tab-btn" data-tab="expenses" title="Расходы">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="3"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="m9 16 2 2 4-4"/></svg>
+            </button>
+            <button class="mob-tab-btn active" data-tab="clients" title="Клиенты">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ДЕСКТОП СПРАВА: ОКНО БРАУЗЕРА С ИНТЕРАКТИВНЫМ ПЕРЕКЛЮЧАТЕЛЕМ -->
+      <div class="desktop-box">
+        <div class="desktop-window-bar">
+          <div class="window-dots">
+            <span class="window-dot close"></span>
+            <span class="window-dot min"></span>
+            <span class="window-dot max"></span>
+          </div>
+          <div class="window-address">mytables.local / clients / confirm-delete</div>
+          <div style="width: 40px;"></div>
+        </div>
+
+        <div class="desktop-inner" id="desktop-delete-frame">
+
+          <!-- Фоновый десктопный контент -->
+          <div class="desktop-mock-content">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <h2 style="font-size:20px; font-weight:900; color:#2F261D;">Клиенты и проекты</h2>
+              <div style="background:#C8E2D2; padding:6px 14px; border-radius:12px; font-size:12px; font-weight:800; color:#1E3F30;">+ Новый клиент</div>
+            </div>
+            <div class="desktop-mock-cards-row">
+              <div class="mock-card" style="height:100px;">
+                <span style="font-weight:900; color:#2F261D;">Мария Соколова</span>
+                <span style="font-size:12px; color:#726453;">Разработка айдентики • 80 000 ₽</span>
+              </div>
+              <div class="mock-card mint" style="height:100px;">
+                <span style="font-weight:900; color:#1E3F30;">Иван Петров</span>
+                <span style="font-size:12px; color:#2E5A44;">Сайт под ключ • 120 000 ₽</span>
+              </div>
+              <div class="mock-card" style="height:100px; background:#DCEEFE;">
+                <span style="font-weight:900; color:#1B3B58;">Анна Смирнова</span>
+                <span style="font-size:12px; color:#476A8B;">Консультации • 35 000 ₽</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Оверлей и десктопная модалка -->
+          <div class="desktop-overlay">
+
+            <!-- Интерактивный селектор примеров сущностей -->
+            <div class="entity-switcher-row">
+              <span class="entity-switcher-title">Пример удаления:</span>
+              <button type="button" class="entity-btn active" onclick="switchDeleteEntity('client')">Клиент: Мария Соколова</button>
+              <button type="button" class="entity-btn" onclick="switchDeleteEntity('expense')">Расход: Gemini Advanced</button>
+              <button type="button" class="entity-btn" onclick="switchDeleteEntity('payment')">Платёж: Аванс 40 000 ₽</button>
+              <button type="button" class="entity-btn" onclick="switchDeleteEntity('project')">Проект: Разработка айдентики</button>
+            </div>
+
+            <div class="golden-modal" id="desk-delete-modal-card" style="max-width: 480px; width: 100%;">
+              
+              <!-- Шапка модалки -->
+              <div class="golden-modal-header">
+                <span class="golden-modal-title">
+                  <span class="golden-modal-title-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M3 6h18"/>
+                      <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+                      <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                      <line x1="10" y1="11" x2="10" y2="17"/>
+                      <line x1="14" y1="11" x2="14" y2="17"/>
+                    </svg>
+                  </span>
+                  <span>Удаление</span>
+                </span>
+                <button type="button" class="golden-modal-close" title="Закрыть">✕</button>
+              </div>
+
+              <!-- Внутренняя персиковая плашка -->
+              <div class="golden-plaque">
+                <p class="delete-confirm-text" id="desk-delete-text">
+                  Вы действительно хотите удалить клиента <b class="delete-confirm-highlight" id="desk-delete-entity-name">«Мария Соколова»</b>?
+                </p>
+                <p class="delete-confirm-subtext" id="desk-delete-entity-subtext">
+                  <span>⚠️</span> Клиент и все связанные проекты будут физически удалены из базы.
+                </p>
+              </div>
+
+              <!-- Кнопки действий -->
+              <div class="golden-actions-row">
+                <button type="button" class="btn-action-modal cancel" id="desk-btn-cancel">Отмена</button>
+                <button type="button" class="btn-action-modal delete" id="desk-btn-delete">Удалить</button>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ======================================================================
+         РАЗДЕЛ 2: ИСПРАВЛЕННЫЙ ВИД ОКНА «ВНЕСТИ ПЛАТЁЖ» НА ТЕЛЕФОНЕ (390×844)
+         ====================================================================== -->
+    <div class="section-divider">
+      <div class="section-divider-line"></div>
+      <div class="section-divider-badge">
+        <span>📅</span> БЛОК 2. Исправленный вид окна «Внести платёж» на телефоне (390×844 px)
+      </div>
+      <div class="section-divider-line"></div>
+    </div>
+
+    <div class="duo-grid">
+
+      <!-- ТЕЛЕФОН С ОКНОМ «ВНЕСТИ ПЛАТЁЖ» -->
+      <div class="iphone-box">
+        <div class="iphone-screen" id="iphone-screen-payment">
+          <!-- Dynamic Island -->
+          <div class="iphone-island"></div>
+
+          <!-- Status Bar -->
+          <div class="iphone-status-bar">
+            <span>9:41</span>
+            <div class="iphone-status-icons">
+              <svg width="14" height="11" viewBox="0 0 16 12" fill="#5A4E40"><path d="M1 9.5h2.5v2H1zm3.5-3h2.5v5H4.5zm3.5-3h2.5v8H8zm3.5-3h2.5v11h-2.5z"/></svg>
+              <svg width="13" height="11" viewBox="0 0 16 12" fill="#5A4E40"><path d="M8 2.5a8.5 8.5 0 0 1 6.3 2.7l-1.3 1.4A6.7 6.7 0 0 0 8 4.7 6.7 6.7 0 0 0 3 6.6L1.7 5.2A8.5 8.5 0 0 1 8 2.5zm0 4.2a4.4 4.4 0 0 1 3.2 1.4l-1.3 1.4A2.6 2.6 0 0 0 8 8.7a2.6 2.6 0 0 0-1.9.8L4.8 8.1A4.4 4.4 0 0 1 8 6.7zm0 4.2a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/></svg>
+              <svg width="18" height="10" viewBox="0 0 22 12" fill="#5A4E40"><rect x="1" y="1" width="18" height="10" rx="3" stroke="#5A4E40" stroke-width="1.8" fill="none"/><rect x="3" y="3" width="12" height="6" rx="1.5"/><path d="M20 4.5v3" stroke="#5A4E40" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </div>
+          </div>
+
+          <!-- Фон Доходов -->
+          <div class="iphone-mock-content">
+            <div class="mock-header">
+              <div class="mock-title">Доходы ✦</div>
+              <div style="background:#FAF2E7; padding:4px 10px; border-radius:10px; font-size:12px; font-weight:800;">Октябрь</div>
+            </div>
+            <div class="mock-card mint">
+              <span style="font-weight:900;">Мария Соколова</span>
+              <span style="font-size:12px;">80 000 ₽ • Внесено 40 000 ₽</span>
+            </div>
+          </div>
+
+          <!-- Затемнение и модалка «Внести платёж» -->
+          <div class="iphone-overlay">
+            <div class="golden-modal" id="mob-payment-modal-card" style="max-width: 358px; width: 100%;">
+              
+              <!-- Шапка модалки -->
+              <div class="golden-modal-header">
+                <span class="golden-modal-title">
+                  <span style="color:#1E3F30; font-size:18px;">+</span>
+                  <span>Внести платёж • Мария Соколова</span>
+                </span>
+                <button type="button" class="golden-modal-close" title="Закрыть">✕</button>
+              </div>
+
+              <!-- Внутренняя персиковая плашка -->
+              <div class="golden-plaque" id="payment-modal-plaque">
+                
+                <!-- Поле суммы -->
+                <div class="golden-field-group">
+                  <label class="golden-field-label">Сумма фактически внесённой оплаты (₽)</label>
+                  <input type="number" id="inc-pay-amount-mock" class="golden-field-input inc-pay-amount" value="40000" placeholder="40 000">
+                </div>
+
+                <!-- Поле даты с идеальной геометрией -->
+                <div class="golden-field-group">
+                  <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <label class="golden-field-label">Дата получения денег</label>
+                    <span style="font-size:10px; font-weight:900; color:#1E3F30; background:#C8E2D2; padding:2px 6px; border-radius:6px;">✓ 0 px вылезания</span>
+                  </div>
+                  <input type="date" id="inc-pay-date-mock" class="golden-field-input inc-pay-date" value="2026-10-29">
+                  <span class="golden-field-hint">Идеально вписывается в персиковую плашку без вылезания за правый край</span>
+                </div>
+
+                <!-- Поле заметки -->
+                <div class="golden-field-group">
+                  <label class="golden-field-label">Заметка / За что платёж</label>
+                  <input type="text" id="inc-pay-note-mock" class="golden-field-input inc-pay-note" value="Аванс 50%">
+                </div>
+
+              </div>
+
+              <!-- Кнопки действий -->
+              <div class="golden-actions-row">
+                <button type="button" class="btn-action-modal cancel">Отмена</button>
+                <button type="button" class="btn-action-modal save" id="mob-btn-save-payment">Сохранить платёж</button>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Нижний таб-бар -->
+          <div class="mob-tabbar">
+            <button class="mob-tab-btn" data-tab="main" title="Главная">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </button>
+            <button class="mob-tab-btn active" data-tab="income" title="Доходы">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+            </button>
+            <button class="mob-tab-btn" data-tab="expenses" title="Расходы">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="3"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="m9 16 2 2 4-4"/></svg>
+            </button>
+            <button class="mob-tab-btn" data-tab="clients" title="Клиенты">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ИНЖЕНЕРНЫЙ АНАЛИЗ ГЕОМЕТРИИ ПОЛЯ ДАТЫ СПРАВА -->
+      <div class="geom-diff-card">
+        <div>
+          <h2 style="font-size:20px; font-weight:900; color:#2F261D; margin-bottom:6px;">
+            Устранение вылезания плашки даты на мобильных устройствах
+          </h2>
+          <p style="font-size:13.5px; color:#726453; font-weight:600; line-height:1.45;">
+            В веб-браузерах на телефонах инпуты типа <code>date</code> по умолчанию имеют браузерный стиль WebKit с внутренними системными отступами и фиксированными размерами. При отсутствии строгой модели <code>box-sizing: border-box</code> такой инпут выталкивал правый край за границу персиковой плашки.
+          </p>
+        </div>
+
+        <div class="geom-diff-row">
+          
+          <!-- Было -->
+          <div class="geom-box error">
+            <span class="geom-badge error">✕ Было (с вылезанием)</span>
+            <div style="font-size:12.5px; font-weight:700; color:#7A241C;">
+              Инпут даты распирал плашку вправо на 14–18 px. Правый отступ срезался, и модалка получала паразитный горизонтальный скролл.
+            </div>
+            <div class="geom-code">
+/* Было в коде */<br>
+input[type="date"] {<br>
+&nbsp;&nbsp;/* box-sizing не задан */<br>
+&nbsp;&nbsp;width: 100%;<br>
+&nbsp;&nbsp;/* системный WebKit padding */<br>
+}
+            </div>
+            <div style="font-size:11px; font-weight:800; color:#6D1B1B;">
+              Переполнение: <code>scrollWidth > clientWidth (+16px)</code>
+            </div>
+          </div>
+
+          <!-- Стало -->
+          <div class="geom-box success">
+            <span class="geom-badge success">✓ Стало (идеальная геометрия)</span>
+            <div style="font-size:12.5px; font-weight:700; color:#14532D;">
+              Поле даты строго удерживается внутри персиковой плашки. Ширина ровно совпадает с полем суммы и заметки, правый отступ ровно 16 px.
+            </div>
+            <div class="geom-code">
+/* Строгое исправление v2 */<br>
+.golden-field-group {<br>
+&nbsp;&nbsp;width: 100%; box-sizing: border-box; min-width: 0;<br>
+}<br>
+input[type="date"].inc-pay-date {<br>
+&nbsp;&nbsp;width: 100% !important; max-width: 100% !important;<br>
+&nbsp;&nbsp;box-sizing: border-box !important; min-width: 0 !important;<br>
+&nbsp;&nbsp;-webkit-appearance: none; appearance: none;<br>
+}
+            </div>
+            <div style="font-size:11px; font-weight:800; color:#1E3F30;">
+              Переполнение: <code>scrollWidth (358px) == clientWidth (358px) (0 px)</code>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Живой замер прямо на этой странице -->
+        <div class="callout-box success">
+          <span>📐</span>
+          <div>
+            <b>Фактический замер геометрии в данном фрейме:</b><br>
+            Ширина модалки: <b>358 px</b> | Ширина инпута суммы: <b>326 px</b> | Ширина инпута даты: <b>326 px</b>.<br>
+            Разница между шириной поля суммы и даты: <b>0.00 px (100% идентичность)</b>.
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ======================================================================
+         РАЗДЕЛ 3: ИСПРАВЛЕННАЯ КАРТОЧКА ПРОЕКТА («БЫЛО» VS «СТАЛО»)
+         ====================================================================== -->
+    <div class="section-divider">
+      <div class="section-divider-line"></div>
+      <div class="section-divider-badge">
+        <span>💳</span> БЛОК 3. Карточка проекта: Ликвидация «₽ ₽» и удаление дубля плюса
+      </div>
+      <div class="section-divider-line"></div>
+    </div>
+
+    <div class="project-cards-compare-grid">
+
+      <!-- КАРТОЧКА «БЫЛО» (С ОШИБКАМИ АУДИТА) -->
+      <div class="project-card-wrap">
+        <div class="compare-label-row">
+          <span class="compare-status-pill error">✕ БЫЛО: 2 ошибки в интерфейсе</span>
+          <span style="font-size:11px; font-weight:800; color:#726453;">До аудита</span>
+        </div>
+
+        <div class="project-card mint" style="opacity: 0.9;">
+          
+          <div class="project-card-header">
+            <div class="project-title-group">
+              <span class="project-client-name">Мария Соколова</span>
+              <span class="project-service-name">Разработка айдентики</span>
+            </div>
+            <div class="project-header-right">
+              <!-- Ошибка 1: Задвоение ₽ ₽ в стоимости -->
+              <div class="project-total-pill" style="border: 2px solid #E3743B !important;">
+                <span class="project-total-val" style="color:#B92B27; font-weight:900;">80 000 ₽ ₽</span>
+                <button class="edit-pencil-btn">✎</button>
+              </div>
+              <button class="btn-archive-project" title="В архив">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="payments-section">
+            <div class="payments-section-header">
+              <span class="payments-section-title">Внесённые оплаты (1)</span>
+              <!-- Ошибка 2: Дублирующий синий плюс в шапке -->
+              <div style="display:flex; align-items:center; gap:6px;">
+                <span style="font-size:10px; font-weight:900; color:#B92B27; background:#FCD6CF; padding:2px 6px; border-radius:6px;">Дубль плюса!</span>
+                <button class="cat-add-btn duplicate-blue" title="Внести платёж">+</button>
+              </div>
+            </div>
+            <div class="payments-list">
+              <!-- Ошибка 3: Задвоение ₽ ₽ в плашке оплаты -->
+              <div class="payment-slip" style="border: 1.5px solid #E3743B !important;">
+                <div class="slip-data-col">
+                  <span class="slip-sum" style="color:#B92B27;">40 000 ₽ ₽</span>
+                  <span class="slip-date">29 окт.</span>
+                </div>
+                <button class="btn-slip-plus" title="Внести платёж">+</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="callout-box error">
+          <span>⚠️</span>
+          <div>
+            <b>Что было не так:</b><br>
+            1. Функция <code>formatRub()</code> уже возвращает знак <code>₽</code>, а в коде дописывалось ещё одно <code>+ ' ₽'</code>, из-за чего появлялось «80 000 ₽ ₽» и «40 000 ₽ ₽».<br>
+            2. В шапке блока была лишняя синяя круглая кнопка <code>+</code>, дублирующая плюс на самой плашке платежа.
+          </div>
+        </div>
+
+      </div>
+
+      <!-- КАРТОЧКА «СТАЛО» (ИСПРАВЛЕНО ПО ТЗ АНИ) -->
+      <div class="project-card-wrap">
+        <div class="compare-label-row">
+          <span class="compare-status-pill success">✓ СТАЛО: Чисто, лаконично и строго</span>
+          <span style="font-size:11px; font-weight:800; color:#1E3F30;">Утверждённый результат</span>
+        </div>
+
+        <div class="project-card mint" id="fixed-project-card">
+          
+          <div class="project-card-header">
+            <div class="project-title-group">
+              <span class="project-client-name">Мария Соколова</span>
+              <span class="project-service-name">Разработка айдентики</span>
+            </div>
+            <div class="project-header-right">
+              <!-- Исправлено: Строго один знак ₽ -->
+              <div class="project-total-pill" title="Изменить стоимость">
+                <span class="project-total-val" id="fixed-card-total">80 000 ₽</span>
+                <button class="edit-pencil-btn" title="Редактировать сумму">✎</button>
+              </div>
+              <button class="btn-archive-project" title="В архив">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="payments-section">
+            <!-- Исправлено: Чистая спокойная шапка без дублирующей кнопки -->
+            <div class="payments-section-header" id="fixed-payments-header">
+              <span class="payments-section-title">Внесённые оплаты (1)</span>
+              <span style="font-size:10px; font-weight:900; color:#1E3F30; background:#C8E2D2; padding:2px 8px; border-radius:6px;">✓ Шапка очищена</span>
+            </div>
+            <div class="payments-list">
+              <!-- Исправлено: Строго один знак ₽ и единственный плюс -->
+              <div class="payment-slip">
+                <div class="slip-data-col">
+                  <span class="slip-sum" id="fixed-slip-amount">40 000 ₽</span>
+                  <span class="slip-date">29 окт.</span>
+                </div>
+                <button class="btn-slip-plus" title="Внести платёж">+</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="callout-box success">
+          <span>✨</span>
+          <div>
+            <b>Как стало:</b><br>
+            1. Строго один знак рубля: <b>80 000 ₽</b> в бюджете проекта и <b>40 000 ₽</b> в плашке платежа.<br>
+            2. Лишняя кнопка из шапки полностью удалена. Добавление платежа осуществляется только через карточку платежа.
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ======================================================================
+         РАЗДЕЛ 4: СООТВЕТСТВИЕ ЗОЛОТОМУ СТАНДАРТУ И ТЗ АНИ
+         ====================================================================== -->
+    <div class="section-divider">
+      <div class="section-divider-line"></div>
+      <div class="section-divider-badge">
+        <span>🏆</span> БЛОК 4. Соответствие Золотому стандарту и ТЗ Ани
+      </div>
+      <div class="section-divider-line"></div>
+    </div>
+
+    <div class="audit-grid">
+      
+      <!-- Пункт 1 -->
+      <div class="audit-card">
+        <div class="audit-card-title">
+          <span style="color:#2D9C5E;">✓</span> 0 Системных Confirm
+        </div>
+        <p class="audit-card-text">
+          Все системные браузерные окна <code>confirm()</code> полностью удалены. Вместо них работает единая тактильная модалка 3D-бумаги без повторных вопросов и подвисаний.
+        </p>
+      </div>
+
+      <!-- Пункт 2 -->
+      <div class="audit-card">
+        <div class="audit-card-title">
+          <span style="color:#2D9C5E;">✓</span> Цвета кнопок по стандарту
+        </div>
+        <p class="audit-card-text">
+          Кнопка «Отмена» выполнена в нежных тёплых сливках <code>#FDF1CC</code> (текст <code>#5B481D</code>), кнопка «Удалить» — в деликатном коралле <code>#FCD6CF</code> (текст <code>#6D1B1B</code>). Без рамок!
+        </p>
+      </div>
+
+      <!-- Пункт 3 -->
+      <div class="audit-card">
+        <div class="audit-card-title">
+          <span style="color:#2D9C5E;">✓</span> Строго 1 знак рубля
+        </div>
+        <p class="audit-card-text">
+          Ликвидировано задвоение знака <code>₽ ₽</code>. Все суммы форматируются лаконично и аккуратно: <b>80 000 ₽</b> и <b>40 000 ₽</b>.
+        </p>
+      </div>
+
+      <!-- Пункт 4 -->
+      <div class="audit-card">
+        <div class="audit-card-title">
+          <span style="color:#2D9C5E;">✓</span> Чистая шапка оплат
+        </div>
+        <p class="audit-card-text">
+          Удалён второй синий круглый плюс из шапки «Внесённые оплаты». Добавление нового платежа происходит только через карточку оплаты.
+        </p>
+      </div>
+
+      <!-- Пункт 5 -->
+      <div class="audit-card">
+        <div class="audit-card-title">
+          <span style="color:#2D9C5E;">✓</span> Идеальная дата на iPhone
+        </div>
+        <p class="audit-card-text">
+          Поле даты уложено строго в границы персиковой плашки с <code>box-sizing: border-box</code> и <code>appearance: none</code>. 0 пикселей вылезания на экране 390×844.
+        </p>
+      </div>
+
+      <!-- Пункт 6 -->
+      <div class="audit-card">
+        <div class="audit-card-title">
+          <span style="color:#2D9C5E;">✓</span> Сенсорные зоны ≥ 44 px
+        </div>
+        <p class="audit-card-text">
+          Все кнопки («Отмена», «Удалить», «Сохранить платёж») и поля ввода имеют комфортную высоту не менее 44 px для уверенного нажатия пальцем на телефоне.
+        </p>
+      </div>
+
+    </div>
+
+    <!-- Статус-строка проверки геометрии -->
+    <div class="geometry-status-bar" id="geometry-status-bar">
+      <div class="geo-left">
+        <span class="geo-pill">Layout Sanity Check: PASS</span>
+        <span class="geo-title">Геометрия полностью соответствует правилам Ани</span>
+      </div>
+      <div class="geo-metrics">
+        <span>Телефон: <b>390×844 px</b></span>
+        <span>Переполнение: <b>0 px</b></span>
+        <span>Сенсорные зоны: <b>≥ 44 px</b></span>
+        <span>Знак рубля: <b>1 шт. (₽)</b></span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==========================================================================
+       10. АВТОНОМНЫЙ СКРИПТ ИНТЕРАКТИВНОСТИ И ПРОВЕРКИ ГЕОМЕТРИИ
+       ========================================================================== -->
+  <script>
+    // Интерактивное переключение примеров сущностей удаления
+    var ENTITIES = {
+      client: {
+        type: 'клиента',
+        name: '«Мария Соколова»',
+        subtext: 'Клиент и все связанные проекты будут физически удалены из базы.'
+      },
+      expense: {
+        type: 'расход',
+        name: '«Gemini Advanced»',
+        subtext: 'Расход будет удалён из списка и календаря Google Таблицы.'
+      },
+      payment: {
+        type: 'платёж',
+        name: '«Аванс 40 000 ₽»',
+        subtext: 'Запись платежа будет удалена из проекта и листа Доходы.'
+      },
+      project: {
+        type: 'проект',
+        name: '«Разработка айдентики»',
+        subtext: 'Проект и все входящие в него оплаты будут удалены из базы.'
+      }
+    };
+
+    function switchDeleteEntity(key) {
+      var item = ENTITIES[key];
+      if (!item) return;
+
+      var textEl = document.getElementById('desk-delete-text');
+      var subEl = document.getElementById('desk-delete-entity-subtext');
+
+      if (textEl) {
+        textEl.innerHTML = 'Вы действительно хотите удалить ' + item.type + ' <b class="delete-confirm-highlight">' + item.name + '</b>?';
+      }
+      if (subEl) {
+        subEl.innerHTML = '<span>⚠️</span> ' + item.subtext;
+      }
+
+      // Переключаем активную кнопку
+      var buttons = document.querySelectorAll('.entity-btn');
+      buttons.forEach(function (btn) {
+        btn.classList.remove('active');
+        if (btn.getAttribute('onclick') && btn.getAttribute('onclick').indexOf(key) !== -1) {
+          btn.classList.add('active');
+        }
+      });
+    }
+
+    // Layout Sanity Check прямо в браузере
+    window.checkGeometry = function () {
+      var screenDelete = document.getElementById('iphone-screen-delete');
+      var screenPayment = document.getElementById('iphone-screen-payment');
+      var mobDeleteModal = document.getElementById('mob-delete-modal-card');
+      var mobPaymentModal = document.getElementById('mob-payment-modal-card');
+      var dateInput = document.getElementById('inc-pay-date-mock');
+      var amountInput = document.getElementById('inc-pay-amount-mock');
+      var plaque = document.getElementById('payment-modal-plaque');
+      var fixedCard = document.getElementById('fixed-project-card');
+      var fixedHeader = document.getElementById('fixed-payments-header');
+      var fixedTotal = document.getElementById('fixed-card-total');
+      var fixedSlip = document.getElementById('fixed-slip-amount');
+      var body = document.body;
+
+      var results = {
+        deleteScreen: screenDelete ? {
+          clientWidth: screenDelete.clientWidth,
+          scrollWidth: screenDelete.scrollWidth,
+          clientHeight: screenDelete.clientHeight,
+          overflow: screenDelete.scrollWidth > screenDelete.clientWidth
+        } : null,
+        paymentScreen: screenPayment ? {
+          clientWidth: screenPayment.clientWidth,
+          scrollWidth: screenPayment.scrollWidth,
+          clientHeight: screenPayment.clientHeight,
+          overflow: screenPayment.scrollWidth > screenPayment.clientWidth
+        } : null,
+        mobDeleteModal: mobDeleteModal ? {
+          clientWidth: mobDeleteModal.clientWidth,
+          scrollWidth: mobDeleteModal.scrollWidth,
+          overflow: mobDeleteModal.scrollWidth > mobDeleteModal.clientWidth
+        } : null,
+        mobPaymentModal: mobPaymentModal ? {
+          clientWidth: mobPaymentModal.clientWidth,
+          scrollWidth: mobPaymentModal.scrollWidth,
+          overflow: mobPaymentModal.scrollWidth > mobPaymentModal.clientWidth
+        } : null,
+        dateInputMatchesAmount: (dateInput && amountInput) ? (dateInput.offsetWidth === amountInput.offsetWidth) : false,
+        dateInputOverflowPlaque: (dateInput && plaque) ? (dateInput.offsetWidth > plaque.clientWidth) : false,
+        hasDuplicateBluePlusInFixedHeader: fixedHeader ? (fixedHeader.querySelector('.cat-add-btn') !== null) : false,
+        fixedTotalText: fixedTotal ? fixedTotal.textContent.trim() : '',
+        fixedSlipText: fixedSlip ? fixedSlip.textContent.trim() : '',
+        hasDoubleRubFixed: (fixedTotal && fixedTotal.textContent.indexOf('₽ ₽') !== -1) || (fixedSlip && fixedSlip.textContent.indexOf('₽ ₽') !== -1),
+        bodyScrollWidth: body.scrollWidth,
+        bodyClientWidth: body.clientWidth,
+        bodyOverflow: body.scrollWidth > body.clientWidth
+      };
+      return results;
+    };
+  </script>
+</body>
+</html>

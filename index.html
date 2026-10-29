@@ -3886,6 +3886,9 @@
       display: flex;
       flex-direction: column;
       gap: 5px;
+      width: 100%;
+      box-sizing: border-box;
+      min-width: 0;
     }
     .golden-field-label, .field-label {
       font-size: 11px;
@@ -3895,7 +3898,8 @@
       letter-spacing: 0.4px;
     }
     .golden-field-input, .golden-field-select, .field-input, .field-textarea {
-      width: 100%;
+      width: 100% !important;
+      max-width: 100% !important;
       min-height: 42px;
       border-radius: 14px;
       background: #FAF2E7 !important;
@@ -3906,8 +3910,18 @@
       color: #2F261D;
       box-shadow: inset 1px 1.5px 3px rgba(35, 30, 20, 0.08), inset -1px -1px 2px rgba(255, 255, 255, 0.95);
       outline: none !important;
-      box-sizing: border-box;
+      box-sizing: border-box !important;
+      min-width: 0 !important;
       font-family: inherit;
+    }
+    input[type="date"].golden-field-input, .inc-pay-date {
+      width: 100% !important;
+      max-width: 100% !important;
+      box-sizing: border-box !important;
+      display: block !important;
+      min-width: 0 !important;
+      -webkit-appearance: none;
+      appearance: none;
     }
     .field-input::placeholder, .field-textarea::placeholder, .golden-field-input::placeholder {
       color: #A39686;
@@ -3987,8 +4001,42 @@
       color: #1E3F30;
     }
     .btn-action-modal.delete {
+      background: #FCD6CF !important;
+      color: #6D1B1B !important;
+    }
+    .golden-modal-title-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
       background: #FCD6CF;
-      color: #58241B;
+      color: #6D1B1B;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 1px 1.5px 3px rgba(35, 30, 20, 0.1);
+      flex-shrink: 0;
+    }
+    .delete-confirm-text {
+      font-size: 14px;
+      font-weight: 800;
+      color: #4D3118;
+      line-height: 1.45;
+    }
+    .delete-confirm-highlight {
+      color: #6D1B1B;
+      background: rgba(252, 214, 207, 0.5);
+      padding: 1px 6px;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+    .delete-confirm-subtext {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #726453;
+      line-height: 1.4;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
     /* ========================================================

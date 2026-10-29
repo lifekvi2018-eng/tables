@@ -96,7 +96,7 @@
     var rate = Number(item.currentRate || item['Сумма'] || item.amount || 0);
     var title = item.title || item['Название / Где'] || item['Название'] || 'Платёж';
     var isArchived = Boolean(item.isArchived || item['В архиве'] || item.status === 'archived');
-    var shopUrl = item.shopUrl || item['Ссылка'] || item['Сайт'] || item.url || 'https://example.com';
+    var shopUrl = item.shopUrl || item['Ссылка'] || item['Сайт'] || item.url || '';
     var paidMonths = Array.isArray(item.paidMonths) ? item.paidMonths : [];
     if (typeof item.paidMonths === 'string') {
       try {
@@ -134,6 +134,8 @@
       category: cat || 'general',
       dayOfMonth: day,
       currentRate: rate,
+      amount: rate,
+      'Сумма': rate,
       currency: item.currency || '₽',
       color: color,
       shopUrl: shopUrl,

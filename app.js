@@ -44,6 +44,86 @@
   // Цвета для аватарок и плашек
   var PALETTE_COLORS = ['#C8E2D2', '#FCD6CF', '#D3E7F8', '#FDF1CC', '#FCE8D5', '#DBCCE9'];
 
+  // Единое модальное окно подтверждения удаления в Золотом стандарте 3D-бумаги Ани
+  function showConfirmDeleteModal(options) {
+    if (typeof document === 'undefined') {
+      if (options && typeof options.onConfirm === 'function') options.onConfirm();
+      return;
+    }
+    options = options || {};
+    var title = options.title || 'Удаление';
+    var message = options.message || 'Вы действительно хотите удалить эту запись?';
+    var subtext = options.subtext || '';
+    var onConfirm = options.onConfirm;
+
+    var modalId = 'mytables-confirm-delete-modal';
+    var overlay = document.getElementById(modalId);
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.id = modalId;
+      overlay.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(45, 35, 25, 0.45); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); display: none; flex-direction: column; justify-content: center; align-items: center; padding: 16px; z-index: 999999; box-sizing: border-box;';
+      document.body.appendChild(overlay);
+    }
+
+    overlay.innerHTML = [
+      '<div class="golden-modal" id="confirm-delete-card" style="max-width: 380px; width: 100%;">',
+      '  <div class="golden-modal-header">',
+      '    <span class="golden-modal-title">',
+      '      <span class="golden-modal-title-icon">',
+      '        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">',
+      '          <path d="M3 6h18"/>',
+      '          <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>',
+      '          <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>',
+      '          <line x1="10" y1="11" x2="10" y2="17"/>',
+      '          <line x1="14" y1="11" x2="14" y2="17"/>',
+      '        </svg>',
+      '      </span>',
+      '      <span>' + escapeHtml(title) + '</span>',
+      '    </span>',
+      '    <button type="button" class="golden-modal-close" id="confirm-delete-close-x" title="Закрыть">✕</button>',
+      '  </div>',
+      '  <div class="golden-plaque">',
+      '    <p class="delete-confirm-text">' + message + '</p>',
+      (subtext ? ('    <p class="delete-confirm-subtext">' + subtext + '</p>') : ''),
+      '  </div>',
+      '  <div class="golden-actions-row">',
+      '    <button type="button" class="btn-action-modal cancel" id="confirm-delete-btn-cancel">Отмена</button>',
+      '    <button type="button" class="btn-action-modal delete" id="confirm-delete-btn-ok">Удалить</button>',
+      '  </div>',
+      '</div>'
+    ].join('');
+
+    function closeModal() {
+      overlay.classList.remove('active');
+      overlay.style.display = 'none';
+      overlay.style.pointerEvents = 'none';
+    }
+
+    var closeX = document.getElementById('confirm-delete-close-x');
+    if (closeX) closeX.onclick = closeModal;
+    var cancelBtn = document.getElementById('confirm-delete-btn-cancel');
+    if (cancelBtn) cancelBtn.onclick = closeModal;
+    var okBtn = document.getElementById('confirm-delete-btn-ok');
+    if (okBtn) {
+      okBtn.onclick = function () {
+        closeModal();
+        if (typeof onConfirm === 'function') {
+          onConfirm();
+        }
+      };
+    }
+
+    overlay.onclick = function (e) {
+      if (e.target === overlay) closeModal();
+    };
+
+    overlay.classList.add('active');
+    overlay.style.display = 'flex';
+    overlay.style.pointerEvents = 'auto';
+  }
+  root.showConfirmDeleteModal = showConfirmDeleteModal;
+  window.showConfirmDeleteModal = showConfirmDeleteModal;
+
   // Инициализация при загрузке страницы
   if (typeof document !== 'undefined') {
     document.addEventListener('DOMContentLoaded', function () {
@@ -140,6 +220,26 @@
 
   // --- ОБНОВЛЕНИЕ ГЛАВНОГО ЭКРАНА ---
   function updateMainScreen(data) {
+    if (!data) data = {};
+    if ((!data.income || data.income.length === 0) && window.MyTablesIncome && typeof window.MyTablesIncome.getPayments === 'function') {
+      var pays = window.MyTablesIncome.getPayments();
+      var projs = (typeof window.MyTablesIncome.getProjects === 'function') ? window.MyTablesIncome.getProjects() : [];
+      data.income = pays.map(function (p) {
+        var proj = projs.find(function (pr) { return pr.id === p.projectId; });
+        return {
+          ID: p.id,
+          id: p.id,
+          'Дата': p.date,
+          date: p.date,
+          'Сумма': p.amount,
+          amount: p.amount,
+          'Клиент / Источник': proj ? proj.client : '',
+          'Проект / Услуга': proj ? proj.project : '',
+          'Заметка': p.note || ''
+        };
+      });
+    }
+
     if (window.MyTablesCalendar && window.MyTablesCalendar.setCalendarData) {
       window.MyTablesCalendar.setCalendarData(data);
     }
@@ -360,6 +460,7 @@
       };
       projects.push(newProj);
       persist();
+      syncToMainScreen();
       renderIncome();
       return newProj;
     }
@@ -373,17 +474,26 @@
         proj.totalCost = cost;
         proj['Полная_Стоимость'] = cost;
         persist();
+        syncToMainScreen();
         renderIncome();
       }
     }
 
-    // Архивация проекта (скрывается с экрана, платежи сохраняются)
+    // Архивация/удаление проекта (скрывается с экрана, каскадно удаляются оплаты из Google Sheets)
     function archiveProject(projectId) {
       var proj = projects.find(function (p) { return p.id === projectId; });
       if (proj) {
         proj.isArchived = true;
         proj['В_Архиве'] = true;
+        var projPayments = payments.filter(function (pay) { return pay.projectId === projectId; });
+        projPayments.forEach(function (pay) {
+          if (window.MyTablesSync && typeof window.MyTablesSync.deleteRecord === 'function') {
+            window.MyTablesSync.deleteRecord('Доходы', pay.id, (proj.client || 'Проект') + ' — ' + (pay.note || pay.amount), true).catch(function () {});
+          }
+        });
+        payments = payments.filter(function (pay) { return pay.projectId !== projectId; });
         persist();
+        syncToMainScreen();
         renderIncome();
       }
     }
@@ -571,7 +681,7 @@
           return [
             '<div class="payment-slip" onclick="window.MyTablesIncome.openEditPaymentModal(\'' + pay.id + '\')">',
             '  <div class="slip-data-col">',
-            '    <span class="slip-sum">' + formatRub(pay.amount) + ' ₽</span>',
+            '    <span class="slip-sum">' + formatRub(pay.amount) + '</span>',
             '    <span class="slip-date">' + formatDayMonth(pay.date) + '</span>',
             '  </div>',
             '  <button class="btn-slip-plus btn-add-payment" onclick="event.stopPropagation(); window.MyTablesIncome.openAddPaymentModal(\'' + p.id + '\')" title="Внести платёж">+</button>',
@@ -599,7 +709,7 @@
         '    </div>',
         '    <div class="project-header-right">',
         '      <div class="project-total-pill" onclick="window.MyTablesIncome.openEditCostModal(\'' + p.id + '\')" title="Изменить стоимость">',
-        '        <span class="project-total-val">' + formatRub(p.totalCost) + ' ₽</span>',
+        '        <span class="project-total-val">' + formatRub(p.totalCost) + '</span>',
         '        <button class="edit-pencil-btn" onclick="event.stopPropagation(); window.MyTablesIncome.openEditCostModal(\'' + p.id + '\')" title="Редактировать сумму">✎</button>',
         '      </div>',
         '      <button class="btn-archive-project" onclick="window.MyTablesIncome.openArchiveModal(\'' + p.id + '\')" title="В архив">',
@@ -616,7 +726,6 @@
         '  <div class="payments-section">',
         '    <div class="payments-section-header" style="display: flex; justify-content: space-between; align-items: center;">',
         '      <span class="payments-section-title">Внесённые оплаты (' + projectPayments.length + ')</span>',
-        '      <button class="cat-add-btn btn-add-payment" onclick="event.stopPropagation(); window.MyTablesIncome.openAddPaymentModal(\'' + p.id + '\')" title="Внести платёж" style="width: 24px; height: 24px; min-width: 24px; min-height: 24px; font-size: 14px; font-weight: 900; line-height: 1; padding: 0; display: inline-flex; align-items: center; justify-content: center; border: none; border-radius: 50%; cursor: pointer;">+</button>',
         '    </div>',
         '    <div class="payments-list">',
         paymentsHtml,
@@ -961,7 +1070,7 @@
         '    </div>',
         '    <div class="golden-field-group">',
         '      <label class="golden-field-label">Дата получения денег</label>',
-        '      <input type="date" id="inc-pay-date" class="golden-field-input inc-pay-date" value="' + today + '" required>',
+        '      <input type="date" id="inc-pay-date" class="golden-field-input inc-pay-date" value="' + today + '" style="box-sizing: border-box !important; width: 100% !important; max-width: 100% !important; min-width: 0 !important; -webkit-appearance: none; appearance: none;" required>',
         '    </div>',
         '    <div class="golden-field-group">',
         '      <label class="golden-field-label">Заметка / За что платёж</label>',
@@ -1019,7 +1128,7 @@
         '    </div>',
         '    <div class="golden-field-group">',
         '      <label class="golden-field-label">Дата получения</label>',
-        '      <input type="date" id="inc-pay-date" class="golden-field-input inc-pay-date" value="' + (pay.date || '') + '" required>',
+        '      <input type="date" id="inc-pay-date" class="golden-field-input inc-pay-date" value="' + (pay.date || '') + '" style="box-sizing: border-box !important; width: 100% !important; max-width: 100% !important; min-width: 0 !important; -webkit-appearance: none; appearance: none;" required>',
         '    </div>',
         '    <div class="golden-field-group">',
         '      <label class="golden-field-label">Заметка / Назначение</label>',
@@ -1035,8 +1144,19 @@
       ].join('');
 
       document.getElementById('inc-btn-delete-pay').onclick = function () {
-        deletePayment(paymentId);
-        closeIncomeModal();
+        var desc = formatRub(pay.amount) + (pay.note ? ' (' + pay.note + ')' : '');
+        showConfirmDeleteModal({
+          title: 'Удаление платежа',
+          message: 'Вы действительно хотите удалить платёж <b class="delete-confirm-highlight">«' + escapeHtml(desc) + '»</b>?',
+          subtext: '⚠️ Запись будет безвозвратно удалена из истории и Google Таблицы.',
+          onConfirm: function () {
+            deletePayment(paymentId);
+            closeIncomeModal();
+            if (window.MyTablesSync && typeof window.MyTablesSync.deleteRecord === 'function') {
+              window.MyTablesSync.deleteRecord('Доходы', paymentId, desc, true).catch(function () {});
+            }
+          }
+        });
       };
 
       document.getElementById('inc-pay-update-btn').onclick = function () {
@@ -1102,60 +1222,25 @@
       }, 50);
     }
 
-    // 5. Модалка архивации проекта
+    // 5. Модалка архивации / удаления проекта
     function openArchiveModal(projectId) {
       var proj = projects.find(function (p) { return p.id === projectId; });
       if (!proj) return;
-      var overlay = ensureOverlay();
-
-      overlay.innerHTML = [
-        '<div class="golden-modal" style="max-width: 440px; width: 100%;">',
-        '  <div class="golden-modal-header">',
-        '    <span class="golden-modal-title">',
-        '      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;">',
-        '        <path d="M3 6h18"/>',
-        '        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>',
-        '        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>',
-        '        <line x1="10" y1="11" x2="10" y2="17"/>',
-        '        <line x1="14" y1="11" x2="14" y2="17"/>',
-        '      </svg>',
-        '      <span>Архивация проекта</span>',
-        '    </span>',
-        '    <button type="button" class="golden-modal-close" onclick="window.MyTablesIncome.closeModal()">✕</button>',
-        '  </div>',
-        '  <div class="golden-plaque">',
-        '    <p style="font-size: 13.5px; font-weight: 700; color: #4D3118; line-height: 1.45; margin-bottom: 6px;">',
-        '      Отправить проект <b>«' + escapeHtml(proj.client) + '»</b> в архив?',
-        '    </p>',
-        '    <p style="font-size: 11.5px; font-weight: 600; color: #726453; line-height: 1.4;">',
-        '      Карточка скроется из активного экрана Доходов, а все внесённые платежи сохранятся в Google Таблицах для годовой отчётности.',
-        '    </p>',
-        '  </div>',
-        '  <div class="golden-actions-row">',
-        '    <button type="button" class="btn-action-modal cancel" onclick="window.MyTablesIncome.closeModal()">Отмена</button>',
-        '    <button type="button" class="btn-action-modal delete" id="inc-proj-archive-btn">В архив</button>',
-        '  </div>',
-        '</div>'
-      ].join('');
-
-      document.getElementById('inc-proj-archive-btn').onclick = function () {
-        archiveProject(projectId);
-        closeIncomeModal();
-      };
-
-      overlay.classList.add('active');
-      overlay.style.display = 'flex';
-      overlay.style.pointerEvents = 'auto';
+      showConfirmDeleteModal({
+        title: 'Удаление проекта',
+        message: 'Вы действительно хотите удалить проект <b class="delete-confirm-highlight">«' + escapeHtml(proj.client) + (proj.project ? (' — ' + proj.project) : '') + '»</b>?',
+        subtext: '⚠️ Проект и все связанные с ним оплаты будут удалены из Google Таблицы.',
+        onConfirm: function () {
+          archiveProject(projectId);
+          closeIncomeModal();
+          showToast('Проект удалён ♡');
+        }
+      });
     }
 
     function setIncomeFromSync(syncIncome) {
       if (!Array.isArray(syncIncome)) return;
       if (syncIncome.length === 0) {
-        projects = [];
-        payments = [];
-        persist();
-        renderIncome();
-        syncToMainScreen();
         return;
       }
       var hasChanges = false;
@@ -1938,6 +2023,27 @@
         selectedClientId = remaining.length > 0 ? remaining[0].id : null;
       }
 
+      syncToMainScreen();
+      renderClients();
+      return target;
+    }
+
+    function deleteClient(id) {
+      var client = clients.find(function (c) { return c.id === id; });
+      var clientName = client ? client.name : id;
+      var idx = clients.findIndex(function (c) { return c.id === id; });
+      var target = null;
+      if (idx !== -1) {
+        target = clients.splice(idx, 1)[0];
+        saveClients();
+      }
+      if (window.MyTablesSync && typeof window.MyTablesSync.deleteRecord === 'function') {
+        window.MyTablesSync.deleteRecord('Клиенты', id, clientName, true).catch(function () {});
+      }
+      if (selectedClientId === id) {
+        var remaining = getActiveClients();
+        selectedClientId = remaining.length > 0 ? remaining[0].id : null;
+      }
       syncToMainScreen();
       renderClients();
       return target;
@@ -2887,7 +2993,19 @@
     }
 
     function openArchiveModal(clientId) {
-      openInteractiveModal('archive', clientId);
+      var id = clientId || selectedClientId;
+      var client = clients.find(function (c) { return c.id === id; });
+      if (!client) return;
+      showConfirmDeleteModal({
+        title: 'Удаление клиента',
+        message: 'Вы действительно хотите удалить клиента <b class="delete-confirm-highlight">«' + escapeHtml(client.name) + '»</b>?',
+        subtext: '⚠️ Клиент и все связанные данные будут удалены из базы.',
+        onConfirm: function () {
+          deleteClient(id);
+          closeModal();
+          showToast('Клиент успешно удалён ♡');
+        }
+      });
     }
 
     function submitAddForm() {
@@ -2999,6 +3117,7 @@
       addClient: addClient,
       updateClient: updateClient,
       archiveClient: archiveClient,
+      deleteClient: deleteClient,
       addClientLink: addClientLink,
       editClientLink: editClientLink,
       togglePasswordVisibility: togglePasswordVisibility,
@@ -3119,6 +3238,8 @@
               p.paidMonths.splice(mIdx, 1);
             }
             if (window.MyTablesSync && typeof window.MyTablesSync.saveExpense === 'function') {
+              p.amount = p.currentRate || p.amount;
+              p['Сумма'] = p.amount;
               window.MyTablesSync.saveExpense(p).catch(function () {});
             }
             break;
@@ -3547,10 +3668,6 @@
         '          <input type="number" id="exp-in-amount" min="1" placeholder="1 500" style="width: 100%; box-sizing: border-box; background: #FAF4EB; border: none; outline: none; border-radius: 12px; padding: 11px 14px; font-size: 13px; font-weight: 700; color: #2F261D; box-shadow: inset 1.5px 2px 4px rgba(130, 100, 70, 0.15); font-family: inherit;" required>',
         '        </div>',
         '      </div>',
-        '      <div style="margin-bottom: 14px;">',
-        '        <label style="font-size: 11px; font-weight: 800; color: #6D3E14; display: block; margin-bottom: 5px;">Ссылка на сайт оплаты</label>',
-        '        <input type="url" id="exp-in-url" placeholder="https://..." style="width: 100%; box-sizing: border-box; background: #FAF4EB; border: none; outline: none; border-radius: 12px; padding: 11px 14px; font-size: 13px; font-weight: 700; color: #2F261D; box-shadow: inset 1.5px 2px 4px rgba(130, 100, 70, 0.15); font-family: inherit;">',
-        '      </div>',
         '      <div>',
         '        <label style="font-size: 11px; font-weight: 800; color: #6D3E14; display: block; margin-bottom: 7px;">Цвет карточки</label>',
         '        <div id="exp-color-dots-row" style="display: flex; gap: 12px; align-items: center;">',
@@ -3656,7 +3773,6 @@
         document.getElementById('exp-in-title').value = '';
         document.getElementById('exp-in-day').value = new Date().getDate();
         document.getElementById('exp-in-amount').value = '';
-        document.getElementById('exp-in-url').value = '';
 
         var archBtn = document.getElementById('exp-modal-archive');
         if (archBtn) archBtn.style.display = 'none';
@@ -3689,19 +3805,17 @@
 
         var name = title;
         var day = 15;
-        var amount = 1500;
-        var url = '';
+        var amount = '';
         var color = '#D3E7F8';
 
         if (p) {
           name = p.title || title;
           day = p.dayOfMonth || p.day || 15;
-          amount = p.currentRate || p.amount || 1500;
-          url = p.shopUrl || '';
+          amount = p.currentRate || p.amount || '';
           color = p.color || '#D3E7F8';
         } else if (slipEl) {
           var priceEl = slipEl.querySelector('.expense-item-price');
-          if (priceEl) amount = Number(priceEl.textContent.replace(/[^\d]/g, '')) || 1500;
+          if (priceEl) amount = Number(priceEl.textContent.replace(/[^\d]/g, '')) || '';
           var dateEl = slipEl.querySelector('.expense-item-date');
           if (dateEl) day = Number(dateEl.textContent.replace(/[^\d]/g, '')) || 15;
         }
@@ -3712,7 +3826,6 @@
         document.getElementById('exp-in-title').value = name;
         document.getElementById('exp-in-day').value = day;
         document.getElementById('exp-in-amount').value = amount;
-        document.getElementById('exp-in-url').value = url;
 
         // Показываем палитру при редактировании
         var dotsRow = document.getElementById('exp-color-dots-row');
@@ -3764,40 +3877,59 @@
       if (archBtn) {
         archBtn.addEventListener('click', function () {
           var titleToArchive = (document.getElementById('exp-in-title').value || '').trim();
-          if (!confirm('Точно удалить платёж «' + titleToArchive + '»?')) {
-            return;
-          }
-          var oldTitle = currentEditingPayment ? currentEditingPayment.title : titleToArchive;
-          var allSlips = document.querySelectorAll('.expense-paper-slip');
-          for (var si = 0; si < allSlips.length; si++) {
-            var sName = allSlips[si].querySelector('.expense-item-name');
-            if (sName && (sName.textContent.trim().toLowerCase() === oldTitle.toLowerCase() || sName.textContent.trim().toLowerCase() === titleToArchive.toLowerCase())) {
-              allSlips[si].remove();
+          var p = currentEditingPayment;
+          var pId = p ? (p.id || p.ID) : null;
+          var pTitle = p ? (p.title || p.name || titleToArchive) : titleToArchive;
+
+          showConfirmDeleteModal({
+            title: 'Удаление расхода',
+            message: 'Вы действительно хотите удалить платёж <b class="delete-confirm-highlight">«' + escapeHtml(pTitle) + '»</b>?',
+            subtext: '⚠️ Платёж будет безвозвратно удалён из списка и Google Таблицы.',
+            onConfirm: function () {
+              var oldTitle = pTitle;
+              var allSlips = document.querySelectorAll('.expense-paper-slip');
+              for (var si = 0; si < allSlips.length; si++) {
+                var sName = allSlips[si].querySelector('.expense-item-name');
+                if (sName && (sName.textContent.trim().toLowerCase() === oldTitle.toLowerCase() || sName.textContent.trim().toLowerCase() === titleToArchive.toLowerCase())) {
+                  allSlips[si].remove();
+                }
+              }
+
+              // Проверяем все категории на опустение и восстанавливаем плашку «Пока нет платежей ♡»
+              var allCatLists = document.querySelectorAll('#desk-view-expenses .cat-items-list, #mob-view-expenses .cat-items-list');
+              for (var cli = 0; cli < allCatLists.length; cli++) {
+                var listEl = allCatLists[cli];
+                var slipsLeft = listEl.querySelectorAll('.expense-paper-slip');
+                if (slipsLeft.length === 0 && !listEl.querySelector('.cat-empty-prompt')) {
+                  listEl.innerHTML = '<div class="cat-empty-prompt" style="padding: 12px 14px; text-align: center; color: #7A6E5F; font-size: 12px; font-weight: 700;">Пока нет платежей ♡</div>';
+                }
+              }
+
+              if (window.MyTablesCalendar && window.MyTablesCalendar.state && window.MyTablesCalendar.state.payments) {
+                var cPays = window.MyTablesCalendar.state.payments;
+                var pIdx = cPays.findIndex(function (item) {
+                  return (pId && (item.id === pId || item.ID === pId)) || (item.title && item.title.toLowerCase() === pTitle.toLowerCase());
+                });
+                if (pIdx !== -1) {
+                  cPays.splice(pIdx, 1);
+                }
+              }
+
+              if (window.MyTablesSync && typeof window.MyTablesSync.deleteRecord === 'function') {
+                window.MyTablesSync.deleteRecord('Расходы', pId || pTitle, pTitle, true).catch(function () {});
+              }
+
+              if (window.MyTablesCalendar && typeof window.MyTablesCalendar.updateSummaryCards === 'function') {
+                window.MyTablesCalendar.updateSummaryCards();
+              }
+              if (window.MyTablesCalendar && typeof window.MyTablesCalendar.renderCalendar === 'function') {
+                window.MyTablesCalendar.renderCalendar();
+              }
+              renderRecentExpensesOnMain();
+              closeExpModal();
+              showToast('Расход успешно удалён ♡');
             }
-          }
-
-          // Проверяем все категории на опустение и восстанавливаем плашку «Пока нет платежей ♡»
-          var allCatLists = document.querySelectorAll('#desk-view-expenses .cat-items-list, #mob-view-expenses .cat-items-list');
-          for (var cli = 0; cli < allCatLists.length; cli++) {
-            var listEl = allCatLists[cli];
-            var slipsLeft = listEl.querySelectorAll('.expense-paper-slip');
-            if (slipsLeft.length === 0 && !listEl.querySelector('.cat-empty-prompt')) {
-              listEl.innerHTML = '<div class="cat-empty-prompt" style="padding: 12px 14px; text-align: center; color: #7A6E5F; font-size: 12px; font-weight: 700;">Пока нет платежей ♡</div>';
-            }
-          }
-
-          if (currentEditingPayment) {
-            currentEditingPayment.isArchived = true;
-          }
-
-          if (window.MyTablesCalendar && typeof window.MyTablesCalendar.updateSummaryCards === 'function') {
-            window.MyTablesCalendar.updateSummaryCards();
-          }
-          if (window.MyTablesCalendar && typeof window.MyTablesCalendar.renderCalendar === 'function') {
-            window.MyTablesCalendar.renderCalendar();
-          }
-          renderRecentExpensesOnMain();
-          closeExpModal();
+          });
         });
       }
 
@@ -3808,7 +3940,7 @@
         var title = (document.getElementById('exp-in-title').value || '').trim();
         var day = parseInt(document.getElementById('exp-in-day').value, 10);
         var amount = Number(document.getElementById('exp-in-amount').value) || 0;
-        var url = (document.getElementById('exp-in-url').value || '').trim();
+        var url = '';
 
         if (!title) {
           alert('Пожалуйста, введите название услуги');
@@ -3860,7 +3992,6 @@
             currentEditingPayment.day = day;
             currentEditingPayment.date = editDateStr;
             currentEditingPayment.Дата = editDateStr;
-            if (url) currentEditingPayment.shopUrl = url;
             currentEditingPayment.color = selectedExpenseColor;
             currentEditingPayment.isUpdate = true;
 

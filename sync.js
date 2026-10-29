@@ -770,7 +770,7 @@
     }
     var title = record['Название / Где'] || record.title || '';
     var category = record['Категория'] || record.category || 'Прочее';
-    var amount = Number(record['Сумма'] || record.amount || 0);
+    var amount = Number(record['Сумма'] || record.amount || record.currentRate || (record.rawItem && (record.rawItem['Сумма'] || record.rawItem.amount)) || 0);
     var wallet = record['Кошелек / Карта'] || record.wallet || 'Т-Банк';
     var note = record['Заметка'] || record.note || '';
 
@@ -957,7 +957,7 @@
   /**
    * Удаление записи с обязательным подтверждением
    */
-  function deleteRecord(sheet, id, description) {
+  function deleteRecord(sheet, id, description, skipConfirm) {
     if (!isAuthenticated()) {
       return Promise.reject(new Error('Требуется авторизация'));
     }
@@ -966,7 +966,8 @@
       return Promise.reject(new Error('Не указан ID записи для удаления.'));
     }
 
-    return confirmDeleteDialog(description || ('запись ' + id))
+    var proceed = skipConfirm ? Promise.resolve(true) : confirmDeleteDialog(description || ('запись ' + id));
+    return proceed
       .then(function (confirmed) {
         if (!confirmed) {
           return { success: false, cancelled: true };
