@@ -106,7 +106,7 @@
       }
     }
 
-    var color = item.color;
+    var color = item.color || item['Цвет'] || item.Color;
     var cat = (item.category || item['Категория'] || '').toLowerCase();
     var tLow = title.toLowerCase();
 
@@ -375,6 +375,7 @@
         else if (bg === '#FDF1CC' || bg === '#F7E4A8') textColor = '#5B481D';
         else if (bg === '#FCE8D5') textColor = '#6D3E14';
         else if (bg === '#DBCCE9') textColor = '#442B5B';
+        else textColor = '#2F261D';
 
         cellStyle += ' background: ' + bg + '; color: ' + textColor + '; border-radius: 50%; width: 26px; height: 26px; margin: 0 auto; display: flex; align-items: center; justify-content: center; box-shadow: 1.5px 2.5px 5px rgba(140,115,90,0.18), inset 0 1px 0 rgba(255,255,255,0.9); font-weight: 800;';
       } else if (dots.length >= 2) {

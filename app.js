@@ -3319,32 +3319,34 @@
   }
 
   function openAddExpenseCategoryModal() {
-    injectCategoryModal();
-    var catModal = document.getElementById('mytables-category-modal');
-    var inName = document.getElementById('cat-in-name');
-    if (inName) inName.value = '';
-    var inFirstTitle = document.getElementById('cat-in-first-title');
-    if (inFirstTitle) inFirstTitle.value = '';
-    var inFirstDay = document.getElementById('cat-in-first-day');
-    if (inFirstDay) inFirstDay.value = '';
-    var inFirstAmount = document.getElementById('cat-in-first-amount');
-    if (inFirstAmount) inFirstAmount.value = '';
+    var forceCreate = arguments && arguments[0] === true;
+    if (forceCreate) {
+      injectCategoryModal();
+      var catModal = document.getElementById('mytables-category-modal');
+      var inName = document.getElementById('cat-in-name');
+      if (inName) inName.value = '';
+      var inFirstTitle = document.getElementById('cat-in-first-title');
+      if (inFirstTitle) inFirstTitle.value = '';
+      var inFirstDay = document.getElementById('cat-in-first-day');
+      if (inFirstDay) inFirstDay.value = '';
+      var inFirstAmount = document.getElementById('cat-in-first-amount');
+      if (inFirstAmount) inFirstAmount.value = '';
 
-    if (catModal) {
-      catModal.classList.add('active');
-      catModal.style.display = 'flex';
-      catModal.style.pointerEvents = 'auto';
+      if (catModal) {
+        catModal.classList.add('active');
+        catModal.style.display = 'flex';
+        catModal.style.pointerEvents = 'auto';
+      }
+      if (inName && typeof inName.focus === 'function') inName.focus();
+      return;
     }
-    if (inName && typeof inName.focus === 'function') inName.focus();
+    // Кнопка «+ Добавить платеж» вверху открывает полноценную модалку расхода с выбором категории
+    openAddExpenseModal();
   }
   window.openAddExpenseCategoryModal = openAddExpenseCategoryModal;
   root.openAddExpenseCategoryModal = openAddExpenseCategoryModal;
 
   function openAddExpenseModal(targetCat, targetColor) {
-    if (!targetCat) {
-      openAddExpenseCategoryModal();
-      return;
-    }
     injectAddModal();
     if (typeof window._realOpenAddExpenseModal === 'function') {
       window._realOpenAddExpenseModal(targetCat, targetColor);
@@ -3381,6 +3383,14 @@
         '  <form id="exp-modal-form" onsubmit="return false;">',
         '    <input type="hidden" id="exp-in-category" value="">',
         '    <div style="background: #FCE8D5; border-radius: 18px; padding: 16px; box-shadow: 3px 5px 14px rgba(170, 130, 95, 0.2), -2px -2px 6px rgba(255, 255, 255, 0.85); margin-bottom: 16px; border: none;">',
+        '      <div id="exp-cat-select-wrap" style="margin-bottom: 12px;">',
+        '        <label style="font-size: 11px; font-weight: 800; color: #6D3E14; display: block; margin-bottom: 5px;">Категория расхода</label>',
+        '        <select id="exp-in-category-select" style="width: 100%; box-sizing: border-box; background: #FAF4EB; border: none; outline: none; border-radius: 12px; padding: 11px 14px; font-size: 13px; font-weight: 700; color: #2F261D; box-shadow: inset 1.5px 2px 4px rgba(130, 100, 70, 0.15); font-family: inherit; cursor: pointer;">',
+        '          <option value="vpn">VPN (Голубая)</option>',
+        '          <option value="internet">Интернет и связь (Мятная)</option>',
+        '          <option value="ai">ИИ сервисы (Персиковая)</option>',
+        '        </select>',
+        '      </div>',
         '      <div style="margin-bottom: 12px;">',
         '        <label style="font-size: 11px; font-weight: 800; color: #6D3E14; display: block; margin-bottom: 5px;">Услуга / Название</label>',
         '        <input type="text" id="exp-in-title" placeholder="Например, Яндекс Плюс, Claude" style="width: 100%; box-sizing: border-box; background: #FAF4EB; border: none; outline: none; border-radius: 12px; padding: 11px 14px; font-size: 13px; font-weight: 700; color: #2F261D; box-shadow: inset 1.5px 2px 4px rgba(130, 100, 70, 0.15); font-family: inherit;" required>',
@@ -3449,22 +3459,56 @@
         });
       }
 
+      var catSelect = document.getElementById('exp-in-category-select');
+      if (catSelect) {
+        catSelect.addEventListener('change', function () {
+          var selVal = this.value;
+          currentTargetCategory = selVal;
+          var catIn = document.getElementById('exp-in-category');
+          if (catIn) catIn.value = selVal;
+          var meta = getCategoryMeta(selVal);
+          if (meta && meta.color) {
+            selectColorDot(meta.color);
+          }
+        });
+      }
+
       var currentEditingSlip = null;
       var currentEditingPayment = null;
 
       window._realOpenAddExpenseModal = function (targetCat, targetColor) {
         currentEditingSlip = null;
         currentEditingPayment = null;
-        currentTargetCategory = targetCat || null;
+        currentTargetCategory = targetCat || 'vpn';
         var catIn = document.getElementById('exp-in-category');
-        if (catIn) catIn.value = targetCat || '';
+        if (catIn) catIn.value = currentTargetCategory;
 
-        var meta = targetCat ? getCategoryMeta(targetCat) : null;
+        var catSel = document.getElementById('exp-in-category-select');
+        if (catSel) {
+          catSel.innerHTML = [
+            '<option value="vpn">VPN (Голубая)</option>',
+            '<option value="internet">Интернет и связь (Мятная)</option>',
+            '<option value="ai">ИИ сервисы (Персиковая)</option>'
+          ].join('');
+          if (Array.isArray(customExpenseCategories)) {
+            customExpenseCategories.forEach(function (c) {
+              if (c && c.id && c.id !== 'vpn' && c.id !== 'internet' && c.id !== 'ai') {
+                var opt = document.createElement('option');
+                opt.value = c.id;
+                opt.textContent = c.name || c.id;
+                catSel.appendChild(opt);
+              }
+            });
+          }
+          catSel.value = currentTargetCategory;
+        }
+
+        var meta = getCategoryMeta(currentTargetCategory);
         var chosenColor = targetColor || (meta ? meta.color : '#D3E7F8');
 
         var modalTitle = expModal.querySelector('.mytables-paper-modal > div:first-child span:first-child');
         if (modalTitle) {
-          modalTitle.textContent = meta ? ('+ Новый расход: ' + meta.name + ' ♡') : '+ Новый расход';
+          modalTitle.textContent = targetCat ? ('+ Новый расход: ' + meta.name + ' ♡') : '+ Новый расход ♡';
         }
 
         document.getElementById('exp-in-title').value = '';
@@ -3475,10 +3519,11 @@
         var archBtn = document.getElementById('exp-modal-archive');
         if (archBtn) archBtn.style.display = 'none';
 
-        // При добавлении расхода в конкретную категорию скрываем палитру (цвет назначается автоматически)
+        // Палитра цветных кружочков ВСЕГДА доступна, чтобы Аня могла сама выбирать цвет
         var dotsRow = document.getElementById('exp-color-dots-row');
         if (dotsRow && dotsRow.parentElement) {
           dotsRow.parentElement.style.display = targetCat ? 'none' : 'block';
+          dotsRow.parentElement.style.display = 'block';
         }
 
         selectColorDot(chosenColor);
@@ -3535,8 +3580,11 @@
 
         selectColorDot(color);
 
+        var catVal = (p && (p.category || p['Категория'])) || 'vpn';
         var catIn = document.getElementById('exp-in-category');
-        if (catIn) catIn.value = (p && (p.category || p['Категория'])) || '';
+        if (catIn) catIn.value = catVal;
+        var catSel = document.getElementById('exp-in-category-select');
+        if (catSel) catSel.value = catVal;
 
         var archBtn = document.getElementById('exp-modal-archive');
         if (archBtn) archBtn.style.display = 'inline-flex';
