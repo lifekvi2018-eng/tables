@@ -7,7 +7,7 @@
  * (они идут напрямую в сеть через модуль sync.js).
  */
 
-const CACHE_NAME = 'mytables-app-shell-v15';
+const CACHE_NAME = 'mytables-app-shell-v16';
 
 const PRECACHE_ASSETS = [
   './',

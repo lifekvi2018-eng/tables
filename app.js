@@ -683,66 +683,165 @@
       }
     }
 
-    // 1. Модалка добавления нового проекта
+    // Конфигурация фирменной палитры клиентов и проектов
+    var COLOR_PALETTE_CONFIG = {
+      mint: { name: 'mint', hex: '#C8E2D2', title: 'Мята', text: '#1E3F30' },
+      peach: { name: 'peach', hex: '#FCD6CF', title: 'Персик', text: '#58241B' },
+      lavender: { name: 'lavender', hex: '#DBCCE9', title: 'Лаванда', text: '#4A2E66' },
+      blue: { name: 'blue', hex: '#D3E7F8', title: 'Голубой', text: '#16324F' },
+      cream: { name: 'cream', hex: '#FDF1CC', title: 'Сливки', text: '#5B481D' }
+    };
+
+    function resolveColorInfo(rawColor) {
+      if (!rawColor) return COLOR_PALETTE_CONFIG.mint;
+      var c = String(rawColor).trim().toLowerCase();
+      if (COLOR_PALETTE_CONFIG[c]) return COLOR_PALETTE_CONFIG[c];
+      if (c === '#c8e2d2') return COLOR_PALETTE_CONFIG.mint;
+      if (c === '#fcd6cf' || c === '#fce8d5') return COLOR_PALETTE_CONFIG.peach;
+      if (c === '#dbcce9') return COLOR_PALETTE_CONFIG.lavender;
+      if (c === '#d3e7f8') return COLOR_PALETTE_CONFIG.blue;
+      if (c === '#fdf1cc') return COLOR_PALETTE_CONFIG.cream;
+      return { name: 'mint', hex: rawColor || '#C8E2D2', title: 'Мята', text: '#1E3F30' };
+    }
+
+    // Сбор активных клиентов из базы (Клиенты ♡, allData, projects)
+    function getAvailableClients() {
+      var clientMap = new Map();
+
+      // 1. MyTablesClients.getActiveClients()
+      var clientsSource = null;
+      if (typeof window !== 'undefined' && window.MyTablesClients && typeof window.MyTablesClients.getActiveClients === 'function') {
+        clientsSource = window.MyTablesClients.getActiveClients();
+      } else if (typeof MyTablesClients !== 'undefined' && typeof MyTablesClients.getActiveClients === 'function') {
+        clientsSource = MyTablesClients.getActiveClients();
+      }
+
+      if (Array.isArray(clientsSource)) {
+        clientsSource.forEach(function (c) {
+          if (!c) return;
+          var name = (c.name || c['Имя клиента'] || c['Имя'] || '').trim();
+          var color = c.color || c['Цвет'] || '#C8E2D2';
+          if (name && !clientMap.has(name)) {
+            clientMap.set(name, { name: name, color: color });
+          }
+        });
+      }
+
+      // 2. window.allData.clients
+      var allDataClients = null;
+      if (typeof window !== 'undefined' && window.allData && Array.isArray(window.allData.clients)) {
+        allDataClients = window.allData.clients;
+      } else if (typeof allData !== 'undefined' && Array.isArray(allData.clients)) {
+        allDataClients = allData.clients;
+      }
+
+      if (Array.isArray(allDataClients)) {
+        allDataClients.forEach(function (c) {
+          if (!c) return;
+          var name = (c.name || c['Имя клиента'] || c['Имя'] || '').trim();
+          var color = c.color || c['Цвет'] || '#C8E2D2';
+          if (name && !clientMap.has(name)) {
+            clientMap.set(name, { name: name, color: color });
+          }
+        });
+      }
+
+      // 3. Текущие проекты
+      if (typeof projects !== 'undefined' && Array.isArray(projects)) {
+        projects.forEach(function (p) {
+          if (!p) return;
+          var name = (p.client || '').trim();
+          var color = p.color || 'mint';
+          if (name && !clientMap.has(name)) {
+            clientMap.set(name, { name: name, color: color });
+          }
+        });
+      }
+
+      return Array.from(clientMap.values());
+    }
+
+    // 1. Модалка добавления нового проекта (бумажный выбор клиента, авто-цвет, без чекбокса)
     function openAddProjectModal() {
       var overlay = ensureOverlay();
-      var existingClients = Array.from(new Set(projects.map(function (p) { return p.client; })));
-      var optionsHtml = existingClients.map(function (c) {
-        return '<option value="' + escapeHtml(c) + '">' + escapeHtml(c) + '</option>';
-      }).join('');
-      optionsHtml += '<option value="__new__">+ Ввести нового клиента...</option>';
+      var availableClients = getAvailableClients();
 
-      var colors = [
-        { name: 'mint', hex: '#C8E2D2' },
-        { name: 'peach', hex: '#FCD6CF' },
-        { name: 'lavender', hex: '#DBCCE9' },
-        { name: 'blue', hex: '#D3E7F8' },
-        { name: 'cream', hex: '#FDF1CC' }
-      ];
+      var selectedClient = availableClients.length > 0 ? availableClients[0] : null;
+      var selectedClientName = selectedClient ? selectedClient.name : '';
+      var selectedColorInfo = selectedClient ? resolveColorInfo(selectedClient.color) : COLOR_PALETTE_CONFIG.mint;
+      var selectedClientInitials = selectedClient ? getInitials(selectedClient.name) : '♡';
 
-      var selectedColor = 'mint';
+      var optionsHtml = '';
+      if (availableClients.length > 0) {
+        optionsHtml = availableClients.map(function (c, idx) {
+          var cInfo = resolveColorInfo(c.color);
+          var inits = getInitials(c.name);
+          var isSel = (idx === 0);
+          return [
+            '<div class="custom-select-option' + (isSel ? ' selected' : '') + '" data-value="' + escapeHtml(c.name) + '" data-color="' + cInfo.name + '" data-hex="' + cInfo.hex + '" data-title="' + cInfo.title + '" data-text="' + cInfo.text + '" data-initials="' + escapeHtml(inits) + '">',
+            '  <span class="option-left" style="display: flex; align-items: center; gap: 8px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">',
+            '    <span class="client-avatar-badge" style="width: 20px; height: 20px; border-radius: 50%; background: ' + cInfo.hex + '; color: ' + cInfo.text + '; display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 900; flex-shrink: 0;">' + escapeHtml(inits) + '</span>',
+            '    <span style="overflow: hidden; text-overflow: ellipsis;">' + escapeHtml(c.name) + '</span>',
+            '    <span class="client-color-pill ' + cInfo.name + '" style="font-size: 10px; font-weight: 900; padding: 2px 8px; border-radius: 8px; background: ' + cInfo.hex + '; color: ' + cInfo.text + '; display: inline-flex; align-items: center; flex-shrink: 0;">' + cInfo.title + '</span>',
+            '  </span>',
+            (isSel ? '  <span class="option-check" style="font-size: 12px; color: #2D9C5E; font-weight: 900; flex-shrink: 0;">✓</span>' : ''),
+            '</div>'
+          ].join('');
+        }).join('');
+      } else {
+        optionsHtml = [
+          '<div class="custom-select-option" style="cursor: default; opacity: 0.7;">',
+          '  <span style="font-size: 12px; color: #8C784C;">Нет активных клиентов. Сначала добавьте клиента во вкладке «Клиенты ♡»</span>',
+          '</div>'
+        ].join('');
+      }
+
+      var triggerValHtml = '';
+      if (selectedClient) {
+        triggerValHtml = [
+          '<span class="client-avatar-badge" style="width: 20px; height: 20px; border-radius: 50%; background: ' + selectedColorInfo.hex + '; color: ' + selectedColorInfo.text + '; display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 900; flex-shrink: 0;">' + escapeHtml(selectedClientInitials) + '</span>',
+          '<span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">' + escapeHtml(selectedClientName) + '</span>',
+          '<span class="client-color-pill ' + selectedColorInfo.name + '" style="font-size: 10px; font-weight: 900; padding: 2px 8px; border-radius: 8px; background: ' + selectedColorInfo.hex + '; color: ' + selectedColorInfo.text + '; display: inline-flex; align-items: center; flex-shrink: 0;">' + selectedColorInfo.title + '</span>'
+        ].join('');
+      } else {
+        triggerValHtml = '<span style="font-size: 12px; color: #8C784C; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Сначала добавьте клиента во вкладке «Клиенты ♡»</span>';
+      }
+
+      var badgeText = selectedClient ? ('Цвет: ' + selectedColorInfo.title) : 'Нет клиентов';
+      var badgeDisplay = selectedClient ? 'inline-block' : 'none';
 
       overlay.innerHTML = [
         '<div class="golden-modal" style="max-width: 440px; width: 100%;">',
         '  <div class="golden-modal-header">',
-        '    <span class="golden-modal-title"><span style="color:#1E3F30;">+</span> Новый проект</span>',
-        '    <button type="button" class="golden-modal-close" onclick="window.MyTablesIncome.closeModal()">✕</button>',
+        '    <span class="golden-modal-title"><span style="color:#1E3F30; font-size: 20px; line-height: 1;">+</span> Новый проект</span>',
+        '    <button type="button" class="golden-modal-close" onclick="window.MyTablesIncome.closeModal()" title="Закрыть">✕</button>',
         '  </div>',
         '  <div class="golden-plaque">',
-        '    <div class="golden-field-group">',
-        '      <label class="golden-field-label">Клиент</label>',
-        '      <select id="inc-modal-client-select" class="golden-field-select">',
+        '    <div class="golden-field-group" style="z-index: 100;">',
+        '      <label class="golden-field-label" style="display: flex; justify-content: space-between; align-items: center;">',
+        '        <span>Клиент</span>',
+        '        <span class="badge-spec" id="inc-modal-client-badge" style="display: ' + badgeDisplay + '; font-size: 9.5px; padding: 2px 6px; border-radius: 6px; background: #FAF2E7; color: #6D3E14; font-weight: 800; text-transform: none;">' + badgeText + '</span>',
+        '      </label>',
+        '      <div class="custom-select" id="inc-custom-client-select" style="width: 100%;">',
+        '        <input type="hidden" id="inc-modal-client" class="inc-proj-client" value="' + escapeHtml(selectedClientName) + '">',
+        '        <input type="hidden" id="inc-proj-color" class="inc-proj-color" value="' + selectedColorInfo.name + '">',
+        '        <button type="button" class="custom-select-trigger" id="inc-client-trigger">',
+        '          <span class="custom-select-val" id="inc-client-val">' + triggerValHtml + '</span>',
+        '          <span class="custom-select-arrow" style="font-size: 11px; opacity: 0.7;">▼</span>',
+        '        </button>',
+        '        <div class="custom-select-dropdown" id="inc-client-dropdown" style="max-height: 240px; overflow-y: auto;">',
         optionsHtml,
-        '      </select>',
-        '      <input type="text" id="inc-modal-client" class="golden-field-input inc-proj-client" placeholder="Имя нового клиента" style="display: none; margin-top: 6px;">',
+        '        </div>',
+        '      </div>',
         '    </div>',
         '    <div class="golden-field-group">',
         '      <label class="golden-field-label">Название проекта / услуги</label>',
-        '      <input type="text" id="inc-modal-title" class="golden-field-input inc-proj-title" placeholder="Например: Разработка CRM, Дизайн">',
+        '      <input type="text" id="inc-modal-name" class="golden-field-input inc-proj-title inc-modal-title inc-modal-name" placeholder="Например: Разработка CRM, Дизайн">',
         '    </div>',
         '    <div class="golden-field-group">',
         '      <label class="golden-field-label">Полная стоимость проекта (₽)</label>',
-        '      <input type="number" id="inc-modal-cost" class="golden-field-input inc-proj-cost" placeholder="100 000" min="1">',
+        '      <input type="number" id="inc-modal-total" class="golden-field-input inc-proj-cost inc-modal-cost inc-modal-total" placeholder="100 000" min="1">',
         '      <span class="golden-field-hint">Фиксированная сумма по договору</span>',
-        '    </div>',
-        '    <div class="golden-field-group">',
-        '      <label class="golden-field-label">Цвет карточки</label>',
-        '      <div class="golden-palette-row" id="inc-proj-palette">',
-        colors.map(function (c, idx) {
-          return '<button type="button" class="palette-circle ' + (idx === 0 ? 'selected' : '') + '" data-color="' + c.name + '" style="background:' + c.hex + ';"></button>';
-        }).join(''),
-        '      </div>',
-        '      <input type="hidden" id="inc-proj-color" class="inc-proj-color" value="mint">',
-        '    </div>',
-        '    <div style="margin-top: 10px; padding: 10px 12px; background: #FAF4EB; border-radius: 12px; box-shadow: inset 1px 1px 3px rgba(130, 100, 70, 0.1);">' +
-        '      <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 12px; font-weight: 800; color: #1E3F30;">' +
-        '        <input type="checkbox" id="inc-modal-paid-now" style="accent-color: #2D9C5E; width: 16px; height: 16px;">' +
-        '        <span>Отметить как оплаченный (внести платёж)</span>' +
-        '      </label>' +
-        '      <div id="inc-modal-date-wrap" style="display: none; margin-top: 8px;">' +
-        '        <label style="font-size: 11px; font-weight: 800; color: #6D3E14; display: block; margin-bottom: 4px;">Дата оплаты</label>' +
-        '        <input type="date" id="inc-modal-paid-date" class="golden-field-input" value="' + new Date().toISOString().slice(0, 10) + '">' +
-        '      </div>' +
         '    </div>',
         '  </div>',
         '  <div class="golden-actions-row">',
@@ -752,47 +851,85 @@
         '</div>'
       ].join('');
 
-      var select = document.getElementById('inc-modal-client-select');
+      var customSelect = document.getElementById('inc-custom-client-select');
+      var trigger = document.getElementById('inc-client-trigger');
+      var clientVal = document.getElementById('inc-client-val');
       var clientInput = document.getElementById('inc-modal-client');
-      var paidCheckbox = document.getElementById('inc-modal-paid-now');
-      var dateWrap = document.getElementById('inc-modal-date-wrap');
-      if (paidCheckbox && dateWrap) {
-        paidCheckbox.onchange = function () {
-          dateWrap.style.display = paidCheckbox.checked ? 'block' : 'none';
+      var colorInput = document.getElementById('inc-proj-color');
+      var clientBadge = document.getElementById('inc-modal-client-badge');
+
+      if (trigger && customSelect) {
+        trigger.onclick = function (e) {
+          if (e && e.stopPropagation) e.stopPropagation();
+          customSelect.classList.toggle('open');
         };
       }
-      select.onchange = function () {
-        if (select.value === '__new__') {
-          clientInput.style.display = 'block';
-          clientInput.focus();
-        } else {
-          clientInput.style.display = 'none';
-        }
-      };
 
-      var paletteCircles = overlay.querySelectorAll('.palette-circle');
-      paletteCircles.forEach(function (btn) {
-        btn.onclick = function () {
-          paletteCircles.forEach(function (b) { b.classList.remove('selected'); });
-          btn.classList.add('selected');
-          selectedColor = btn.getAttribute('data-color');
-          document.getElementById('inc-proj-color').value = selectedColor;
+      var options = overlay.querySelectorAll('.custom-select-option');
+      options.forEach(function (opt) {
+        opt.onclick = function (e) {
+          if (e && e.stopPropagation) e.stopPropagation();
+          var val = opt.getAttribute('data-value');
+          if (!val) return;
+          var col = opt.getAttribute('data-color') || 'mint';
+          var hex = opt.getAttribute('data-hex') || '#C8E2D2';
+          var title = opt.getAttribute('data-title') || 'Мята';
+          var txt = opt.getAttribute('data-text') || '#1E3F30';
+          var inits = opt.getAttribute('data-initials') || '♡';
+
+          if (clientInput) clientInput.value = val;
+          if (colorInput) colorInput.value = col;
+          if (clientBadge) {
+            clientBadge.style.display = 'inline-block';
+            clientBadge.textContent = 'Цвет: ' + title;
+          }
+          if (clientVal) {
+            clientVal.innerHTML = [
+              '<span class="client-avatar-badge" style="width: 20px; height: 20px; border-radius: 50%; background: ' + hex + '; color: ' + txt + '; display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 900; flex-shrink: 0;">' + escapeHtml(inits) + '</span>',
+              '<span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">' + escapeHtml(val) + '</span>',
+              '<span class="client-color-pill ' + col + '" style="font-size: 10px; font-weight: 900; padding: 2px 8px; border-radius: 8px; background: ' + hex + '; color: ' + txt + '; display: inline-flex; align-items: center; flex-shrink: 0;">' + title + '</span>'
+            ].join('');
+          }
+
+          options.forEach(function (o) {
+            o.classList.remove('selected');
+            var chk = o.querySelector('.option-check');
+            if (chk) chk.remove();
+          });
+          opt.classList.add('selected');
+          var chkSpan = document.createElement('span');
+          chkSpan.className = 'option-check';
+          chkSpan.style.cssText = 'font-size: 12px; color: #2D9C5E; font-weight: 900; flex-shrink: 0;';
+          chkSpan.textContent = '✓';
+          opt.appendChild(chkSpan);
+
+          if (customSelect) customSelect.classList.remove('open');
         };
       });
 
+      overlay.onclick = function (e) {
+        if (e.target.id === 'mytables-income-overlay') {
+          closeIncomeModal();
+        } else if (customSelect && !customSelect.contains(e.target)) {
+          customSelect.classList.remove('open');
+        }
+      };
+
       document.getElementById('inc-modal-save-proj').onclick = function () {
-        var client = select.value === '__new__' ? clientInput.value : select.value;
-        var title = document.getElementById('inc-modal-title').value;
-        var cost = document.getElementById('inc-modal-cost').value;
-        var color = document.getElementById('inc-proj-color').value || 'mint';
+        var client = (clientInput && clientInput.value ? clientInput.value : '').trim();
+        if (!client) {
+          alert('Пожалуйста, выберите клиента из списка (или сначала добавьте его во вкладке «Клиенты ♡»)');
+          return;
+        }
+        var titleEl = document.getElementById('inc-modal-name') || document.getElementById('inc-modal-title');
+        var title = titleEl ? titleEl.value.trim() : '';
+        var costEl = document.getElementById('inc-modal-total') || document.getElementById('inc-modal-cost');
+        var cost = costEl ? costEl.value.trim() : '';
+        var color = (colorInput && colorInput.value) || 'mint';
 
         try {
-          var newP = addProject({ client: client, project: title, totalCost: cost, color: color });
-          if (paidCheckbox && paidCheckbox.checked && newP) {
-            var dateInput = document.getElementById('inc-modal-paid-date');
-            var payDate = (dateInput && dateInput.value) || new Date().toISOString().slice(0, 10);
-            addPayment(newP.id, { amount: Number(cost), date: payDate, note: 'Оплачено' });
-          }
+          addProject({ client: client, project: title, totalCost: cost, color: color });
+          if (typeof syncToMainScreen === 'function') syncToMainScreen();
           closeIncomeModal();
         } catch (err) {
           alert(err.message);
@@ -1091,6 +1228,7 @@
       deletePayment: deletePayment,
       renderIncome: renderIncome,
       syncToMainScreen: syncToMainScreen,
+      getAvailableClients: getAvailableClients,
       openAddProjectModal: openAddProjectModal,
       openAddPaymentModal: openAddPaymentModal,
       openEditPaymentModal: openEditPaymentModal,
